@@ -1,0 +1,38 @@
+.bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 3rem;
+  padding-left: 0.6rem;
+  padding-right: 0.6rem;
+  background-color: #4A148C;
+  color: #fafafa;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.24);
+
+  &__title {
+    font-weight: 900;
+  }
+
+  &__pagelist {
+    &__page {
+      display: inline-block;
+      margin-left: 1rem;
+      margin-right: 1rem;
+
+      a {
+        color: #fafafa;
+        text-decoration: none;
+
+        &:hover {
+          color: transparentize(#fafafa, .2);
+          text-decoration: underline;
+        }
+      }
+
+      &--active {
+        font-weight: 900;
+      }
+    }
+  }
+}

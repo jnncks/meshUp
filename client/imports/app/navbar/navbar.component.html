@@ -1,0 +1,8 @@
+<div class="bar">
+  <span class="bar__title">{{ title }}</span>
+  <ul class="bar__pagelist">
+    <li class="bar__pagelist__page" routerLinkActive="bar__pagelist__page--active" *ngFor="let page of (pages | routeWithName)">
+      <a routerLink="{{ page.path }}">{{ page.data.name }}</a>
+    </li>
+  </ul>
+</div>

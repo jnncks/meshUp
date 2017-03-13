@@ -1,0 +1,15 @@
+.app {
+  width: 100%;
+  background-color: #fafafa;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  &__navbar {
+    z-index: 999;
+  }
+
+  &__page-content {
+    flex: 1 1 auto;
+  }
+}

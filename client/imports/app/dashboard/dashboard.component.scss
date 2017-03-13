@@ -1,0 +1,42 @@
+.dashboard {
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  &__category {
+    &__content {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+
+      &__item {
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: calc(25% - 1rem);
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        padding-bottom: 0.5rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 2px solid #e0e0e0;
+        background-color: #fff;
+
+        &:only-of-type {
+          flex-basis: 100%;
+        }
+
+        &:nth-child(even) {
+          margin-left: 1rem;
+        }
+
+        &:nth-child(odd) {
+          margin-right: 1rem;
+        }
+
+        &__title {
+          word-break: break-all;
+        }
+      }
+    }
+  }
+}
