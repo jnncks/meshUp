@@ -2,12 +2,12 @@
   <h1>{{ title }}</h1>
   <p>{{ greeting }}, {{ user }}!</p>
 
-  <div class="dashboard__category" *ngFor="let category of categories">
+  <div class="dashboard__category" *ngFor="let category of categories | async">
     <h2 class="dashboard__category__title">{{ category.name }}</h2>
     <p class="dashboard__category__description">{{ category.description }}</p>
     <div class="dashboard__category__content">
 
-      <div class="dashboard__category__content__item" *ngFor="let item of category.items">
+      <div class="dashboard__category__content__item" *ngFor="let item of items | async">
         <h3 class="dashboard__category__content__item__title">{{ item.name }}</h3>
         <p>{{ item.description }}</p>
       </div>

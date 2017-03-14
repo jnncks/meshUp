@@ -1,8 +1,10 @@
+import { Mongo } from 'meteor/mongo';
+
 export interface Node {
   title: string;
-  id: string;
-  created: Date;
-  lastEdited: Date;
   detail: string;
   content: string;
+  id: Mongo.ObjectID;
+  created: Date;
+  lastEdited: Date;
 }

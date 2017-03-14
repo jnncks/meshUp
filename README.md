@@ -1,19 +1,17 @@
-# Angular2-Meteor Boilerplate
+# meshUp
 
-[![bitHound Overall Score](https://www.bithound.io/github/Urigo/angular2-meteor-base/badges/score.svg)](https://www.bithound.io/github/Urigo/angular2-meteor-base) [![bitHound Dependencies](https://www.bithound.io/github/Urigo/angular2-meteor-base/badges/dependencies.svg)](https://www.bithound.io/github/Urigo/angular2-meteor-base/master/dependencies/npm)
+## Installation
+Make sure you have [Meteor 1.4](https://www.meteor.com/install) and a current node.js version installed. If so, you can skip (1.) and (2.), as well as the optional (3.).
 
-
-## Usage
-
-Since Meteor v1.4 you can use one command to create a working Angular2 app based on this boilerplate:
-
-```
-meteor create --example angular2-boilerplate
-```
-
+1. Download and install node.js from [](https://nodejs.org/).
+2. Install Meteor 1.4 from [](https://www.meteor.com/install).
+3. (Optional) Install yarn for faster packet installation: `npm install -g yarn`.
+4. Run `npm install` or `yarn install` (preferred) inside this directory.
+5. Run Meteor initially to install the required Meteor packets: `npm run start`. 
+ 
 ## NPM Scripts
 
-This boilerplate comes with predefined NPM scripts, defined in `package.json`:
+This project comes with predefined NPM scripts, defined in `package.json`:
 
 - `$ npm run start` - Run the Meteor application.
 - `$ npm run start:prod` - Run the Meteor application in production mode.
@@ -23,10 +21,7 @@ This boilerplate comes with predefined NPM scripts, defined in `package.json`:
 - `$ npm run test` - Executes Meteor in test mode with Mocha.
 - `$ npm run test:ci` - Executes Meteor in test mode with Mocha for CI (run once).
 
-## Boilerplate Contents
-
-This boilerplate contains the basics that requires to quick start with Angular2-Meteor application.
-
+## Package Contents
 This package contains:
 
 - TypeScript support (with `@types`) and Angular 2 compilers for Meteor
@@ -36,16 +31,8 @@ This package contains:
 - Testing framework with Mocha and Chai
 - [Meteor-RxJS](http://angular-meteor.com/meteor-rxjs/) support and usage
 
-This application also contains demo code:
 
-- Main Component (`/client/app.component`)
-- Demo Child Component (`/client/imports/demo/demo.component`)
-- Demo Service (`/client/imports/demo/demo-data.service`)
-- Demo Mongo Collection (`/both/demo.collection.ts`) with a TypeScript interface as model.
-
-The Main component loads the child component, which uses the demo service that gets it's data from the demo collection.
-
-### Folder Structure
+## Folder Structure
 
 The folder structure is a mix between [Angular 2 recommendation](https://johnpapa.net/angular-2-styles/) and [Meteor 1.3 recommendation](https://guide.meteor.com/structure.html).
 
@@ -70,7 +57,7 @@ All other server files should be located under `/server/imports`.
 
 Example for common files in our app, is the MongoDB collection we create - it located under `/both/demo-collection.ts` and it can be imported from both client and server code.
 
-### Testing
+## Testing
 
 The testing environment in this boilerplate based on [Meteor recommendation](https://guide.meteor.com/testing.html), and uses Mocha as testing framework along with Chai for assertion.
 
@@ -79,3 +66,10 @@ There is a main test file that initialize Angular 2 tests library, it located un
 All other test files are located near the component/service it tests, with the `.test.ts` extension.
 
 The `DemoComponent` contains example for Angular 2 tests for Component, and in the server side there is an example for testing Meteor collections and stub data.
+
+## Debugging
+For an overview about the Mongo data collections, this package provides Mongol.
+When running the client you may use `Ctrl + M` in the Browser to open Mongol for 
+
+## Credits
+Based on [](https://github.com/Urigo/angular2-meteor-base).

@@ -1,40 +1,29 @@
 import { Injectable } from '@angular/core';
 import { ObservableCursor } from 'meteor-rxjs';
-import { Demo } from '../../../../both/models/demo.model';
-import { DemoCollection } from '../../../../both/collections/demo.collection';
+import { Mongo } from 'meteor/mongo'
+
+import { InfoNetCategory } from '../../../../both/models/infonetcategory.model';
+import { InfoNetCategoryCollection} from '../../../../both/collections/infonetcategory.collection';
+import { InfoNetMeta } from '../../../../both/models/infonetmeta.model';
+import { InfoNetMetaCollection } from '../../../../both/collections/infonetmeta.collection';
 
 @Injectable()
 export class DashboardService {
-  private data: ObservableCursor<Demo>;
+  private _categories: ObservableCursor<InfoNetCategory>;
+  private _infoNetMetas: ObservableCursor<InfoNetMeta>;
 
   constructor() {
-    this.data = DemoCollection.find({});
+    Meteor.subscribe('InfoNetMetaCollection');
+    Meteor.subscribe('InfoNetCategoryCollection');
+    this._categories = InfoNetCategoryCollection.find({});
+    this._infoNetMetas = InfoNetMetaCollection.find({});
   }
 
-  public getData(): ObservableCursor<Demo> {
-    return this.data;
+  public getInfoNetCategories(): ObservableCursor<InfoNetCategory> {
+    return this._categories;
   }
 
-  public getCategories() {
-    return [
-      {
-        name: 'Vorlesungen',
-        description: 'Alle Netze, die mit Vorlesungen zu tun haben.',
-        items: [
-          {
-            name: 'Einführung in die Medieninformatik',
-            description: 'Was gehört alles zum Medieninformatik-Studium dazu?'
-          },
-          {
-            name: 'Software-Ergonomie',
-            description: 'Grundlagen der menschzentrierten Softwareentwicklung.'
-          }
-        ]
-      },
-      {
-        name: 'Privat',
-        description: 'Meine privaten Netze.'
-      }
-    ];
+  public getInfoNetMetaByCategory(category: ObservableCursor<InfoNetCategory>): ObservableCursor<InfoNetMeta[]> {
+    return this._infoNetMetas.find({_id: {$in: category.items}});
   }
 }
