@@ -3,10 +3,9 @@ import { MeteorObservable } from 'meteor-rxjs';
 import { Observable } from 'rxjs';
 import { Mongo } from 'meteor/mongo'
 
-import { InfoNetCategory } from '../../../../both/models/infonetcategory.model';
-import { InfoNetCategoryCollection} from '../../../../both/collections/infonetcategory.collection';
-import { InfoNetMeta } from '../../../../both/models/infonetmeta.model';
-import { InfoNetMetaCollection } from '../../../../both/collections/infonetmeta.collection';
+import { InfoNetCategory, InfoNetMeta } from '../../../../both/models';
+import { InfoNetCategoryCollection, InfoNetMetaCollection } from '../../../../both/collections';
+
 
 @Injectable()
 export class DashboardService {

@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { DashboardService } from './dashboard.service';
-import { InfoNetMeta } from '../../../../both/models/infonetmeta.model';
-import { InfoNetCategory } from '../../../../both/models/infonetcategory.model';
+import { InfoNetMeta, InfoNetCategory} from '../../../../both/models';
 
 import template from './dashboard.component.html';
 import style from './dashboard.component.scss';
@@ -29,7 +28,13 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
 
     // get the categories
-    this.categories = this._dashboardService.getInfoNetCategories().zone();
+    this.categories = this._dashboardService.getInfoNetCategories();
+
+    let map = this.categories.map(categoryArray => {
+      return categoryArray
+    })
+
+    console.log(map)
     
     // fill the categories with data
     let test = this.categories.subscribe(() => {
