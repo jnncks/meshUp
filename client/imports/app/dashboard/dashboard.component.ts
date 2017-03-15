@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
   greeting: string;
   user: string;
   categories: Observable<InfoNetCategory[]>;
-  items: Observable<InfoNetMeta[]>;
+  items;
 
   constructor(private _dashboardService: DashboardService) {
     this.title = 'Dashboard';
@@ -31,13 +31,13 @@ export class DashboardComponent implements OnInit {
     // get the categories
     this.categories = this._dashboardService.getInfoNetCategories().zone();
     
-    // TODO
-    this.items = this._dashboardService.getInfoNetMetaByCategory(this.categories[0]);
-
-
     // fill the categories with data
-    /*this.categories.forEach((category) => {
-      category.items = this._dashboardService.getInfoNetMetaByCategory(category.name).zone()
-    });*/
+    let test = this.categories.subscribe(() => {
+      this.categories.take(2).forEach(categories => {
+        categories.forEach(category => {
+          return this._dashboardService.getInfoNetMetaByCategory(category)
+        })
+      })
+    });
   }
 }

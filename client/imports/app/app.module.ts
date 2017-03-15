@@ -2,40 +2,36 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
+/* Components */
 import { AppComponent } from './app.component';
-
-import { DemoComponent } from './demo/demo.component';
-import { DemoDataService } from './demo/demo-data.service';
-
 import { NavBarComponent } from './navbar/navbar.component';
-
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { DashboardService } from './dashboard/dashboard.service';
-
 import { NetComponent } from './net/net.component';
 
+/* Services */
+import { DashboardService } from './dashboard/dashboard.service';
+
+/* Pipes */
 import { RouteWithNamePipe } from './shared/route-with-name.pipe';
 
 @NgModule({
-  // Components, Pipes, Directive
+  /* Components, Pipes, Directives */
   declarations: [
     AppComponent,
-    DemoComponent,
     NavBarComponent,
     DashboardComponent,
     NetComponent,
     RouteWithNamePipe
   ],
-  // Entry Components
+  /* Entry Components */
   entryComponents: [
     AppComponent
   ],
-  // Providers
+  /* Providers */
   providers: [
-    DemoDataService,
     DashboardService
   ],
-  // Modules
+  /* Modules */
   imports: [
     BrowserModule,
     RouterModule.forRoot([
@@ -60,7 +56,7 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
       }
     ])
   ],
-  // Main Component
+  /* Main Component */
   bootstrap: [ AppComponent ]
 })
 export class AppModule {
