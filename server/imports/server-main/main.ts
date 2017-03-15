@@ -30,8 +30,27 @@ export class Main {
 
   initFakeData(): void {
 
-    let lectureIds = [];
-    let privateCategoryIds = [];
+    let lectureId: Mongo.ObjectID;
+    let privateCategoryId: Mongo.ObjectID;
+
+    // generate some fake categories if the collection is empty
+    if (InfoNetCategoryCollection.find({}).cursor.count() === 0) {
+      InfoNetCategoryCollection.insert(
+        {
+          name: 'Vorlesungen',
+          description: 'Alle Netze, die mit Vorlesungen zu tun haben.'
+        }
+      )
+      .subscribe(id => lectureId = id);
+
+      InfoNetCategoryCollection.insert(
+        {
+          name: 'Privat',
+          description: 'Meine privaten Netze.'
+        }
+      )
+      .subscribe(id => privateCategoryId = id);
+    }
 
     // generate some fake InfoNetMeta elements if the collection is empty
     if (InfoNetMetaCollection.find({}).cursor.count() === 0) {
@@ -41,28 +60,30 @@ export class Main {
         name: 'Einführung in die Medieninformatik',
         description: 'Was gehört alles zum Medieninformatik-Studium dazu?',
         created: new Date(),
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
+        categoryId: lectureId
       }, {
         name: 'Software-Ergonomie',
         description: 'Grundlagen menschzentrierter Softwareentwicklung.',
         created: new Date(),
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
+        categoryId: lectureId
       }, {
         name: 'Analysis',
         description: 'Integration. Fourier.',
         created: new Date(),
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
+        categoryId: lectureId
       }, {
         name: 'Ingenieupsychologie',
         description: 'Gaps und mehr.',
         created: new Date(),
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
+        categoryId: lectureId
       }];
 
       lectures.forEach((obj: InfoNetMeta) => {
-        InfoNetMetaCollection
-          .insert(obj) // returns an Observable of the ID of the inserted obj
-          .subscribe(id => lectureIds.push(id));
+        InfoNetMetaCollection.insert(obj)
       });
 
       // privateCategory nets
@@ -70,35 +91,18 @@ export class Main {
         name: 'Todo-Liste',
         description: 'Arbeit, Arbeit!',
         created: new Date(),
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
+        categoryId: privateCategoryId
       }, {
         name: 'Einkaufsliste als Netz',
         description: 'Was ich noch kaufen muss.',
         created: new Date(),
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
+        categoryId: privateCategoryId
       }];
 
       privateNets.forEach((obj: InfoNetMeta) => {
-        InfoNetMetaCollection
-          .insert(obj) // returns an Observable of the ID of the inserted obj
-          .subscribe(id => privateCategoryIds.push(id));
-      });
-    }
-
-    // generate some fake categories if the collection is empty
-    if (InfoNetCategoryCollection.find({}).cursor.count() === 0) {
-      const data: InfoNetCategory[] = [{
-        name: 'Vorlesungen',
-        description: 'Alle Netze, die mit Vorlesungen zu tun haben.',
-        items: lectureIds
-      }, {
-        name: 'Privat',
-        description: 'Meine privaten Netze.',
-        items: privateCategoryIds
-      }];
-
-      data.forEach((obj: InfoNetMeta) => {
-        InfoNetCategoryCollection.insert(obj)
+        InfoNetMetaCollection.insert(obj);
       });
     }
   }

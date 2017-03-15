@@ -10,24 +10,28 @@ import { InfoNetCategoryCollection, InfoNetMetaCollection } from '../../../../bo
 @Injectable()
 export class DashboardService {
   private _categories: Observable<InfoNetCategory[]>;
-  private _infoNetMetas: Observable<InfoNetMeta[]>;
 
   constructor() {
-    this._categories = InfoNetCategoryCollection.find({});
-    this._infoNetMetas = InfoNetMetaCollection.find({});
+    this._categories = InfoNetCategoryCollection
+      .find({})
+      .mergeMap((categories: InfoNetCategory[]) => 
+        Observable.combineLatest(
+          ...categories.map((category: InfoNetCategory) =>
+            InfoNetMetaCollection
+              .find({categoryId: category._id})
+              .startWith(null)
+              .map(infoNetMetas => {
+                if (infoNetMetas) category.items = infoNetMetas;
+                return category;
+              })
+          )
+        )
+      );
     MeteorObservable.subscribe('InfoNetCategoryCollection').subscribe();
     MeteorObservable.subscribe('InfoNetMetaCollection').subscribe();
   }
 
   public getInfoNetCategories(): Observable<InfoNetCategory[]> {
     return this._categories;
-  }
-
-  public getInfoNetMetaByID(id: Mongo.ObjectID): Observable<InfoNetMeta> {
-    return this._infoNetMetas.findOne({'_id': id});
-  }
-
-  public getInfoNetMetaByCategory(category: InfoNetCategory) {
-    //return this._infoNetMetas.find()
   }
 }

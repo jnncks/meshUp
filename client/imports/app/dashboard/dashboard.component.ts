@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscriber } from 'rxjs';
+
+import { MeteorObservable } from 'meteor-rxjs';
 
 import { DashboardService } from './dashboard.service';
 import { InfoNetMeta, InfoNetCategory} from '../../../../both/models';
+
+import { InfoNetMetaCollection, InfoNetCategoryCollection } from '../../../../both/collections';
 
 import template from './dashboard.component.html';
 import style from './dashboard.component.scss';
@@ -17,7 +21,6 @@ export class DashboardComponent implements OnInit {
   greeting: string;
   user: string;
   categories: Observable<InfoNetCategory[]>;
-  items;
 
   constructor(private _dashboardService: DashboardService) {
     this.title = 'Dashboard';
@@ -26,23 +29,7 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    // get the categories
+    // get the categories and its contents
     this.categories = this._dashboardService.getInfoNetCategories();
-
-    let map = this.categories.map(categoryArray => {
-      return categoryArray
-    })
-
-    console.log(map)
-    
-    // fill the categories with data
-    let test = this.categories.subscribe(() => {
-      this.categories.take(2).forEach(categories => {
-        categories.forEach(category => {
-          return this._dashboardService.getInfoNetMetaByCategory(category)
-        })
-      })
-    });
-  }
+  }   
 }

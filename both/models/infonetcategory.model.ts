@@ -1,7 +1,8 @@
-import { Mongo } from 'meteor/mongo';
+import { InfoNetMeta } from './infonetmeta.model';
 
 export interface InfoNetCategory {
+  _id?: Mongo.ObjectID;
   name: string;
   description: string;
-  items?: Mongo.ObjectID[];
+  items?: InfoNetMeta[];
 }

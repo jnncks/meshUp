@@ -7,7 +7,7 @@
     <p class="dashboard__category__description">{{ category.description }}</p>
     <div class="dashboard__category__content">
 
-      <div class="dashboard__category__content__item" *ngFor="let item of items | async">
+      <div class="dashboard__category__content__item" *ngFor="let item of category.items">
         <h3 class="dashboard__category__content__item__title">{{ item.name }}</h3>
         <p>{{ item.description }}</p>
       </div>

@@ -1,7 +1,7 @@
 .dashboard {
   padding-left: 1rem;
   padding-right: 1rem;
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: calc(100vh - 3rem);
 
   &__category {
@@ -20,22 +20,16 @@
         padding-bottom: 0.5rem;
         margin-top: 1rem;
         margin-bottom: 1rem;
+        margin-left: 2rem;
         border: 2px solid #e0e0e0;
         background-color: #fff;
 
-        &:nth-child(2n), &:nth-child(2n + 1) {
-          margin-left: 1rem;
-          margin-right: 1rem;
-        }
-
-        &:nth-child(4n) {
-          margin-left: 1rem;
-          margin-right: 0;
+        &:first-child {
+          margin-left: 0;
         }
 
         &:nth-child(4n + 1) {
           margin-left: 0;
-          margin-right: 1rem;
         }
 
         &:only-of-type {
