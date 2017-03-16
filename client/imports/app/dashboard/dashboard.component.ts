@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, Subscriber } from 'rxjs';
-
-import { MeteorObservable } from 'meteor-rxjs';
+import { Observable } from 'rxjs';
 
 import { DashboardService } from './dashboard.service';
-import { InfoNetMeta, InfoNetCategory} from '../../../../both/models';
 
-import { InfoNetMetaCollection, InfoNetCategoryCollection } from '../../../../both/collections';
+import { InfoNetMeta, InfoNetCategory } from '../../../../both/models';
+
+import {
+  InfoNetMetaCollection,
+  InfoNetCategoryCollection
+} from '../../../../both/collections';
 
 import template from './dashboard.component.html';
 import style from './dashboard.component.scss';
@@ -29,7 +31,15 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    // get the categories and its contents
-    this.categories = this._dashboardService.getInfoNetCategories();
-  }   
+    // get the categories and their contents (InfoNetMeta elements)
+    this.categories = this._dashboardService.getInfoNetCategories().zone();
+  }
+
+  deleteCategory(category: InfoNetCategory): void {
+    let number = this._dashboardService.deleteCategory(category);
+  }
+
+  deleteNet(infoNet: InfoNetMeta): void {
+    let number = this._dashboardService.deleteInfoNet(infoNet);
+  }
 }
