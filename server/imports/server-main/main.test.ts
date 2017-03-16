@@ -4,23 +4,29 @@ import * as spies from 'chai-spies';
 import StubCollections from 'meteor/hwillson:stub-collections';
 
 import { Main } from './main';
-import { DemoCollection } from '../../../both/collections/demo.collection';
+import {
+  InfoNetCategoryCollection,
+  InfoNetMetaCollection
+} from '../../../both/collections';
+
 
 chai.use(spies);
+
 
 describe('Server Main', () => {
   let mainInstance: Main;
 
   beforeEach(() => {
-    // Creating database mock
-    StubCollections.stub(DemoCollection);
+    // create a database mock
+    StubCollections.stub(InfoNetCategoryCollection);
+    StubCollections.stub(InfoNetMetaCollection);
 
-    // Create instance of main class
+    // create an instance of main class
     mainInstance = new Main();
   });
 
   afterEach(() => {
-    // Restore database
+    // restore the database
     StubCollections.restore();
   });
 
@@ -31,10 +37,17 @@ describe('Server Main', () => {
     chai.expect(mainInstance.initFakeData).to.have.been.called();
   });
 
-  it('Should call insert 3 times when init fake data', () => {
-    DemoCollection.insert = chai.spy();
+  it('Should call insert 2 times for InfoNetCategoryCollection when init fake data', () => {
+    InfoNetCategoryCollection.collection.insert = chai.spy();
     mainInstance.initFakeData();
 
-    chai.expect(DemoCollection.insert).to.have.been.called.exactly(3);
+    chai.expect(InfoNetCategoryCollection.collection.insert).to.have.been.called.exactly(2);
+  });
+
+  it('Should call insert 6 times for InfoNetMetaCollection when init fake data', () => {
+    InfoNetMetaCollection.collection.insert = chai.spy();
+    mainInstance.initFakeData();
+
+    chai.expect(InfoNetMetaCollection.collection.insert).to.have.been.called.exactly(6);
   });
 });

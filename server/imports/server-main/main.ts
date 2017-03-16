@@ -1,12 +1,9 @@
-import { Mongo } from 'meteor/mongo';
-
 // collections
 import {
   InfoNetCategoryCollection,
   InfoNetCollection,
   InfoNetMetaCollection
 } from '../../../both/collections';
-
 
 // models
 import {
@@ -29,31 +26,28 @@ export class Main {
   }
 
   initFakeData(): void {
-
     let lectureId: Mongo.ObjectID;
     let privateCategoryId: Mongo.ObjectID;
 
     // generate some fake categories if the collection is empty
-    if (InfoNetCategoryCollection.find({}).cursor.count() === 0) {
-      InfoNetCategoryCollection.insert(
+    if (InfoNetCategoryCollection.collection.find({}).count() === 0) {
+     lectureId = InfoNetCategoryCollection.collection.insert(
         {
           name: 'Vorlesungen',
           description: 'Alle Netze, die mit Vorlesungen zu tun haben.'
         }
-      )
-      .subscribe(id => lectureId = id);
+      );
 
-      InfoNetCategoryCollection.insert(
+      privateCategoryId = InfoNetCategoryCollection.collection.insert(
         {
           name: 'Privat',
           description: 'Meine privaten Netze.'
         }
-      )
-      .subscribe(id => privateCategoryId = id);
+      );
     }
 
     // generate some fake InfoNetMeta elements if the collection is empty
-    if (InfoNetMetaCollection.find({}).cursor.count() === 0) {
+    if (InfoNetMetaCollection.collection.find({}).count() === 0) {
 
       // lectures
       const lectures: InfoNetMeta[] = [{
@@ -83,7 +77,7 @@ export class Main {
       }];
 
       lectures.forEach((obj: InfoNetMeta) => {
-        InfoNetMetaCollection.insert(obj)
+        InfoNetMetaCollection.collection.insert(obj)
       });
 
       // privateCategory nets
@@ -102,7 +96,7 @@ export class Main {
       }];
 
       privateNets.forEach((obj: InfoNetMeta) => {
-        InfoNetMetaCollection.insert(obj);
+        InfoNetMetaCollection.collection.insert(obj);
       });
     }
   }
