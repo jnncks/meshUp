@@ -54,7 +54,7 @@ All other server files should be located under `/server/imports`.
 
 
 ### Common
-Example for common files in our app, is the MongoDB collection we create - it located under `/both/demo-collection.ts` and it can be imported from both client and server code.
+Example for common files in our app, are the MongoDB collections and models we create - they are located under `/both/collections/` and `/both/models/` and can be imported from both client and server code.
 
 
 ## Testing
