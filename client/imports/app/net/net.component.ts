@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 
 import template from './net.component.html';
 import style from './net.component.scss';
@@ -17,6 +16,5 @@ export class NetComponent implements OnInit {
   }
 
   ngOnInit() {
-    //this.data = this.demoDataService.getData().zone();
   }
 }

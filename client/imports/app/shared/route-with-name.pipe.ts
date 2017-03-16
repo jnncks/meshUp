@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Route } from '@angular/router';
 
-/*
+/**
  * Excludes routes without a name in the data property.
  * 
  * e.g. `{ path: 'home', component: HomeComponent, data: { name: 'Home' } }`
