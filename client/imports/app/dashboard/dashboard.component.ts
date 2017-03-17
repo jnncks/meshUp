@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { DashboardService } from './dashboard.service';
@@ -24,7 +25,7 @@ export class DashboardComponent implements OnInit {
   user: string;
   categories: Observable<InfoNetCategory[]>;
 
-  constructor(private _dashboardService: DashboardService) {
+  constructor(private _router: Router, private _dashboardService: DashboardService) {
     this.title = 'Dashboard';
     this.greeting = 'Hallo und viel Spaß mit meshUp';
     this.user = 'Peter'
@@ -41,5 +42,9 @@ export class DashboardComponent implements OnInit {
 
   deleteNet(infoNet: InfoNetMeta): void {
     let number = this._dashboardService.deleteInfoNet(infoNet);
+  }
+
+  viewNet(infoNet: InfoNetMeta): void {
+    this._router.navigate(['/net', infoNet._id]);
   }
 }

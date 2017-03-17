@@ -6,7 +6,8 @@ import StubCollections from 'meteor/hwillson:stub-collections';
 import { Main } from './main';
 import {
   InfoNetCategoryCollection,
-  InfoNetMetaCollection
+  InfoNetMetaCollection,
+  InfoNetCollection
 } from '../../../both/collections';
 
 
@@ -20,6 +21,7 @@ describe('Server Main', () => {
     // create a database mock
     StubCollections.stub(InfoNetCategoryCollection);
     StubCollections.stub(InfoNetMetaCollection);
+    StubCollections.stub(InfoNetCollection);
 
     // create an instance of main class
     mainInstance = new Main();
@@ -49,5 +51,12 @@ describe('Server Main', () => {
     mainInstance.initFakeData();
 
     chai.expect(InfoNetMetaCollection.collection.insert).to.have.been.called.exactly(6);
+  });
+
+  it('Should call insert 6 times for InfoNetCollection when init fake data', () => {
+    InfoNetCollection.collection.insert = chai.spy();
+    mainInstance.initFakeData();
+
+    chai.expect(InfoNetCollection.collection.insert).to.have.been.called.exactly(6);
   });
 });

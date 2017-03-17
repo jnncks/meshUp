@@ -1,15 +1,15 @@
 // collections
 import {
   InfoNetCategoryCollection,
-  InfoNetCollection,
-  InfoNetMetaCollection
+  InfoNetMetaCollection,
+  InfoNetCollection
 } from '../../../both/collections';
 
 // models
 import {
   InfoNetCategory,
-  InfoNet,
-  InfoNetMeta
+  InfoNetMeta,
+  InfoNet
 } from '../../../both/models';
 
 
@@ -19,15 +19,20 @@ export class Main {
 
     Meteor.publish('InfoNetCategoryCollection', function() {
       return InfoNetCategoryCollection.collection.find({});
-    })
+    });
     Meteor.publish('InfoNetMetaCollection', function() {
       return InfoNetMetaCollection.collection.find({});
-    })
+    });
+    Meteor.publish('InfoNetCollection', function() {
+      return InfoNetCollection.collection.find({});
+    });
   }
 
   initFakeData(): void {
     let lectureId: Mongo.ObjectID;
     let privateCategoryId: Mongo.ObjectID;
+    const lectureMetaIds: Mongo.ObjectID[] = [];
+    const privateCategoryMetaIds: Mongo.ObjectID[] = [];
 
     // generate some fake categories if the collection is empty
     if (InfoNetCategoryCollection.collection.find({}).count() === 0) {
@@ -49,8 +54,8 @@ export class Main {
     // generate some fake InfoNetMeta elements if the collection is empty
     if (InfoNetMetaCollection.collection.find({}).count() === 0) {
 
-      // lectures
-      const lectures: InfoNetMeta[] = [{
+      // lecture InfoNets meta info
+      const lecturesMeta: InfoNetMeta[] = [{
         name: 'Einführung in die Medieninformatik',
         description: 'Was gehört alles zum Medieninformatik-Studium dazu?',
         created: new Date(),
@@ -76,12 +81,28 @@ export class Main {
         categoryId: lectureId
       }];
 
-      lectures.forEach((obj: InfoNetMeta) => {
-        InfoNetMetaCollection.collection.insert(obj)
+      lecturesMeta.forEach((obj: InfoNetMeta) => {
+        let id = InfoNetMetaCollection.collection.insert(obj)
+        lectureMetaIds.push(id);
       });
 
-      // privateCategory nets
-      const privateNets: InfoNetMeta[] = [{
+      // lecture InfoNets
+      const lectures: InfoNet[] = [{
+        metaId: lectureMetaIds[0]
+      }, {
+        metaId: lectureMetaIds[1]
+      }, {
+        metaId: lectureMetaIds[2]
+      }, {
+        metaId: lectureMetaIds[3]
+      }];
+
+      lectures.forEach((obj: InfoNet) => {
+        InfoNetCollection.collection.insert(obj);
+      });
+
+      // privateCategory InfoNets meta info
+      const privateNetsMeta: InfoNetMeta[] = [{
         name: 'Todo-Liste',
         description: 'Arbeit, Arbeit!',
         created: new Date(),
@@ -95,8 +116,20 @@ export class Main {
         categoryId: privateCategoryId
       }];
 
-      privateNets.forEach((obj: InfoNetMeta) => {
-        InfoNetMetaCollection.collection.insert(obj);
+      privateNetsMeta.forEach((obj: InfoNetMeta) => {
+        let id = InfoNetMetaCollection.collection.insert(obj)
+        privateCategoryMetaIds.push(id);
+      });
+
+      // lecture InfoNets
+      const privateNets: InfoNet[] = [{
+        metaId: privateCategoryMetaIds[0]
+      }, {
+        metaId: privateCategoryMetaIds[1]
+      }];
+
+      privateNets.forEach((obj: InfoNet) => {
+        InfoNetCollection.collection.insert(obj);
       });
     }
   }

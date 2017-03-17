@@ -10,6 +10,7 @@ import { NetComponent } from './net/net.component';
 
 /* Services */
 import { DashboardService } from './dashboard/dashboard.service';
+import { NetService } from './net/net.service';
 
 /* Pipes */
 import { RouteWithNamePipe } from './shared/route-with-name.pipe';
@@ -29,7 +30,8 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
   ],
   /* Providers */
   providers: [
-    DashboardService
+    DashboardService,
+    NetService
   ],
   /* Modules */
   imports: [
@@ -48,7 +50,7 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
         }
       },
       {
-        path: 'net',
+        path: 'net/:id',
         component: NetComponent,
         data: {
           name: 'Netview'

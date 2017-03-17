@@ -1,1 +1,3 @@
-<div>Test</div>
+<div *ngIf="net | async">
+{{ net | async | json }}  
+</div>

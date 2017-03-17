@@ -44,10 +44,10 @@ export class DashboardService {
   }
 
   /**
-   * Returns an Observable for the aggregated streams of the categories collections
-   * and the contents (InfoNetMeta elements) of those categories.
+   * Returns an Observable for the aggregated streams of the categories
+   * collections and the contents (InfoNetMeta elements) of those categories.
    * 
-   * @returns Observable
+   * @returns Observable<InfoNetCategory[]>
    */
   public getInfoNetCategories(): Observable<InfoNetCategory[]> {
     return this._categories;
@@ -61,12 +61,14 @@ export class DashboardService {
    * @param  {InfoNetCategory} category the InfoNetCategory to remove
    */
   public deleteCategory(category: InfoNetCategory): void {
-    MeteorObservable.call('deleteInfoNetCategory', category._id).zone().subscribe({
-      error: (e: Error) => {
-        if (e) {
-          this._handleError(e);
+    MeteorObservable.call('deleteInfoNetCategory', category._id)
+      .zone()
+      .subscribe({
+        error: (e: Error) => {
+          if (e) {
+            this._handleError(e);
+          }
         }
-      }
     });
   }
 
@@ -78,12 +80,14 @@ export class DashboardService {
    * @param  {InfoNetMeta} infoNet the InfoNet to remove
    */
   public deleteInfoNet(infoNet: InfoNetMeta): void {
-    MeteorObservable.call('deleteInfoNet', infoNet._id).zone().subscribe({
-      error: (e: Error) => {
-        if (e) {
-          this._handleError(e);
+    MeteorObservable.call('deleteInfoNet', infoNet._id)
+      .zone()
+      .subscribe({
+        error: (e: Error) => {
+          if (e) {
+            this._handleError(e);
+          }
         }
-      }
     });
   }
 

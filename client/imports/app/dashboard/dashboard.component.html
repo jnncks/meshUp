@@ -9,6 +9,7 @@
       <div class="dashboard__category__content__item" *ngFor="let item of category.items">
         <h3 class="dashboard__category__content__item__title">{{ item.name }}</h3>
         <p>{{ item.description }}</p>
+        <button (click)="viewNet(item)">view infonet</button>
         <button (click)="deleteNet(item)">remove infonet</button>
       </div>
     </div>

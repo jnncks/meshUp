@@ -3,6 +3,7 @@ import { Relation } from './relation.model';
 
 export interface InfoNet {
   _id?: Mongo.ObjectID;
-  nodes: Node[];
-  relations: Relation[];
+  metaId: Mongo.ObjectID;
+  nodes?: Node[];
+  relations?: Relation[];
 }
