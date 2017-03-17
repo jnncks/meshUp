@@ -1,16 +1,17 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i');
-
-@import 'tipograf';
-
-body, html {
-  padding: 0;
-  margin: 0;
-  background: #EEE;
-}
+@import 'colors';
 
 * {
   box-sizing: border-box;
 }
+
+body, html {
+  padding: 0;
+  margin: 0;
+  background-color: $background;
+}
+
+@import 'normalize';
+@import 'typography';
 
 .booting {
   display: flex;

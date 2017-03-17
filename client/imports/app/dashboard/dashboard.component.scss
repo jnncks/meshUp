@@ -1,3 +1,5 @@
+@import '../../../styles/breakpoints';
+
 .dashboard {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -7,39 +9,87 @@
   &__category {
     &__content {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       flex-wrap: wrap;
       justify-content: flex-start;
 
       &__item {
-        flex-grow: 1;
         flex-shrink: 1;
-        flex-basis: calc(25% - 2rem);
+        flex-grow: 1;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
         padding-left: 0.5rem;
         padding-right: 0.5rem;
         padding-bottom: 0.5rem;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        margin-left: 2rem;
         border: 2px solid #e0e0e0;
         background-color: #fff;
 
-        &:first-child {
-          margin-left: 0;
-        }
-
-        &:nth-child(4n + 1) {
-          margin-left: 0;
-        }
-
-        &:only-of-type {
-          flex-basis: 100%;
-          margin-left: 0;
-          margin-right: 0;
-        }
-
         &__title {
           word-break: break-all;
+        }
+      }
+    }
+
+    @include for-size(phone-only) {
+      &__content {
+        &__item {
+          width: 100%;
+        }
+      }
+    }
+
+    @include for-size(tablet-portrait-up) {
+      &__content {
+        flex-direction: row;
+        margin-left: -1rem;
+        margin-right: -1rem;
+
+        &__item {
+          width: calc(50% - 2rem);
+          margin-left: 1rem;
+          margin-right: 1rem;
+        }
+      }
+    }
+
+    @include for-size(tablet-landscape-up) {
+      &__content {
+        &__item {
+          width: calc(33% - 2rem);
+
+          &:nth-child(3n+1):nth-last-child(-n+3),
+          &:nth-child(3n+1):nth-last-child(-n+3) ~ .dashboard__category__content__item {
+            flex-grow: 1;
+            max-width: calc(50% - 2rem);
+          }
+        }
+      }
+    }
+
+    @include for-size(desktop-up) {
+      &__content {
+        &__item {
+          width: calc(25% - 2rem);
+
+          &:nth-child(4n+1):nth-last-child(-n+4),
+          &:nth-child(4n+1):nth-last-child(-n+4) ~ .dashboard__category__content__item {
+            flex-grow: 1;
+            max-width: calc(33% - 2rem);
+          }
+        }
+      }
+    }
+
+    @include for-size(big-desktop-up) {
+      &__content {
+        &__item {
+          width: calc(20% - 2rem);
+
+          &:nth-child(5n+1):nth-last-child(-n+5),
+          &:nth-child(5n+1):nth-last-child(-n+5) ~ .dashboard__category__content__item {
+            flex-grow: 1;
+            max-width: calc(25% - 2rem);
+          }
         }
       }
     }
