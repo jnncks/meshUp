@@ -1,7 +1,7 @@
 // chai uses as asset library
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
-import resetDatabase from 'meteor/xolvio:cleaner';
+import { resetDatabase } from 'meteor/xolvio:cleaner';
 
 import { Main } from './main';
 import {
@@ -13,7 +13,7 @@ import {
 
 chai.use(spies);
 
-
+    
 describe('Server Main', () => {
   let mainInstance: Main;
 

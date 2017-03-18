@@ -31,8 +31,6 @@ declare module "*.sass" {
 
 declare module "meteor/xolvio:cleaner" {
   function resetDatabase(): void;
-
-  export default resetDatabase;
 }
 
 declare module "meteor/hwillson:stub-collections" {
