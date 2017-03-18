@@ -1,7 +1,7 @@
 // chai uses as asset library
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
-import StubCollections from 'meteor/hwillson:stub-collections';
+import resetDatabase from 'meteor/xolvio:cleaner';
 
 import { Main } from './main';
 import {
@@ -18,18 +18,13 @@ describe('Server Main', () => {
   let mainInstance: Main;
 
   beforeEach(() => {
-    // create a database mock
-    StubCollections.stub(InfoNetCategoryCollection);
-    StubCollections.stub(InfoNetMetaCollection);
-    StubCollections.stub(InfoNetCollection);
-
     // create an instance of main class
     mainInstance = new Main();
   });
 
   afterEach(() => {
-    // restore the database
-    StubCollections.restore();
+    // reset the database
+    resetDatabase();
   });
 
   it('Should call initFakeData on startup', () => {

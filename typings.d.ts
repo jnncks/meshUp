@@ -29,6 +29,12 @@ declare module "*.sass" {
   export default style;
 }
 
+declare module "meteor/xolvio:cleaner" {
+  function resetDatabase(): void;
+
+  export default resetDatabase;
+}
+
 declare module "meteor/hwillson:stub-collections" {
   import { Mongo } from "meteor/mongo";
 
