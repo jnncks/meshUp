@@ -79,6 +79,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     console.log(changes)
+
+    // TODO: handle Input changes to update the graph
   }
 
   /**
@@ -98,8 +100,22 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     this._graph = svg.append('g')
       .attr('class', 'graph');
+
+    svg.call(d3.zoom()
+      .scaleExtent([0.05, 5])
+      .on('zoom', this.handleZoom));
+
+    svg.call(d3.drag()
+      .on('drag', this.handleDrag));
+
   }
 
+  /**
+   * Updates the graph.
+   * 
+   * Appends new nodes and edges or updates properties
+   * of existing nodes and edges.
+   */
   updateGraph(): void {
     let element = this._graphContainer.nativeElement;
     let g = d3.select(element).select('svg').select('g.graph');
@@ -138,5 +154,23 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     d3.select(element).select('svg')
       .attr('width', element.offsetWidth)
       .attr('height', element.offsetHeight);
+  }
+
+  /**
+   * Handles zoom transforms.
+   */
+  handleZoom(): void {
+    // TODO: find a way to suppress warnings regarding 'this'
+    d3.select(this).select('g.graph')
+      .attr('transform', d3.event.transform);
+  }
+
+  /**
+   * Handles drag transforms.
+   */
+  handleDrag(d): void {
+    // TODO: find a way to suppress warning regardings 'this'
+    d3.select(this).select('g.graph')
+      .attr('cx', d.x = d3.event.x).attr('cy', d.y = d3.event.y);
   }
 }

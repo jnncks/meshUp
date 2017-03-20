@@ -1,12 +1,13 @@
 .graph-container {
   height: 100%;
   width: 100%;
+  background-color: #212121;
 }
 
 .graph {
   .node {
-    fill: #fff;
-    stroke: #000;
+    fill: #ffffff;
+    stroke: #777777;
     stroke-width: 4px;
   }
   .edge {
