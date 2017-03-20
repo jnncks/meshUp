@@ -1,0 +1,16 @@
+.graph-container {
+  height: 100%;
+  width: 100%;
+}
+
+.graph {
+  .node {
+    fill: #fff;
+    stroke: #000;
+    stroke-width: 4px;
+  }
+  .edge {
+    stroke-width: 4px;
+    stroke: #6c6c6c;
+  }
+}

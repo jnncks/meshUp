@@ -2,6 +2,7 @@ import { Node } from './node.model';
 
 export interface Relation {
   _id?: Mongo.ObjectID;
-  type: string;
-  nodes: Node[];
+  type?: string;
+  source: Mongo.ObjectID;
+  target: Mongo.ObjectID;
 }

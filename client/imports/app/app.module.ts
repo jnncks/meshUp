@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { NavBarComponent } from './navbar/navbar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NetComponent } from './net/net.component';
+import { GraphComponent } from './net/graph.component';
 
 /* Services */
 import { DashboardService } from './dashboard/dashboard.service';
@@ -22,6 +23,7 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
     NavBarComponent,
     DashboardComponent,
     NetComponent,
+    GraphComponent,
     RouteWithNamePipe
   ],
   /* Entry Components */

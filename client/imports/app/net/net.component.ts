@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Observable } from 'rxjs';
 
@@ -15,8 +15,8 @@ import style from './net.component.scss';
   styles: [ style ]
 })
 export class NetComponent implements OnInit {
-  net: Observable<InfoNet>;
-  netMetaId: Mongo.ObjectID;
+  private _net: Observable<InfoNet>;
+  private _netMetaId: Mongo.ObjectID;
 
   constructor(private _route: ActivatedRoute, private _router: Router, private _netService: NetService) {
   }
@@ -24,7 +24,7 @@ export class NetComponent implements OnInit {
   ngOnInit() {
     this._route.params
       .subscribe((params: Params) => {
-        this.net = this._netService.getInfoNet(params.id)
+        this._net = this._netService.getInfoNet(params.id).zone();
       });
   }
 }
