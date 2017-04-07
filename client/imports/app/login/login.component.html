@@ -1,0 +1,9 @@
+<form (ngSubmit)="login()" #loginForm="ngForm">
+  <label for="user">Benutzername oder E-Mail-Adresse</label>
+  <input [(ngModel)]="user" name="user" id="password" type="text" required>
+
+  <label for="password">Passwort</label>
+  <input [(ngModel)]="password" name="password" id="password" type="password" required>
+
+  <button (click)="login()" type="submit" [disabled]="!loginForm.form.valid">Anmelden</button>
+</form>

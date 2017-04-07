@@ -15,6 +15,7 @@ import style from './app.component.scss';
 export class AppComponent implements OnInit {
 
   pages: Route[];
+  rootPage: any;
   appName: string;
 
   constructor(
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit {
     private _activatedRoute: ActivatedRoute,
     private _titleService: Title) {
     this.pages = this._router.config;
+    this.rootPage = Meteor.user() ? 'login' : 'home';
     this.appName = 'meshUp';
   }
 

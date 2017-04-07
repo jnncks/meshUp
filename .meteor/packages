@@ -22,3 +22,6 @@ hwillson:stub-collections
 dispatch:mocha-phantomjs
 shell-server@0.2.3
 msavin:mongol
+accounts-base
+npm-bcrypt
+accounts-password

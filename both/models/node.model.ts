@@ -2,10 +2,12 @@ export interface Node {
   _id?: Mongo.ObjectID;
   x: number;
   y: number;
-  size?: number;
+  //size?: number;
   title: string;
-  detail: string;
+  //detail: string;
   content: string;
-  created: Date;
+  tags: string[];
+  creator: Mongo.ObjectID;
+  creationDate: Date;
   lastEdited: Date;
 }

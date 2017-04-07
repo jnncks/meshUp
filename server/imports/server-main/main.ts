@@ -1,5 +1,9 @@
+import { Meteor } from 'meteor/meteor';
+import { Accounts } from 'meteor/accounts-base';
+
 // collections
 import {
+  UsersCollection,
   InfoNetCategoryCollection,
   InfoNetMetaCollection,
   InfoNetCollection
@@ -7,6 +11,7 @@ import {
 
 // models
 import {
+  User,
   InfoNetCategory,
   InfoNetMeta,
   InfoNet
@@ -17,18 +22,22 @@ export class Main {
   start(): void {
     this.initFakeData();
 
-    Meteor.publish('InfoNetCategoryCollection', function() {
-      return InfoNetCategoryCollection.collection.find({});
-    });
-    Meteor.publish('InfoNetMetaCollection', function() {
-      return InfoNetMetaCollection.collection.find({});
-    });
-    Meteor.publish('InfoNetCollection', function() {
-      return InfoNetCollection.collection.find({});
-    });
+    
   }
 
   initFakeData(): void {
+    if (Meteor.users.find({}).count() === 0) {
+      console.log('no users found')
+      Accounts.createUser({
+        username: 'test',
+        email: 'test@test.test',
+        password: 'test',
+        profile: {
+          name: 'Testuser'
+        }
+      });
+    }
+
     let lectureId: Mongo.ObjectID;
     let privateCategoryId: Mongo.ObjectID;
     const lectureMetaIds: Mongo.ObjectID[] = [];
@@ -54,28 +63,38 @@ export class Main {
     // generate some fake InfoNetMeta elements if the collection is empty
     if (InfoNetMetaCollection.collection.find({}).count() === 0) {
 
+      let user = Meteor.users.findOne({});
+
       // lecture InfoNets meta info
       const lecturesMeta: InfoNetMeta[] = [{
         name: 'Einführung in die Medieninformatik',
         description: 'Was gehört alles zum Medieninformatik-Studium dazu?',
+        owner: '',
+        collaborators: [ user._id ],
         created: new Date(),
         lastUpdated: new Date(),
         categoryId: lectureId
       }, {
         name: 'Software-Ergonomie',
         description: 'Grundlagen menschzentrierter Softwareentwicklung.',
+        owner: '',
+        collaborators: [ user._id ],
         created: new Date(),
         lastUpdated: new Date(),
         categoryId: lectureId
       }, {
         name: 'Analysis',
         description: 'Integration. Fourier.',
+        owner: '',
+        collaborators: [ user._id ],
         created: new Date(),
         lastUpdated: new Date(),
         categoryId: lectureId
       }, {
-        name: 'Ingenieupsychologie',
+        name: 'Ingenieurpsychologie',
         description: 'Gaps und mehr.',
+        owner: '',
+        collaborators: [ user._id ],
         created: new Date(),
         lastUpdated: new Date(),
         categoryId: lectureId
@@ -105,12 +124,16 @@ export class Main {
       const privateNetsMeta: InfoNetMeta[] = [{
         name: 'Todo-Liste',
         description: 'Arbeit, Arbeit!',
+        owner: user._id,
+        collaborators: [],
         created: new Date(),
         lastUpdated: new Date(),
         categoryId: privateCategoryId
       }, {
         name: 'Einkaufsliste als Netz',
         description: 'Was ich noch kaufen muss.',
+        owner: user._id,
+        collaborators: [],
         created: new Date(),
         lastUpdated: new Date(),
         categoryId: privateCategoryId

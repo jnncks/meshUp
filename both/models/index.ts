@@ -1,4 +1,5 @@
 // expose all existing collections
+export * from './user.model';
 export * from './infonet.model';
 export * from './infonetcategory.model';
 export * from './infonetmeta.model';

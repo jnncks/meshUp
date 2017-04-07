@@ -1,14 +1,13 @@
-import { InfoNet } from './infonet.model';
-import { InfoNetCategory } from './infonetcategory.model';
+import { InfoNet, InfoNetCategory, User } from './';
 
 export interface InfoNetMeta {
   _id?: Mongo.ObjectID;
   name: string;
   description?: string;
+  owner: string;
+  collaborators: string[];
   created: Date;
   lastUpdated: Date;
   categoryId?: Mongo.ObjectID;
-  //owner: Meteor.User;
-  //collaborators: Meteor.User[];
   //infonet: Mongo.ObjectID;
 }
