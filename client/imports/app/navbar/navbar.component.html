@@ -1,7 +1,11 @@
 <div class="bar">
-  <span class="bar__title">{{ title }}</span>
   <ul class="bar__pagelist" *ngIf="isLoggedIn()">
-    <li class="bar__pagelist__page" routerLinkActive="bar__pagelist__page--active" *ngFor="let page of (pages | routeWithName)">
+    <li class="bar__pagelist__page" routerLinkActive="bar__pagelist__page--active" *ngFor="let page of (pages | routeWithName); let first = first">
+      <div class="bar__pagelist__page__divider" *ngIf="!first">
+        <svg>
+          <use xlink:href="icons/svg-sprite-navigation-symbol.svg#ic_chevron_right_24px" />
+        </svg>
+      </div>
       <a routerLink="{{ page.path }}">{{ page.data.name }}</a>
     </li>
   </ul>

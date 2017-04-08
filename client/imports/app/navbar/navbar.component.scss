@@ -7,7 +7,6 @@
   justify-content: space-between;
   align-items: center;
   height: $navbar-height;
-  padding-left: .6rem;
   background-color: $primary-color;
   color: $primary-color-text;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,0.24);
@@ -31,7 +30,7 @@
     &__page {
       display: flex;
       align-items: stretch;
-
+      
       a {
         display: inline-flex;
         flex-direction: column;
@@ -40,16 +39,43 @@
         padding-left: 1rem;
         padding-right: 1rem;
         color: $primary-color-text;
-        text-decoration: none;
+        text-decoration: underline;
 
         &:hover {
-          background-color: $primary-color-light;
+          color: $primary-color-secondary-text;
         }
       }
 
       &--active {
         font-weight: 700;
-        background-color: $primary-color-dark;
+
+        a {
+          text-decoration: none;
+
+          &:hover {
+            color: $primary-color-text;
+            cursor: default;
+          }
+        }
+      }
+
+       &__divider {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 2rem;
+        font-weight: normal;
+        align-items: center;
+        color: $primary-color-text;
+        cursor: default;
+
+        svg {
+          padding-top: 0.1em;
+          width: 1.6em;
+          fill: currentColor;
+        }
       }
     }
   }

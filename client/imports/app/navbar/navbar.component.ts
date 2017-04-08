@@ -12,7 +12,6 @@ import style from './navbar.component.scss';
   styles: [ style ]
 })
 export class NavBarComponent{
-  @Input() title: string;
   @Input() pages: Route[];
 
   constructor(private _authService: AuthService) {
