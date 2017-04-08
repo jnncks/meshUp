@@ -5,6 +5,6 @@ export interface Relation {
   type?: string;
   source: Mongo.ObjectID;
   target: Mongo.ObjectID;
-  creator: Mongo.ObjectID;
+  creator?: Mongo.ObjectID;
   creationDate: Date;
 }

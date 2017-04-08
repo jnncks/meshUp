@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { NavBarComponent } from './navbar/navbar.component';
+import { ProfileButtonComponent } from './navbar/profile-button.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NetComponent } from './net/net.component';
 import { GraphComponent } from './net/graph.component';
@@ -25,6 +26,7 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
     AppComponent,
     LoginComponent,
     NavBarComponent,
+    ProfileButtonComponent,
     DashboardComponent,
     NetComponent,
     GraphComponent,
@@ -49,15 +51,7 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
         path: '',
         pathMatch: 'full',
         component: LoginComponent,
-        data: {
-          name: 'Anmelden'
-        }
       },
-      //  {
-      //   path: '',
-      //   redirectTo: '/dashboard',
-      //   pathMatch: 'full',
-      // },
       {
         path: 'home',
         component: DashboardComponent,

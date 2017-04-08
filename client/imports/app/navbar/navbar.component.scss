@@ -1,3 +1,4 @@
+@import '../../../styles/layout-variables';
 @import '../../../styles/colors';
 
 .bar {
@@ -5,9 +6,8 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  height: 3rem;
-  padding-left: 0.6rem;
-  padding-right: 0.6rem;
+  height: $navbar-height;
+  padding-left: .6rem;
   background-color: $primary-color;
   color: $primary-color-text;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,0.24);

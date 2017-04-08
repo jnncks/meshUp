@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { Meteor } from 'meteor/meteor';
 
 import { DashboardService } from './dashboard.service';
 
@@ -22,13 +23,13 @@ import style from './dashboard.component.scss';
 export class DashboardComponent implements OnInit {
   title: string;
   greeting: string;
-  user: string;
+  user: Meteor.User;
   categories: Observable<InfoNetCategory[]>;
 
   constructor(private _router: Router, private _dashboardService: DashboardService) {
     this.title = 'Dashboard';
     this.greeting = 'Hallo und viel Spaß mit meshUp';
-    this.user = 'Peter'
+    this.user = Meteor.user();
   }
 
   ngOnInit() {
@@ -46,5 +47,23 @@ export class DashboardComponent implements OnInit {
 
   viewNet(infoNet: InfoNetMeta): void {
     this._router.navigate(['/net', infoNet._id]);
+  }
+
+  getUserName(): string {
+    let user: Meteor.User = this.user;
+
+    if (!user)
+      return '';
+
+    if (user.profile && user.profile.name)
+      return user.profile.name;
+
+    if (user.username)
+      return user.username;
+
+    if (user.emails && user.emails[0] && user.emails[0].address)
+      return user.emails[0].address;
+
+    return '';
   }
 }

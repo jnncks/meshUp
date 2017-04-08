@@ -1,3 +1,5 @@
+@import '../../styles/layout-variables';
+
 .app {
   width: 100%;
   background-color: #fafafa;
@@ -7,10 +9,11 @@
 
   &__navbar {
     z-index: 999;
+    height: $navbar-height;
   }
 
   &__page-content {
     flex: 1 1 auto;
-    max-height: calc(100vh - 3rem);
+    max-height: calc(100vh - $navbar-height);
   }
 }

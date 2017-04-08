@@ -1,0 +1,54 @@
+@import '../../../styles/layout-variables';
+@import '../../../styles/colors';
+
+.profile-button {
+  display: flex;
+  flex-direction: row;
+   height: $navbar-height;
+   margin: 0;
+   padding-left: .6rem;
+   padding-right: .6rem;
+
+  &:hover {
+    cursor: pointer;
+    background-color: $primary-color-light;
+  }
+
+  &__text {
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+
+    &--name, &--login {
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      color: $primary-color-text;
+    }
+  }
+
+  &__image {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: .5rem;
+    max-height: 100%;
+    max-width: 100%;
+
+    img {
+      background-color: #fafafa;
+      border-radius: 50%;
+      max-width: 2rem;
+      max-height: 2rem;
+      
+    }
+
+    &--icon {
+      width: 2rem;
+      height: 2rem;
+      background-color: #fafafa;
+      border-radius: 50%;
+    }
+  }
+}
