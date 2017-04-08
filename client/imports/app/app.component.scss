@@ -14,6 +14,6 @@
 
   &__page-content {
     flex: 1 1 auto;
-    max-height: calc(100vh - $navbar-height);
+    max-height: calc(100vh - #{$navbar-height});
   }
 }

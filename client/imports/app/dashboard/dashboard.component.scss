@@ -5,7 +5,7 @@
   padding-left: 1rem;
   padding-right: 1rem;
   overflow-y: auto;
-  max-height: calc(100vh - $navbar-height);
+  max-height: calc(100vh - #{$navbar-height});
 
   &__category {
     &__content {
