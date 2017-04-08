@@ -13,7 +13,8 @@ import { NetComponent } from './net/net.component';
 import { GraphComponent } from './net/graph.component';
 
 /* Services */
-import { AuthenticationService } from './shared/authentication.service';
+import { AuthService } from './shared/auth.service';
+import { AuthGuard } from './shared/auth-guard';
 import { DashboardService } from './dashboard/dashboard.service';
 import { NetService } from './net/net.service';
 
@@ -38,7 +39,8 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
   ],
   /* Providers */
   providers: [
-    AuthenticationService,
+    AuthService,
+    AuthGuard,
     DashboardService,
     NetService
   ],
@@ -50,6 +52,10 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
       {
         path: '',
         pathMatch: 'full',
+        redirectTo: 'login'
+      },
+      {
+        path: 'login',
         component: LoginComponent,
       },
       {
@@ -57,14 +63,20 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
         component: DashboardComponent,
         data: {
           name: 'Home'
-        }
+        },
+        canActivate: [
+          AuthGuard
+        ]
       },
       {
         path: 'net/:id',
         component: NetComponent,
         data: {
           name: 'Netview'
-        }
+        },
+        canActivate: [
+          AuthGuard
+        ]
       }
     ])
   ],
@@ -73,6 +85,5 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
 })
 export class AppModule {
   constructor() {
-
   }
 }

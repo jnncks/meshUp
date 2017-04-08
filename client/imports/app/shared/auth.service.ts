@@ -3,12 +3,13 @@ import { Meteor } from 'meteor/meteor';
 import { MeteorObservable } from 'meteor-rxjs';
 
 @Injectable()
-export class AuthenticationService {
+export class AuthService {
   constructor() {
   }
   
   /**
-   * Login...
+   * Logs the user in via the submitted parameters.
+   * 
    * @param  {string} user email or username
    * @param  {string} password
    * @returns Promise
@@ -25,9 +26,9 @@ export class AuthenticationService {
     });
   }
 
-  
   /**
-   * Logout...
+   * Logs the user out.
+   * 
    * @returns Promise
    */
   logout(): Promise<void> {
@@ -40,5 +41,14 @@ export class AuthenticationService {
         resolve();
       });
     });
+  }
+
+  /**
+   * Checks whether the user is currently logged in.
+   * 
+   * @returns boolean the login state
+   */
+  isLoggedIn(): boolean {
+    return !!Meteor.user();
   }
 }
