@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 import { MongoObservable } from 'meteor-rxjs'
@@ -12,7 +12,8 @@ import style from './profile-button.component.scss';
   template,
   styles: [ style ]
 })
-export class ProfileButtonComponent {
+export class ProfileButtonComponent implements OnChanges {
+  @Input() toggled: boolean;
   autorunComputation: Tracker.Computation;
   user: Meteor.User;
   userId: string;
@@ -22,6 +23,12 @@ export class ProfileButtonComponent {
 
   constructor(private _zone: NgZone) {
     this._initAutorun();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.toggled)
+      this.toggled = changes.toggled.currentValue;
+ 
   }
 
   getUserName(): string {

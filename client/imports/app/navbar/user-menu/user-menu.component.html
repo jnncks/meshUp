@@ -1,0 +1,4 @@
+ <div class="user-menu" [ngClass]="{'user-menu--toggled' : toggleState}" (blur)="onBlur($event)" tabindex="1">
+   <profile-button (click)="togglePanel()"></profile-button>
+   <menu-panel [visible]="toggleState" (clicked)="handleItemClick($event)"></menu-panel>
+ </div>

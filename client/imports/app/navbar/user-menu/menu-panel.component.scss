@@ -1,0 +1,30 @@
+@import '../../../../styles/colors';
+@import '../../../../styles/layout-variables';
+
+.menu-panel {
+  width: 100%;
+  height: auto;
+  background-color: $primary-color-dark;
+  padding-top: .6rem;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &__item {
+    padding-left: .6rem;
+    padding-right: .6rem;
+    padding-top: .3rem;
+    padding-bottom: .3rem;
+    width: 100%;
+    background-color: $primary-color-dark;
+    border: none;
+    color: $primary-color-text;
+    text-align: left;
+
+    &:hover {
+      background-color: $primary-color-light;
+      cursor: pointer;
+    }
+  }
+}

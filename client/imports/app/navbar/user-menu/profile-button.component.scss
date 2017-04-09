@@ -1,13 +1,13 @@
-@import '../../../styles/layout-variables';
-@import '../../../styles/colors';
+@import '../../../../styles/layout-variables';
+@import '../../../../styles/colors';
 
 .profile-button {
   display: flex;
   flex-direction: row;
-   height: $navbar-height;
-   margin: 0;
-   padding-left: .6rem;
-   padding-right: .6rem;
+  height: $navbar-height;
+  margin: 0;
+  padding-left: .6rem;
+  padding-right: .6rem;
 
   &:hover {
     cursor: pointer;
@@ -37,7 +37,7 @@
     max-width: 100%;
 
     img {
-      background-color: #fafafa;
+      background-color: $background;
       border-radius: 50%;
       max-width: 2rem;
       max-height: 2rem;
@@ -47,7 +47,8 @@
     &--icon {
       width: 2rem;
       height: 2rem;
-      background-color: #fafafa;
+      fill: $primary-color-light;
+      background-color: $background;
       border-radius: 50%;
     }
   }

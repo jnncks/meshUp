@@ -1,0 +1,19 @@
+@import '../../../../styles/colors';
+@import '../../../../styles/layout-variables';
+
+.user-menu {
+  align-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  z-index: 999;
+  height: $navbar-height;
+  overflow-y: visible;
+
+  &--toggled {
+    background-color: $primary-color-dark; 
+  }
+
+  &:focus {
+    outline: none;
+  }
+}

@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { NavBarComponent } from './navbar/navbar.component';
-import { ProfileButtonComponent } from './navbar/profile-button.component';
+import { UserMenuComponent, MenuPanelComponent, ProfileButtonComponent } from './navbar/user-menu';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NetComponent } from './net/net.component';
 import { GraphComponent } from './net/graph.component';
@@ -27,7 +27,9 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
     AppComponent,
     LoginComponent,
     NavBarComponent,
+    MenuPanelComponent, 
     ProfileButtonComponent,
+    UserMenuComponent,
     DashboardComponent,
     NetComponent,
     GraphComponent,
