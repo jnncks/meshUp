@@ -11,12 +11,14 @@ import { UserMenuComponent, MenuPanelComponent, ProfileButtonComponent } from '.
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NetComponent } from './net/net.component';
 import { GraphComponent } from './net/graph.component';
+import { Modal } from './shared/modal';
 
 /* Services */
 import { AuthService } from './shared/auth.service';
 import { AuthGuard } from './shared/auth-guard';
 import { DashboardService } from './dashboard/dashboard.service';
 import { NetService } from './net/net.service';
+import { ModalService } from './shared/modal';
 
 /* Pipes */
 import { RouteWithNamePipe } from './shared/route-with-name.pipe';
@@ -33,7 +35,8 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
     DashboardComponent,
     NetComponent,
     GraphComponent,
-    RouteWithNamePipe
+    RouteWithNamePipe,
+    Modal
   ],
   /* Entry Components */
   entryComponents: [
@@ -44,7 +47,8 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
     AuthService,
     AuthGuard,
     DashboardService,
-    NetService
+    NetService,
+    ModalService
   ],
   /* Modules */
   imports: [

@@ -28,3 +28,27 @@
     }
   }
 }
+
+.modal {
+  &__buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &__button {
+      color: $primary-color;
+      background-color: $background;
+      border: 2px solid $primary-color;
+      font-weight: bold;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-top: .6rem;
+      padding-bottom: .6rem;
+
+      &:hover {
+        color: $primary-color-text;
+        background-color: $primary-color;
+      }
+    }
+  }
+}

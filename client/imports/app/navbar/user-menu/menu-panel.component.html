@@ -1,3 +1,13 @@
 <div class="menu-panel" [hidden]="!visible">
-  <button class="menu-panel__item" (click)="logout()">abmelden</button>
+  <button class="menu-panel__item" (click)="openLogoutModal(LOGOUT_MODAL_ID)">abmelden</button>
 </div>
+
+<modal modal-title="Abmelden" modal-id="{{ LOGOUT_MODAL_ID }}" [blocking]="false">
+    <div class="modal__message">
+      <p>{{ logoutModalMessage }}</p>
+    </div>
+    <div class="modal__buttons">
+        <button class="modal__buttons__button" (click)="closeLogoutModal(LOGOUT_MODAL_ID)">abbrechen</button>
+        <button class="modal__buttons__button" (click)="logout()">abmelden</button>
+    </div>
+</modal>
