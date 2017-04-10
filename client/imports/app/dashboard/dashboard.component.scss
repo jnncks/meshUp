@@ -1,5 +1,7 @@
 @import '../../../styles/layout-variables';
+@import '../../../styles/colors';
 @import '../../../styles/breakpoints';
+@import '../../../styles/cards';
 
 .dashboard {
   padding-left: 1rem;
@@ -17,13 +19,16 @@
       &__item {
         flex-shrink: 1;
         flex-grow: 1;
+        position: relative;
+        z-index: 1;
         margin-top: 1rem;
         margin-bottom: 1rem;
         padding-left: .5rem;
         padding-right: .5rem;
         padding-bottom: .5rem;
-        border: 2px solid #e0e0e0;
-        background-color: #fff;
+        background-color: $card-background-color;
+        @include card-border;
+        @include card-shadow($hover: 'true');
 
         &__title {
           word-break: break-all;

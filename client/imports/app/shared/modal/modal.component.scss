@@ -1,51 +1,50 @@
 @import '../../../../styles/colors';
 @import '../../../../styles/layout-variables';
+@import '../../../../styles/cards';
 
 .modal-overlay {
-    background-color: rgba(0, 0, 0, .4);
-    bottom: 0;
-    left: 0;
-    position: fixed;
-    right: 0;
-    top: 0;
-    z-index: 1000;
+  background-color: rgba(0, 0, 0, .4);
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 997;
+  opacity: 1;
+  -webkit-transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
+  transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
 }
 
 .modal {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    max-height: calc(100vh - 2 * $navbar-height);
-    min-height: 10em;
-    width: 400px;
-    overflow-y: auto;
-    left: calc(50% - 200px);
-    top: 5em;
-    z-index: 1100;
-    padding: .75em;
-    background-color: $background;
-    color: $primary-text-color;
-    box-shadow: 0rem .6rem 2rem 0rem rgba(0, 0, 0, 0.2), 0rem 1rem 3rem 0rem rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  max-height: calc(100vh - 2 * #{$navbar-height});
+  min-height: 10vh;
+  width: 400px;
+  overflow-y: auto;
+  left: calc(50% - 200px);
+  top: 10vh;
+  z-index: 999;
+  padding: 1rem;
+  background-color: $card-background-color;
+  color: $primary-text-color;
+  @include card-border;
+  @include card-shadow;
+  opacity: 1;
+  -webkit-transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
+  transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
 
-    &__title {
-        .right {
-            color: $primary-text-color;
-            cursor: pointer;
-        }
-
-        .right:hover {
-            color: lighten($primary-text-color, 10%);
-        }
+  &__title {
+    .right {
+      color: $primary-text-color;
     }
 
-    &__title,
-    &__body {
-        
+    .right:hover {
+      color: lighten($primary-text-color, 10%);
     }
+  }
 
-    input,
-    select {
-        height: auto;
-        margin-bottom: 7px;
-    }
+  &__title,
+  &__body {}
 }

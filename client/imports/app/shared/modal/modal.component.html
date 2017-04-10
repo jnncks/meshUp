@@ -1,6 +1,5 @@
-<div *ngIf="isOpen">
+<div *ngIf="isOpen" [@fadeInOut]="'in'">
   <div class="modal-overlay" (click)="close(true)"></div>
-
   <div class="modal">
     <div class="modal__title" *ngIf="modalTitle">
       <h2>{{ modalTitle }}</h2>

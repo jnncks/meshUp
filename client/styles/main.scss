@@ -13,6 +13,10 @@ body, html {
 @import 'normalize';
 @import 'typography';
 
+button {
+  cursor: pointer;
+}
+
 .booting {
   display: flex;
   width: 100%;
