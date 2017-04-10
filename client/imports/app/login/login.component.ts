@@ -6,7 +6,7 @@ import { Meteor } from 'meteor/meteor';
 import { AuthService } from '../shared/auth.service';
 
 import template from './login.component.html';
-import style from './login.component.scss';
+import styleUrl from './login.component.scss';
 
 /**
  * Displays an login form and navigates to the home page when the user is
@@ -14,7 +14,7 @@ import style from './login.component.scss';
  */
 @Component({
   template,
-  styles: [style]
+  styles: [ styleUrl ]
 })
 export class LoginComponent implements OnInit {
   public user: string;

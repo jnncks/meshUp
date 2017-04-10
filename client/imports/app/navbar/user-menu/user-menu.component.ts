@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 
 import template from './user-menu.component.html';
-import style from './user-menu.component.scss';
+import styleUrl from './user-menu.component.scss';
 
 @Component({
   selector: 'user-menu',
   template,
-  styles: [ style ]
+  styles: [ styleUrl ]
 })
 export class UserMenuComponent {
   toggleState: boolean;

@@ -4,13 +4,12 @@ import { Title } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 
 import template from './app.component.html';
-import style from './app.component.scss';
+import styleUrl from './app.component.scss';
 
 @Component({
   selector: 'app',
   template,
-  styles: [ style ],
-
+  styles: [ styleUrl ]
 })
 export class AppComponent implements OnInit {
   pages: Route[];

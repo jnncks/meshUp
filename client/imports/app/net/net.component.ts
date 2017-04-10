@@ -7,12 +7,12 @@ import { NetService } from './net.service';
 import { InfoNet, InfoNetMeta} from '../../../../both/models';
 
 import template from './net.component.html';
-import style from './net.component.scss';
+import styleUrl from './net.component.scss';
 
 @Component({
   selector: 'net',
   template,
-  styles: [ style ]
+  styles: [ styleUrl ]
 })
 export class NetComponent implements OnInit {
   private _net: Observable<InfoNet>;

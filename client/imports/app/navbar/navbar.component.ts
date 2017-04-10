@@ -4,12 +4,12 @@ import { Route } from '@angular/router';
 import { AuthService } from '../shared/auth.service';
 
 import template from './navbar.component.html';
-import style from './navbar.component.scss';
+import styleUrl from './navbar.component.scss';
 
 @Component({
   selector: 'navbar',
   template,
-  styles: [ style ]
+  styles: [ styleUrl ]
 })
 export class NavBarComponent{
   @Input() pages: Route[];

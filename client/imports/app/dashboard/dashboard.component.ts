@@ -13,12 +13,12 @@ import {
 } from '../../../../both/collections';
 
 import template from './dashboard.component.html';
-import style from './dashboard.component.scss';
+import styleUrl from './dashboard.component.scss';
 
 @Component({
   selector: 'dashboard',
   template,
-  styles: [ style ]
+  styles: [ styleUrl ]
 })
 export class DashboardComponent implements OnInit {
   title: string;

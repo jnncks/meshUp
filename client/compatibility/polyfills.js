@@ -1,0 +1,1 @@
+require('web-animations-js/web-animations.min');

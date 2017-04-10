@@ -14,12 +14,12 @@ import * as d3 from 'd3';
 import { InfoNet, Node, Relation } from '../../../../both/models';
 
 import template from './graph.component.html';
-import style from './graph.component.scss';
+import styleUrl from './graph.component.scss';
 
 @Component({
   selector: 'meshup-graph',
   template,
-  styles: [ style ],
+  styles: [ styleUrl ],
   encapsulation: ViewEncapsulation.None
 })
 export class GraphComponent implements AfterViewInit, OnChanges {

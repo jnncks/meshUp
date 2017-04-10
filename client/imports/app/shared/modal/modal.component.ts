@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { trigger, state, style, animate, transition } from '@angular/core';
+import { trigger, state, style, animate, transition, keyframes} from '@angular/core';
 
 import { ModalService } from './modal.service';
 
@@ -12,13 +12,17 @@ import styleUrl from './modal.component.scss';
   styles: [ styleUrl ],
   animations: [
     trigger('fadeInOut', [
-      state('in', style({opacity: '1'})),
       transition(':enter', [
-        style({opacity: '0'}),
-        animate(125)
+        animate('0.125s ease', keyframes([
+          style({opacity: 0}),
+          style({opacity: 1})
+        ]))
       ]),
       transition(':leave', [
-        animate(125, style({opacity: '0'}))
+        animate('0.125s ease', keyframes([
+          style({opacity: 1}),
+          style({opacity: 0})
+        ]))
       ])
     ])
   ],

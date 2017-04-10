@@ -5,12 +5,12 @@ import { MongoObservable } from 'meteor-rxjs'
 import { Observable } from 'rxjs';
 
 import template from './profile-button.component.html';
-import style from './profile-button.component.scss';
+import styleUrl from './profile-button.component.scss';
 
 @Component({
   selector: 'profile-button',
   template,
-  styles: [ style ]
+  styles: [ styleUrl ]
 })
 export class ProfileButtonComponent implements OnChanges {
   @Input() toggled: boolean;

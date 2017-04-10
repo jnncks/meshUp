@@ -5,12 +5,12 @@ import { Modal, ModalService } from '../../shared/modal';
 import { AuthService } from '../../shared/auth.service';
 
 import template from './menu-panel.component.html';
-import style from './menu-panel.component.scss';
+import styleUrl from './menu-panel.component.scss';
 
 @Component({
   selector: 'menu-panel',
   template,
-  styles: [ style ]
+  styles: [ styleUrl ]
 })
 export class MenuPanelComponent implements OnInit, OnChanges{
   private LOGOUT_MODAL_ID: string;
