@@ -5,10 +5,10 @@ $card-background-color: #FFFFFF;
   border-width: 0;
 }
 
-@mixin card-shadow($hover: 'false') {
+@mixin card-shadow($hover: false) {
   box-shadow: 0 .2rem .4rem 0 rgba(0,0,0,.1);
 
-  @if $hover == 'true' {
+  @if $hover == true {
     -webkit-transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
     transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
     

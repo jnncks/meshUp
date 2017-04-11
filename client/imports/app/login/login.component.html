@@ -1,9 +1,19 @@
-<form (ngSubmit)="login()" #loginForm="ngForm">
-  <label for="user">Benutzername oder E-Mail-Adresse</label>
-  <input [(ngModel)]="user" name="user" id="password" type="text" required>
+<div class="login">
+  <object type="image/svg+xml" data="assets/logo.svg" class="login__logo">
+    meshUp Logo
+  </object>
 
-  <label for="password">Passwort</label>
-  <input [(ngModel)]="password" name="password" id="password" type="password" required>
+  <h1 class="login__welcome-title">{{ welcomeTitle }}</h1>
+  <p class="login__welcome-message">{{ welcomeMessage }}</p>
 
-  <button (click)="login()" type="submit" [disabled]="!loginForm.form.valid">Anmelden</button>
-</form>
+  <form class="login__form" (ngSubmit)="login()" #loginForm="ngForm">
+    <label for="user">Benutzername oder E-Mail-Adresse</label>
+    <input [(ngModel)]="user" name="user" id="password" type="text" placeholder="dein Benutzername oder deine E-Mail-Adresse" required>
+
+    <label for="password">Passwort</label>
+    <input [(ngModel)]="password" name="password" id="password" type="password" placeholder="dein Passwort" required>
+    <div class="login__form__buttons">
+      <button class="login__form__buttons__button" (click)="login()" type="submit" [disabled]="!loginForm.form.valid">Anmelden</button>
+    </div>
+  </form>
+</div>

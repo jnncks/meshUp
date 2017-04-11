@@ -28,7 +28,7 @@
         padding-bottom: .5rem;
         background-color: $card-background-color;
         @include card-border;
-        @include card-shadow($hover: 'true');
+        @include card-shadow($hover: true);
 
         &__title {
           word-break: break-all;

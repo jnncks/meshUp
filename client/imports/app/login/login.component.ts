@@ -17,6 +17,8 @@ import styleUrl from './login.component.scss';
   styles: [ styleUrl ]
 })
 export class LoginComponent implements OnInit {
+  public welcomeTitle: string;
+  public welcomeMessage: string;
   public user: string;
   public password: string;
 
@@ -28,6 +30,10 @@ export class LoginComponent implements OnInit {
     if (Meteor.user()) {
       this._router.navigateByUrl('home');
     }
+
+    // intialize the welcome texts
+    this.welcomeTitle = 'Willkommen bei meshUp!';
+    this.welcomeMessage = 'Du bist derzeit nicht angemeldet. Melde dich an!';
 
     // intialize the form fiels
     this.user = '';

@@ -1,5 +1,6 @@
 @import '../../../../styles/colors';
 @import '../../../../styles/cards';
+@import '../../../../styles/buttons';
 @import '../../../../styles/layout-variables';
 
 .menu-panel {
@@ -31,25 +32,9 @@
 }
 
 .modal {
-  &__buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-
-    &__button {
-      color: $primary-color;
-      background-color: $card-background-color;
-      border: 2px solid $primary-color;
-      font-weight: bold;
-      padding-left: 1rem;
-      padding-right: 1rem;
-      padding-top: .5rem;
-      padding-bottom: .5rem;
-
-      &:hover {
-        color: $primary-color-text;
-        background-color: $primary-color;
-      }
-    }
-  }
+  @include buttons(
+    $bg-color: $card-background-color,
+    $color: $primary-color,
+    $hover-color: $primary-color-text
+  );
 }
