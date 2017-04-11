@@ -32,9 +32,15 @@
 }
 
 .modal {
-  @include buttons(
-    $bg-color: $card-background-color,
-    $color: $primary-color,
-    $hover-color: $primary-color-text
-  );
+   &__buttons {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      @include buttons(
+        $bg-color: $card-background-color,
+        $color: $primary-color,
+        $hover-color: $primary-color-text
+      );
+   }
 }

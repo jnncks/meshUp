@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit {
   categories: Observable<InfoNetCategory[]>;
 
   constructor(private _router: Router, private _dashboardService: DashboardService) {
-    this.title = 'Dashboard';
+    this.title = 'Home';
     this.greeting = 'Hallo und viel Spaß mit meshUp';
     this.user = Meteor.user();
   }

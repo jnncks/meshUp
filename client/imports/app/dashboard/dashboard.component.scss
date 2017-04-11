@@ -2,6 +2,7 @@
 @import '../../../styles/colors';
 @import '../../../styles/breakpoints';
 @import '../../../styles/cards';
+@import '../../../styles/buttons';
 
 .dashboard {
   padding-left: 1rem;
@@ -10,16 +11,54 @@
   max-height: calc(100vh - #{$navbar-height});
 
   &__category {
-    &__content {
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+
+    &__title {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+
+      &__settings-icon {
+        flex-basis: 1em;
+        flex-grow: 0;
+        flex-shrink: 0;
+        height: 1em;
+        width: 1em;
+        fill: $primary-text-color;
+
+        &:hover {
+          fill: $primary-color;
+          cursor: pointer;
+        }
+      }
+    }
+
+    &__description {
+        
+    }
+
+    &__cards {
       display: flex;
       flex-direction: column;
       flex-wrap: wrap;
       justify-content: flex-start;
+      margin-top: 2rem;
+      
+      @include for-size(tablet-portrait-up) {
+        flex-direction: row;
+        margin-left: -1rem;
+        margin-right: -1rem;
+      }
 
-      &__item {
+      &__card {
         flex-shrink: 1;
         flex-grow: 1;
         position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         z-index: 1;
         margin-top: 1rem;
         margin-bottom: 1rem;
@@ -28,74 +67,106 @@
         padding-bottom: .5rem;
         background-color: $card-background-color;
         @include card-border;
-        @include card-shadow($hover: true);
+        @include card-shadow;
 
-        &__title {
-          word-break: break-all;
-        }
-      }
-    }
-
-    @include for-size(phone-only) {
-      &__content {
-        &__item {
+        @include for-size(phone-only) {
           width: 100%;
         }
-      }
-    }
 
-    @include for-size(tablet-portrait-up) {
-      &__content {
-        flex-direction: row;
-        margin-left: -1rem;
-        margin-right: -1rem;
-
-        &__item {
+        @include for-size(tablet-portrait-up) {
           width: calc(50% - 2rem);
           margin-left: 1rem;
           margin-right: 1rem;
         }
-      }
-    }
 
-    @include for-size(tablet-landscape-up) {
-      &__content {
-        &__item {
+        @include for-size(tablet-landscape-up) {
           width: calc(33% - 2rem);
 
           &:nth-child(3n+1):nth-last-child(-n+3),
-          &:nth-child(3n+1):nth-last-child(-n+3) ~ .dashboard__category__content__item {
+          &:nth-child(3n+1):nth-last-child(-n+3) ~ .dashboard__category__cards__card {
             flex-grow: 1;
             max-width: calc(50% - 2rem);
           }
         }
-      }
-    }
 
-    @include for-size(desktop-up) {
-      &__content {
-        &__item {
+        @include for-size(desktop-up) {
           width: calc(25% - 2rem);
 
           &:nth-child(4n+1):nth-last-child(-n+4),
-          &:nth-child(4n+1):nth-last-child(-n+4) ~ .dashboard__category__content__item {
+          &:nth-child(4n+1):nth-last-child(-n+4) ~ .dashboard__category__cards__card {
             flex-grow: 1;
             max-width: calc(33% - 2rem);
           }
         }
-      }
-    }
 
-    @include for-size(big-desktop-up) {
-      &__content {
-        &__item {
+        @include for-size(big-desktop-up) {
           width: calc(20% - 2rem);
 
           &:nth-child(5n+1):nth-last-child(-n+5),
-          &:nth-child(5n+1):nth-last-child(-n+5) ~ .dashboard__category__content__item {
+          &:nth-child(5n+1):nth-last-child(-n+5) ~ .dashboard__category__cards__card {
             flex-grow: 1;
             max-width: calc(25% - 2rem);
           }
+        }
+
+        &__content {
+          -webkit-hyphens: auto;
+          -moz-hyphens: auto;
+          hyphens: auto;
+
+          &__title {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+
+            &__settings-icon {
+              flex-basis: 1em;
+              flex-grow: 0;
+              flex-shrink: 0;
+              height: 1em;
+              width: 1em;
+              fill: $primary-text-color;
+
+              &:hover {
+                fill: $primary-color;
+                cursor: pointer;
+              }
+            }
+          }
+
+          &__subtitle {
+            color: $secondary-text-color;
+            font-size: 0.75em;
+            font-weight: 500;
+            font-style: italic;
+	          margin-top: 1em;
+	          margin-bottom: 1em;
+          }
+
+          &__tags {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            color: $secondary-text-color;
+            font-size: 0.75em;
+            font-weight: 500;
+	          margin-top: 1em;
+	          margin-bottom: 1em;
+
+            p + p {
+              margin-left: 1em;
+            }
+          }
+        }
+
+        &__buttons {
+          align-self: flex-end;
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+
+          @include buttons($bg-color: $card-background-color);
         }
       }
     }

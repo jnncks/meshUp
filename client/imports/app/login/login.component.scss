@@ -71,10 +71,13 @@
         font-style: italic;
       }
     }
-    &__buttons {
-      margin-top: 3rem;
-    }
 
-    @include buttons($bg-color: $white);
+    &__buttons {
+      display: flex;
+      flex-direction: row;
+      margin-top: 3rem;
+
+      @include buttons($bg-color: $white);
+    }
   }
 }

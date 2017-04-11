@@ -1,16 +1,40 @@
 <div class="dashboard">
   <h1>{{ title }}</h1>
   <p>{{ greeting }}, {{ getUserName() }}!</p>
+
   <div class="dashboard__category" *ngFor="let category of categories | async">
-    <h2 class="dashboard__category__title">{{ category.name }}</h2>
+    <h2 class="dashboard__category__title">{{ category.name }}
+      <svg class="dashboard__category__title__settings-icon" *ngIf="category.owner === user._id">
+        <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_settings_24px" />
+      </svg>
+    </h2>
     <p class="dashboard__category__description">{{ category.description }}</p>
-    <button (click)="deleteCategory(category)">remove category</button>
-    <div class="dashboard__category__content">
-      <div class="dashboard__category__content__item" *ngFor="let item of category.items">
-        <h3 class="dashboard__category__content__item__title">{{ item.name }}</h3>
-        <p>{{ item.description }}</p>
-        <button (click)="viewNet(item)">view infonet</button>
-        <button (click)="deleteNet(item)">remove infonet</button>
+    <div class="dashboard__category__cards">
+      <div class="dashboard__category__cards__card" *ngFor="let card of category.items">
+        <div class="dashboard__category__cards__card__content">
+          <h3 class="dashboard__category__cards__card__content__title">
+            {{ card.name }}
+            <svg class="dashboard__category__cards__card__content__title__settings-icon" *ngIf="card.owner === user._id">
+              <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_settings_24px" />
+            </svg>
+          </h3>
+          <p class="dashboard__category__cards__card__content__subtitle">
+            von {{ card.owner }}
+            <br>
+            letzte Änderung am
+            {{ card.lastUpdated | date: 'MM.dd.yyyy' }}
+            um
+            {{ card.lastUpdated | date: 'H:mm'}}
+          </p>
+          <p>{{ card.description }}</p>
+          <div class="dashboard__category__cards__card__content__tags">
+            <p><strong>Tags:</strong></p>
+            <p>{{ card.tags }}</p>
+          </div>
+        </div>
+        <div class="dashboard__category__cards__card__buttons">
+          <button class="dashboard__category__cards__card__buttons__button" (click)="viewNet(card)">betrachten</button>
+        </div>
       </div>
     </div>
   </div>

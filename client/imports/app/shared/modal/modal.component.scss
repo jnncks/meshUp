@@ -34,17 +34,4 @@
   opacity: 1;
   -webkit-transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
   transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
-
-  &__title {
-    .right {
-      color: $primary-text-color;
-    }
-
-    .right:hover {
-      color: lighten($primary-text-color, 10%);
-    }
-  }
-
-  &__title,
-  &__body {}
 }

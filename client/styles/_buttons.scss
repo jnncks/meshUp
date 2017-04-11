@@ -1,37 +1,31 @@
 @import './colors';
 
 @mixin buttons ($bg-color: $background, $color: $primary-color, $hover-color: $primary-color-text) {
-  &__buttons {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
+  &__button {
+    color: $color;
+    background-color: $bg-color;
+    border: 2px solid $color;
+    border-radius: 0.15rem;
+    font-weight: bold;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
 
-      &__button {
-        color: $color;
+    &:hover {
+      color: $hover-color;
+      background-color: $color;
+    }
+
+    &[disabled] {
+      color: transparentize($color, 0.5);
+      border-color: transparentize($color, 0.5);
+      cursor: not-allowed;
+      
+      &:hover {
+        color: transparentize($color, 0.5);
         background-color: $bg-color;
-        border: 2px solid $color;
-        border-radius: 0.15rem;
-        font-weight: bold;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        padding-top: .5rem;
-        padding-bottom: .5rem;
-
-        &:hover {
-          color: $hover-color;
-          background-color: $color;
-        }
-
-        &[disabled] {
-          color: transparentize($color, 0.5);
-          border-color: transparentize($color, 0.5);
-          cursor: not-allowed;
-
-          &:hover {
-            color: transparentize($color, 0.5);
-            background-color: $bg-color;
-          }
-        }
       }
     }
+  }
 }
