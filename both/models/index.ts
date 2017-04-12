@@ -1,4 +1,4 @@
-// expose all existing collections
+// expose all existing models
 export * from './user.model';
 export * from './infonet.model';
 export * from './infonetcategory.model';
