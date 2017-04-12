@@ -9,5 +9,4 @@ export interface InfoNetMeta {
   created: Date;
   lastUpdated: Date;
   categoryId?: Mongo.ObjectID;
-  //infonet: Mongo.ObjectID;
 }

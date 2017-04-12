@@ -1,8 +1,14 @@
 @import '../../../styles/layout-variables';
+@import '../../../styles/breakpoints';
 
 .dashboard {
   padding-left: 1rem;
   padding-right: 1rem;
   overflow-y: auto;
   max-height: calc(100vh - #{$navbar-height});
+
+  @include for-size(desktop-up) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }

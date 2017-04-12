@@ -7,7 +7,7 @@
       </svg>
     </h3>
     <p class="card__content__subtitle">
-      von {{ infoNet.ownerName }}
+      von {{ getUserName(infoNet.owner) | async }}
       <br>
       letzte Änderung am {{ infoNet.lastUpdated | date: 'd.MM.yyyy' }}
       um {{ infoNet.lastUpdated | date: 'H:mm'}}

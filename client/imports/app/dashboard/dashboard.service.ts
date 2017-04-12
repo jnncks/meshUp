@@ -2,11 +2,16 @@ import { Injectable } from '@angular/core';
 import { MeteorObservable } from 'meteor-rxjs';
 import { Observable } from 'rxjs';
 
-import { InfoNetCategory, InfoNetMeta } from '../../../../both/models';
+import {
+  InfoNetCategory,
+  InfoNetMeta,
+  User
+} from '../../../../both/models';
 
 import {
   InfoNetCategoryCollection,
-  InfoNetMetaCollection
+  InfoNetMetaCollection,
+  UsersCollection
 } from '../../../../both/collections';
 
 
@@ -22,6 +27,7 @@ export class DashboardService {
     // subscribe to the collections
     MeteorObservable.subscribe('InfoNetCategoryCollection').subscribe();
     MeteorObservable.subscribe('InfoNetMetaCollection').subscribe();
+    MeteorObservable.subscribe('UsersCollection').subscribe();
 
     // merge streams of categories and their contents
     this._categories = InfoNetCategoryCollection
@@ -89,6 +95,15 @@ export class DashboardService {
           }
         }
     });
+  }
+
+  public getUserName(userId): Observable<User> {
+    return Observable.from(
+      UsersCollection.find(
+        {_id: userId},
+        {limit: 1, fields: { profile: 1, } }
+      ).map(users => users[0].profile.name)
+    );
   }
 
   /**

@@ -56,7 +56,7 @@
         width: calc(33% - 2rem);
 
         &:nth-child(3n+1):nth-last-child(-n+3),
-        &:nth-child(3n+1):nth-last-child(-n+3)~.dashboard__category__cards__card {
+        &:nth-child(3n+1):nth-last-child(-n+3)~* {
           flex-grow: 1;
           max-width: calc(50% - 2rem);
         }
@@ -66,7 +66,7 @@
         width: calc(25% - 2rem);
 
         &:nth-child(4n+1):nth-last-child(-n+4),
-        &:nth-child(4n+1):nth-last-child(-n+4)~.dashboard__category__cards__card {
+        &:nth-child(4n+1):nth-last-child(-n+4)~* {
           flex-grow: 1;
           max-width: calc(33% - 2rem);
         }
@@ -76,7 +76,7 @@
         width: calc(20% - 2rem);
 
         &:nth-child(5n+1):nth-last-child(-n+5),
-        &:nth-child(5n+1):nth-last-child(-n+5)~.dashboard__category__cards__card {
+        &:nth-child(5n+1):nth-last-child(-n+5)~* {
           flex-grow: 1;
           max-width: calc(25% - 2rem);
         }

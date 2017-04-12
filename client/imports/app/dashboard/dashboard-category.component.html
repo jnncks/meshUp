@@ -1,4 +1,4 @@
-<div class="category">
+<div class="category" *ngIf="user && category">
   <h2 class="category__title">{{ category.name }}
     <svg class="category__title__settings-icon" *ngIf="category.owner === user._id">
       <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_settings_24px" />

@@ -34,4 +34,10 @@ export class DashboardCardComponent {
   viewNet(infoNet: InfoNetMeta = this.infoNet): void {
     this._router.navigate(['/net', infoNet._id]);
   }
+
+  getUserName(userId: string) {
+    if (!userId)
+      return;
+    return this._dashboardService.getUserName(userId);
+  }
 }
