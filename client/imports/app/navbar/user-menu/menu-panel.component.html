@@ -1,5 +1,5 @@
 <div class="menu-panel" [hidden]="!visible">
-  <button class="menu-panel__item" (click)="openLogoutModal(LOGOUT_MODAL_ID)">abmelden</button>
+  <button class="menu-panel__item" (click)="openLogoutModal(LOGOUT_MODAL_ID)" (blur)="onBlur($event)">abmelden</button>
 </div>
 
 <modal modal-title="Abmelden" modal-id="{{ LOGOUT_MODAL_ID }}" [blocking]="false">

@@ -70,6 +70,16 @@ export class MenuPanelComponent implements OnInit, OnChanges{
         this.handleError(e);
       });
   }
+  
+  onBlur(event) {
+     // check whether the blur event has been emitted by clicking a related element
+    if (event.relatedTarget)
+      // don't close the menu
+      return;
+
+    // no related element has been clicked, close the menu
+    this.clicked.emit('close');
+  }
 
   /**
    * Handles errors (currently by logging them to the console).
