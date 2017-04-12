@@ -15,7 +15,20 @@
     <p>{{ infoNet.description }}</p>
     <div class="card__content__tags">
       <p><strong>Tags:</strong></p>
-      <p>{{ infoNet.tags }}</p>
+      <p *ngIf="tags">
+        {{ tags | arrayToList }}<!-- no whitespace
+     --><span *ngIf="infoNet.tags && tags.length < infoNet.tags.length"><!-- no whitespace
+       -->, …&ensp;
+          <strong class="card__content__tags__toggle"  (click)="toggleMoreTags()">alle Tags anzeigen</strong>
+        </span>
+         <span *ngIf="tags.length > 5">
+          &ensp;
+          <strong class="card__content__tags__toggle"  (click)="toggleMoreTags()">weniger Tags anzeigen</strong>
+        </span>
+      </p>
+      <p *ngIf="!tags.length">
+        keine Tags...
+      </p>
     </div>
   </div>
   <div class="card__buttons">

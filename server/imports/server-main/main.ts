@@ -124,6 +124,7 @@ export class Main {
       const privateNetsMeta: InfoNetMeta[] = [{
         name: 'Todo-Liste',
         description: 'Arbeit, Arbeit!',
+        tags: [ 'Arbeit', 'Todos', 'Liste', 'Test', 'Test' ],
         owner: user._id,
         collaborators: [],
         created: new Date(),

@@ -19,12 +19,19 @@ import styleUrl from './dashboard-card.component.scss';
   template,
   styles: [ styleUrl ]
 })
-export class DashboardCardComponent {
+export class DashboardCardComponent implements OnChanges {
   user: Meteor.User;
   @Input() infoNet: InfoNetMeta;
+  tags: string[];
 
   constructor(private _router: Router, private _dashboardService: DashboardService) {
     this.user = Meteor.user();
+    this.tags = [];
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.infoNet && changes.infoNet.currentValue.tags)
+      this.tags = changes.infoNet.currentValue.tags.slice(0,5);
   }
 
   deleteNet(infoNet: InfoNetMeta): void {
@@ -38,6 +45,15 @@ export class DashboardCardComponent {
   getUserName(userId: string) {
     if (!userId)
       return;
+
     return this._dashboardService.getUserName(userId);
+  }
+
+  toggleMoreTags() {
+    if (this.tags.length < this.infoNet.tags.length) {
+      this.tags = this.infoNet.tags; // insert all tags
+    } else {
+      this.tags = this.tags.slice(0,5); // keep only the first 5 tags
+    }
   }
 }

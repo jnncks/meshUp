@@ -65,6 +65,11 @@
       margin-top: 1em;
       margin-bottom: 1em;
 
+      &__toggle {
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
       p+p {
         margin-left: 1em;
       }

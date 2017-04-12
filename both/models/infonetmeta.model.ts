@@ -4,6 +4,7 @@ export interface InfoNetMeta {
   _id?: Mongo.ObjectID;
   name: string;
   description?: string;
+  tags?: string[];
   owner: string;
   collaborators: string[];
   created: Date;

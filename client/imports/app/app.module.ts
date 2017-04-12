@@ -22,6 +22,7 @@ import { ModalService } from './shared/modal';
 
 /* Pipes */
 import { RouteWithNamePipe } from './shared/route-with-name.pipe';
+import { ArrayToListPipe } from './shared/array-to-list.pipe';
 
 @NgModule({
   /* Components, Pipes, Directives */
@@ -37,8 +38,9 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
     DashboardCardComponent,
     NetComponent,
     GraphComponent,
+    Modal,
     RouteWithNamePipe,
-    Modal
+    ArrayToListPipe
   ],
   /* Entry Components */
   entryComponents: [
