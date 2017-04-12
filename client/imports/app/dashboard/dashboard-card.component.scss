@@ -1,0 +1,80 @@
+@import '../../../styles/colors';
+@import '../../../styles/cards';
+@import '../../../styles/buttons';
+
+.card {
+  flex-shrink: 1;
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 1;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  height: calc(100% - 2rem);
+  background-color: $card-background-color;
+  @include card-padding;
+  @include card-border;
+  @include card-shadow;
+
+  &__content {
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+
+    &__title {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      font-size: 1.25em;
+      font-weight: 600;
+      margin-top: 0.67em;
+      margin-bottom: 0.67em;
+
+      &__settings-icon {
+        flex-basis: 1em;
+        flex-grow: 0;
+        flex-shrink: 0;
+        height: 1em;
+        width: 1em;
+        fill: $primary-text-color;
+
+        &:hover {
+          fill: $primary-color;
+          cursor: pointer;
+        }
+      }
+    }
+    &__subtitle {
+      color: $secondary-text-color;
+      font-size: 0.75em;
+      font-weight: 500;
+      font-style: italic;
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+    &__tags {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      color: $secondary-text-color;
+      font-size: 0.75em;
+      font-weight: 500;
+      margin-top: 1em;
+      margin-bottom: 1em;
+
+      p+p {
+        margin-left: 1em;
+      }
+    }
+  }
+  &__buttons {
+    align-self: flex-end;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    @include buttons( $bg-color: $card-background-color, $color: $primary-text-color, $hover-bg-color: $primary-color, $hover-color: $primary-color-text);
+  }
+}

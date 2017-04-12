@@ -1,0 +1,24 @@
+<div class="card" *ngIf="infoNet">
+  <div class="card__content">
+    <h3 class="card__content__title">
+      {{ infoNet.name }}
+      <svg class="card__content__title__settings-icon" *ngIf="infoNet.owner === user._id">
+        <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_settings_24px" />
+      </svg>
+    </h3>
+    <p class="card__content__subtitle">
+      von {{ infoNet.ownerName }}
+      <br>
+      letzte Änderung am {{ infoNet.lastUpdated | date: 'd.MM.yyyy' }}
+      um {{ infoNet.lastUpdated | date: 'H:mm'}}
+    </p>
+    <p>{{ infoNet.description }}</p>
+    <div class="card__content__tags">
+      <p><strong>Tags:</strong></p>
+      <p>{{ infoNet.tags }}</p>
+    </div>
+  </div>
+  <div class="card__buttons">
+    <button class="card__buttons__button" (click)="viewNet()">betrachten</button>
+  </div>
+</div>

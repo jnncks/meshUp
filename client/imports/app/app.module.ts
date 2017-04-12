@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { NavBarComponent } from './navbar/navbar.component';
 import { UserMenuComponent, MenuPanelComponent, ProfileButtonComponent } from './navbar/user-menu';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardComponent, DashboardCardComponent } from './dashboard';
 import { NetComponent } from './net/net.component';
 import { GraphComponent } from './net/graph.component';
 import { Modal } from './shared/modal';
@@ -33,6 +33,7 @@ import { RouteWithNamePipe } from './shared/route-with-name.pipe';
     ProfileButtonComponent,
     UserMenuComponent,
     DashboardComponent,
+    DashboardCardComponent,
     NetComponent,
     GraphComponent,
     RouteWithNamePipe,

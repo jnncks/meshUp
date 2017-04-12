@@ -41,14 +41,6 @@ export class DashboardComponent implements OnInit {
     let number = this._dashboardService.deleteCategory(category);
   }
 
-  deleteNet(infoNet: InfoNetMeta): void {
-    let number = this._dashboardService.deleteInfoNet(infoNet);
-  }
-
-  viewNet(infoNet: InfoNetMeta): void {
-    this._router.navigate(['/net', infoNet._id]);
-  }
-
   getUserName(): string {
     let user: Meteor.User = this.user;
 

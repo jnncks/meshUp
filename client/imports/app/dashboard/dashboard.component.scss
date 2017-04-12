@@ -52,23 +52,7 @@
         margin-right: -1rem;
       }
 
-      &__card {
-        flex-shrink: 1;
-        flex-grow: 1;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        z-index: 1;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        padding-left: .5rem;
-        padding-right: .5rem;
-        padding-bottom: .5rem;
-        background-color: $card-background-color;
-        @include card-border;
-        @include card-shadow;
-
+      > * {
         @include for-size(phone-only) {
           width: 100%;
         }
@@ -83,7 +67,7 @@
           width: calc(33% - 2rem);
 
           &:nth-child(3n+1):nth-last-child(-n+3),
-          &:nth-child(3n+1):nth-last-child(-n+3) ~ .dashboard__category__cards__card {
+          &:nth-child(3n+1):nth-last-child(-n+3)~.dashboard__category__cards__card {
             flex-grow: 1;
             max-width: calc(50% - 2rem);
           }
@@ -93,80 +77,19 @@
           width: calc(25% - 2rem);
 
           &:nth-child(4n+1):nth-last-child(-n+4),
-          &:nth-child(4n+1):nth-last-child(-n+4) ~ .dashboard__category__cards__card {
+          &:nth-child(4n+1):nth-last-child(-n+4)~.dashboard__category__cards__card {
             flex-grow: 1;
             max-width: calc(33% - 2rem);
           }
         }
-
         @include for-size(big-desktop-up) {
           width: calc(20% - 2rem);
 
           &:nth-child(5n+1):nth-last-child(-n+5),
-          &:nth-child(5n+1):nth-last-child(-n+5) ~ .dashboard__category__cards__card {
+          &:nth-child(5n+1):nth-last-child(-n+5)~.dashboard__category__cards__card {
             flex-grow: 1;
             max-width: calc(25% - 2rem);
           }
-        }
-
-        &__content {
-          -webkit-hyphens: auto;
-          -moz-hyphens: auto;
-          hyphens: auto;
-
-          &__title {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            justify-content: space-between;
-
-            &__settings-icon {
-              flex-basis: 1em;
-              flex-grow: 0;
-              flex-shrink: 0;
-              height: 1em;
-              width: 1em;
-              fill: $primary-text-color;
-
-              &:hover {
-                fill: $primary-color;
-                cursor: pointer;
-              }
-            }
-          }
-
-          &__subtitle {
-            color: $secondary-text-color;
-            font-size: 0.75em;
-            font-weight: 500;
-            font-style: italic;
-	          margin-top: 1em;
-	          margin-bottom: 1em;
-          }
-
-          &__tags {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            color: $secondary-text-color;
-            font-size: 0.75em;
-            font-weight: 500;
-	          margin-top: 1em;
-	          margin-bottom: 1em;
-
-            p + p {
-              margin-left: 1em;
-            }
-          }
-        }
-
-        &__buttons {
-          align-self: flex-end;
-          display: flex;
-          flex-direction: row;
-          justify-content: flex-end;
-
-          @include buttons($bg-color: $card-background-color);
         }
       }
     }
