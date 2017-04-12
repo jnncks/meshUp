@@ -10,7 +10,8 @@ body, html {
   background-color: $background;
 }
 
-@import 'normalize';
+@import '../../../node_modules/normalize.css/normalize';
+@import '../../../node_modules/normalize-opentype.css/normalize-opentype';
 @import 'typography';
 
 button {

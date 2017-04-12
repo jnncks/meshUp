@@ -35,6 +35,8 @@
     "bcrypt": "^1.0.2",
     "d3": "^4.7.3",
     "meteor-rxjs": "0.4.7",
+    "normalize-opentype.css": "^0.2.4",
+    "normalize.css": "^6.0.0",
     "reflect-metadata": "0.1.9",
     "rxjs": "5.0.2",
     "web-animations-js": "^2.2.2",
