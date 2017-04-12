@@ -1,17 +1,6 @@
 <div class="dashboard">
   <h1>{{ title }}</h1>
   <p>{{ greeting }}, {{ getUserName() }}!</p>
-
-  <div class="dashboard__category" *ngFor="let category of categories | async">
-    <h2 class="dashboard__category__title">{{ category.name }}
-      <svg class="dashboard__category__title__settings-icon" *ngIf="category.owner === user._id">
-        <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_settings_24px" />
-      </svg>
-    </h2>
-    <p class="dashboard__category__description">{{ category.description }}</p>
-    <div class="dashboard__category__cards">
-      <dashboard-card *ngFor="let card of category.items" [infoNet]="card">
-      </dashboard-card>
-    </div>
-  </div>
+  
+  <dashboard-category *ngFor="let category of categories | async" [category]="category"></dashboard-category>
 </div>

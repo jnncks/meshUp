@@ -1,0 +1,86 @@
+@import '../../../styles/colors';
+@import '../../../styles/breakpoints';
+
+.category {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+
+  &__title {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+
+    &__settings-icon {
+      flex-basis: 1em;
+      flex-grow: 0;
+      flex-shrink: 0;
+      height: 1em;
+      width: 1em;
+      fill: $primary-text-color;
+
+      &:hover {
+        fill: $primary-color;
+        cursor: pointer;
+      }
+    }
+  }
+
+  &__description {}
+
+  &__cards {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-top: 2rem;
+
+    @include for-size(tablet-portrait-up) {
+      flex-direction: row;
+      margin-left: -1rem;
+      margin-right: -1rem;
+    }
+
+    >* {
+      @include for-size(phone-only) {
+        width: 100%;
+      }
+
+      @include for-size(tablet-portrait-up) {
+        width: calc(50% - 2rem);
+        margin-left: 1rem;
+        margin-right: 1rem;
+      }
+
+      @include for-size(tablet-landscape-up) {
+        width: calc(33% - 2rem);
+
+        &:nth-child(3n+1):nth-last-child(-n+3),
+        &:nth-child(3n+1):nth-last-child(-n+3)~.dashboard__category__cards__card {
+          flex-grow: 1;
+          max-width: calc(50% - 2rem);
+        }
+      }
+
+      @include for-size(desktop-up) {
+        width: calc(25% - 2rem);
+
+        &:nth-child(4n+1):nth-last-child(-n+4),
+        &:nth-child(4n+1):nth-last-child(-n+4)~.dashboard__category__cards__card {
+          flex-grow: 1;
+          max-width: calc(33% - 2rem);
+        }
+      }
+
+      @include for-size(big-desktop-up) {
+        width: calc(20% - 2rem);
+
+        &:nth-child(5n+1):nth-last-child(-n+5),
+        &:nth-child(5n+1):nth-last-child(-n+5)~.dashboard__category__cards__card {
+          flex-grow: 1;
+          max-width: calc(25% - 2rem);
+        }
+      }
+    }
+  }
+}

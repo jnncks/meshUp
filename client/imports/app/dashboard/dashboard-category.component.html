@@ -1,0 +1,12 @@
+<div class="category">
+  <h2 class="category__title">{{ category.name }}
+    <svg class="category__title__settings-icon" *ngIf="category.owner === user._id">
+      <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_settings_24px" />
+    </svg>
+  </h2>
+  <p class="category__description">{{ category.description }}</p>
+  <div class="category__cards">
+    <dashboard-card *ngFor="let card of category.items" [infoNet]="card">
+    </dashboard-card>
+  </div>
+</div>
