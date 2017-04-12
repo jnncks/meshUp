@@ -1,0 +1,15 @@
+<div class="modal" *ngIf="!hide" [@fadeInOut]>
+	<div class="modal__backdrop" (click)="cancel()"></div>
+	<div class="modal__dialog">
+		<div class="modal__dialog__title" *ngIf="modalTitle">
+      <h2>{{ modalTitle }}</h2>
+    </div>
+    <div class="modal__dialog__message">
+    	<p>{{ modalMessage }}</p>
+  	</div>
+  	<div class="modal__dialog__buttons">
+    	<button class="modal__dialog__buttons__button" (click)="cancel()">abbrechen</button>
+   		<button class="modal__dialog__buttons__button" (click)="logout()">abmelden</button>
+  	</div>
+  </div>
+</div>

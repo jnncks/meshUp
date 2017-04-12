@@ -1,0 +1,56 @@
+@import '../../../../styles/colors';
+@import '../../../../styles/layout-variables';
+@import '../../../../styles/cards';
+@import '../../../../styles/buttons';
+
+
+.modal {
+  z-index: 777;
+
+  &[hidden] {
+    display: none;
+  }
+  
+  &__backdrop {
+    background-color: rgba(0, 0, 0, .4);
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 888;
+  }
+
+  &__dialog {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    max-height: calc(100vh - 2 * #{$navbar-height});
+    min-height: 10vh;
+    width: 400px;
+    overflow-y: auto;
+    left: calc(50% - 200px);
+    top: 10vh;
+    z-index: 999;
+    @include card-padding;
+    background-color: $card-background-color;
+    color: $primary-text-color;
+    @include card-border;
+    @include card-shadow;
+
+    &__buttons {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      @include buttons(
+        $bg-color: $card-background-color,
+        $color: $primary-text-color,
+        $hover-bg-color: $primary-color,
+        $hover-color: $primary-color-text
+      );
+    }
+  }
+}
+
+

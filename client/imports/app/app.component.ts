@@ -3,6 +3,8 @@ import { Router, Route, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 
+import { ModalPlaceholderComponent } from './shared/modal.module';
+
 import template from './app.component.html';
 import styleUrl from './app.component.scss';
 

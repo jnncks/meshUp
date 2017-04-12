@@ -1,28 +1,70 @@
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
+import {
+  NgModule
+} from '@angular/core';
+import {
+  FormsModule
+} from '@angular/forms';
+import {
+  BrowserModule
+} from '@angular/platform-browser';
+import {
+  RouterModule
+} from '@angular/router';
 
 /* Components */
-import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
-import { NavBarComponent } from './navbar/navbar.component';
-import { UserMenuComponent, MenuPanelComponent, ProfileButtonComponent } from './navbar/user-menu';
-import { DashboardComponent, DashboardCategoryComponent, DashboardCardComponent } from './dashboard';
-import { NetComponent } from './net/net.component';
-import { GraphComponent } from './net/graph.component';
-import { Modal } from './shared/modal';
+import {
+  AppComponent
+} from './app.component';
+import {
+  LoginComponent
+} from './login/login.component';
+import {
+  NavBarComponent
+} from './navbar/navbar.component';
+import {
+  UserMenuComponent,
+  MenuPanelComponent,
+  ProfileButtonComponent,
+  LogoutModalComponent
+} from './navbar/user-menu';
+import {
+  DashboardComponent,
+  DashboardCategoryComponent,
+  DashboardCardComponent
+} from './dashboard';
+import {
+  NetComponent
+} from './net/net.component';
+import {
+  GraphComponent
+} from './net/graph.component';
 
 /* Services */
-import { AuthService } from './shared/auth.service';
-import { AuthGuard } from './shared/auth-guard';
-import { DashboardService } from './dashboard/dashboard.service';
-import { NetService } from './net/net.service';
-import { ModalService } from './shared/modal';
+import {
+  AuthService
+} from './shared/auth.service';
+import {
+  AuthGuard
+} from './shared/auth-guard';
+import {
+  DashboardService
+} from './dashboard/dashboard.service';
+import {
+  NetService
+} from './net/net.service';
 
 /* Pipes */
-import { RouteWithNamePipe } from './shared/route-with-name.pipe';
-import { ArrayToListPipe } from './shared/array-to-list.pipe';
+import {
+  RouteWithNamePipe
+} from './shared/route-with-name.pipe';
+import {
+  ArrayToListPipe
+} from './shared/array-to-list.pipe';
+
+/* Modules */
+import {
+  ModalModule
+} from './shared/modal.module';
 
 @NgModule({
   /* Components, Pipes, Directives */
@@ -30,15 +72,15 @@ import { ArrayToListPipe } from './shared/array-to-list.pipe';
     AppComponent,
     LoginComponent,
     NavBarComponent,
-    MenuPanelComponent, 
+    MenuPanelComponent,
     ProfileButtonComponent,
+    LogoutModalComponent,
     UserMenuComponent,
     DashboardComponent,
     DashboardCategoryComponent,
     DashboardCardComponent,
     NetComponent,
     GraphComponent,
-    Modal,
     RouteWithNamePipe,
     ArrayToListPipe
   ],
@@ -51,15 +93,14 @@ import { ArrayToListPipe } from './shared/array-to-list.pipe';
     AuthService,
     AuthGuard,
     DashboardService,
-    NetService,
-    ModalService
+    NetService
   ],
   /* Modules */
   imports: [
     BrowserModule,
     FormsModule,
-    RouterModule.forRoot([
-      {
+    ModalModule,
+    RouterModule.forRoot([{
         path: '',
         pathMatch: 'full',
         redirectTo: 'login'
@@ -91,9 +132,8 @@ import { ArrayToListPipe } from './shared/array-to-list.pipe';
     ])
   ],
   /* Main Component */
-  bootstrap: [ AppComponent ]
+  bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor() {
-  }
+  constructor() {}
 }

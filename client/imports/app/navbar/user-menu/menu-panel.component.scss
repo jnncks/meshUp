@@ -1,6 +1,4 @@
 @import '../../../../styles/colors';
-@import '../../../../styles/cards';
-@import '../../../../styles/buttons';
 @import '../../../../styles/layout-variables';
 
 .menu-panel {
@@ -29,19 +27,4 @@
       cursor: pointer;
     }
   }
-}
-
-.modal {
-   &__buttons {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-
-      @include buttons(
-        $bg-color: $card-background-color,
-        $color: $primary-text-color,
-        $hover-bg-color: $primary-color,
-        $hover-color: $primary-color-text
-      );
-   }
 }
