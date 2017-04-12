@@ -81,6 +81,10 @@ li {
 	margin-bottom: 0.5em;
 }
 
+input, textarea, select, button  {
+	font-size: 1em;
+}
+
 // breakpoints
 @include for-size(phone-only) {
   body {

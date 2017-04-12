@@ -1,8 +1,15 @@
 $card-background-color: #ffffff;
+$card-border-color: #eeeeee;
 
 @mixin card-border {
   border-radius: .3rem;
-  border-width: 0;
+  border-width: 1px;
+  border-style: solid;
+  border-color: $card-border-color;
+}
+
+@mixin card-padding {
+  padding: 1rem;
 }
 
 @mixin card-shadow($hover: false) {

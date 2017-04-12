@@ -26,7 +26,7 @@
   left: calc(50% - 200px);
   top: 10vh;
   z-index: 999;
-  padding: 1rem;
+  @include card-padding;
   background-color: $card-background-color;
   color: $primary-text-color;
   @include card-border;

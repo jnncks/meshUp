@@ -39,7 +39,8 @@
 
       @include buttons(
         $bg-color: $card-background-color,
-        $color: $primary-color,
+        $color: $primary-text-color,
+        $hover-bg-color: $primary-color,
         $hover-color: $primary-color-text
       );
    }
