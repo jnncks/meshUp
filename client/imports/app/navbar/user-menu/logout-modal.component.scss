@@ -13,11 +13,14 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: calc(2 * #{$navbar-height});
+  padding-top: calc(2 * #{$navbar-height});
+  padding-bottom: $navbar-height;
+  padding-left: calc(2 * #{$navbar-height});
+  padding-right: calc(2 * #{$navbar-height});
   background-color: rgba(0, 0, 0, .4);
 
   @include for-size(phone-only) {
-    padding-top: calc(2 * #{$navbar-height});
+    padding-top: calc(1.5 * #{$navbar-height});
     padding-bottom: 0;
     padding-left: 5%;
     padding-right: 5%;
@@ -26,7 +29,6 @@
   &__dialog {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
     max-height: calc(100vh - 4 * #{$navbar-height});
     min-height: 10vh;
     width: 25rem;
@@ -38,16 +40,28 @@
     @include card-border;
     @include card-shadow;
 
+    @include for-size(phone-only) {
+      max-height: calc(100vh - 2 * #{$navbar-height})
+    }
+
+    &__message {
+      overflow-y: auto;
+    }
+
     &__buttons {
       display: flex;
+      flex-shrink: 0;
       flex-direction: row;
       justify-content: space-between;
+      margin-left: -.5rem;
+      margin-right: -.5rem;
 
       @include buttons(
         $bg-color: $card-background-color,
         $color: $primary-text-color,
         $hover-bg-color: $primary-color,
-        $hover-color: $primary-color-text
+        $hover-color: $primary-color-text,
+        $margin-h: .5rem
       );
     }
   }
