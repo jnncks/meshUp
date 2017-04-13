@@ -31,10 +31,9 @@ import styleUrl from './logout-modal.component.scss';
 })
 @Modal()
 export class LogoutModalComponent {
-  destroy: Function;
   closeModal: Function;
+  hidden: boolean;
 
-  hide: boolean = false;
   modalTitle: string;
   modalMessage: string;
 
@@ -43,29 +42,23 @@ export class LogoutModalComponent {
     this.modalMessage = 'Möchtest du dich wirklich abmelden?'
   }
 
-  logout() {
+  logout(): void {
     this._authService.logout()
       .then(() => {
         this._router.navigateByUrl('login');
-        this.hideModal();
+        this.closeModal();
       })
       .catch((e) => {
         this.handleError(e);
       });
   }
 
-  cancel(): void{
-    this.hideModal();
-  }
+  cancel(event): void {
+    if (event && event.srcElement.id !== 'logoutModal')
+      return;
 
-  hideModal() {
-    this.hide = true;
-    setTimeout(() => {
-      this.closeModal();
-      this.destroy();
-    }, 300);
+    this.closeModal();
   }
-
 
   /**
    * Handles errors (currently by logging them to the console).

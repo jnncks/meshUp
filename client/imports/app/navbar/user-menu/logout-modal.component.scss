@@ -1,36 +1,36 @@
 @import '../../../../styles/colors';
 @import '../../../../styles/layout-variables';
+@import '../../../../styles/breakpoints';
 @import '../../../../styles/cards';
 @import '../../../../styles/buttons';
 
-
 .modal {
-  z-index: 777;
+  z-index: 999;
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: calc(2 * #{$navbar-height});
+  background-color: rgba(0, 0, 0, .4);
 
-  &[hidden] {
-    display: none;
-  }
-  
-  &__backdrop {
-    background-color: rgba(0, 0, 0, .4);
-    bottom: 0;
-    left: 0;
-    position: fixed;
-    right: 0;
-    top: 0;
-    z-index: 888;
+  @include for-size(phone-only) {
+    padding-top: calc(2 * #{$navbar-height});
+    padding-bottom: 0;
+    padding-left: 5%;
+    padding-right: 5%;
   }
 
   &__dialog {
     display: flex;
     flex-direction: column;
-    position: fixed;
-    max-height: calc(100vh - 2 * #{$navbar-height});
-    min-height: 10vh;
-    width: 400px;
     overflow-y: auto;
-    left: calc(50% - 200px);
-    top: 10vh;
+    max-height: calc(100vh - 4 * #{$navbar-height});
+    min-height: 10vh;
+    width: 25rem;
+    max-width: 25rem;
     z-index: 999;
     @include card-padding;
     background-color: $card-background-color;

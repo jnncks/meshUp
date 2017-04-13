@@ -1,5 +1,4 @@
-<div class="modal" *ngIf="!hide" [@fadeInOut]>
-	<div class="modal__backdrop" (click)="cancel()"></div>
+<div class="modal" id="logoutModal" *ngIf="!hidden" [@fadeInOut] (click)="cancel($event)">
 	<div class="modal__dialog">
 		<div class="modal__dialog__title" *ngIf="modalTitle">
       <h2>{{ modalTitle }}</h2>

@@ -84,10 +84,13 @@ export class ModalPlaceholderComponent implements OnInit {
 // These 2 items will make sure that you can annotate
 // a modalcomponent with @Modal()
 export class ModalContainer {
+  hidden: boolean = false;
   destroy: Function;
   componentIndex: number;
+  
   closeModal(): void {
-    this.destroy();
+    this.hidden = true;
+    setTimeout(() => this.destroy(), 300);
   }
 }
 export function Modal() {
