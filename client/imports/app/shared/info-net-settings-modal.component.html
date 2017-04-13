@@ -1,0 +1,27 @@
+<div class="modal" id="infoNetSettingsModal" *ngIf="!hidden" [@fadeInOut] (click)="cancel($event)">
+	<div class="modal__dialog">
+
+		<div class="modal__dialog__title" *ngIf="modalTitle">
+      <h2>{{ modalTitle }}</h2>
+    </div>
+
+    <form class="modal__dialog__form" [formGroup]="infoNetForm">
+      <label for="name">Titel</label>
+      <input formControlName="name" name="name" type="text" placeholder="Titel des Informationsnetzes">
+
+      <label for="description">Beschreibung</label>
+      <textarea  formControlName="description" name="description" placeholder="Beschreibung des Informationsnetzes" rows="4">
+      </textarea>
+
+      <label for="tags">Tags (durch Kommata getrennt)</label>
+      <textarea formControlName="tags" name="tags" placeholder="Tags für das Informationsnetz" rows="3">
+      </textarea>
+    </form>
+
+  	<div class="modal__dialog__buttons">
+    	<button class="modal__dialog__buttons__button" (click)="cancel()">abbrechen</button>
+   		<button class="modal__dialog__buttons__button" (click)="save()">Änderungen speichern</button>
+  	</div>
+
+  </div>
+</div>

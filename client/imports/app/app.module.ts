@@ -2,7 +2,7 @@ import {
   NgModule
 } from '@angular/core';
 import {
-  FormsModule
+  FormsModule, ReactiveFormsModule
 } from '@angular/forms';
 import {
   BrowserModule
@@ -38,6 +38,9 @@ import {
 import {
   GraphComponent
 } from './net/graph.component';
+import {
+  InfoNetSettingsModal
+} from './shared/info-net-settings-modal.component';
 
 /* Services */
 import {
@@ -75,6 +78,7 @@ import {
     MenuPanelComponent,
     ProfileButtonComponent,
     LogoutModalComponent,
+    InfoNetSettingsModal,
     UserMenuComponent,
     DashboardComponent,
     DashboardCategoryComponent,
@@ -99,6 +103,7 @@ import {
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     ModalModule,
     RouterModule.forRoot([{
         path: '',

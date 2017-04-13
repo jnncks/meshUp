@@ -4,6 +4,9 @@ import { Observable } from 'rxjs';
 import { Meteor } from 'meteor/meteor';
 
 import { DashboardService } from './dashboard.service';
+import { ModalService } from '../shared/modal.module';
+
+import { InfoNetSettingsModal } from '../shared/info-net-settings-modal.component';
 
 import { InfoNetMeta } from '../../../../both/models';
 
@@ -24,7 +27,7 @@ export class DashboardCardComponent implements OnChanges {
   @Input() infoNet: InfoNetMeta;
   tags: string[];
 
-  constructor(private _router: Router, private _dashboardService: DashboardService) {
+  constructor(private _router: Router, private _dashboardService: DashboardService, private _modalService: ModalService) {
     this.user = Meteor.user();
     this.tags = [];
   }
@@ -40,6 +43,15 @@ export class DashboardCardComponent implements OnChanges {
 
   viewNet(infoNet: InfoNetMeta = this.infoNet): void {
     this._router.navigate(['/net', infoNet._id]);
+  }
+
+  /**
+   * Opens a confirmation modal to prevent accidental logout actions.
+   */
+  openSettingsModal(infoNet: InfoNetMeta): void {
+    this._modalService.create(InfoNetSettingsModal, {
+      infoNet: infoNet
+    });
   }
 
   getUserName(userId: string) {

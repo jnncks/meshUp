@@ -2,7 +2,7 @@
   <div class="card__content">
     <h3 class="card__content__title">
       {{ infoNet.name }}
-      <svg class="card__content__title__settings-icon" *ngIf="infoNet.owner === user._id">
+      <svg class="card__content__title__settings-icon" *ngIf="infoNet.owner === user._id" (click)="openSettingsModal(infoNet)">
         <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_settings_24px" />
       </svg>
     </h3>
