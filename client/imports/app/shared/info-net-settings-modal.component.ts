@@ -74,14 +74,20 @@ export class InfoNetSettingsModal implements OnInit{
   }
 
   cancel(event): void {
-    if (event && event.srcElement.id === 'infoNetSettingsModal' && this.infoNetForm.dirty) {
-      let name = this.infoNetForm.get('name').value.trim();
-      let description = this.infoNetForm.get('description').value.trim();
-      let tags = this.infoNetForm.get('tags').value.trim();
+    if (event &&
+      event.srcElement.id === 'infoNetSettingsModal' &&
+      this.infoNetForm.dirty) {
+        let name = this.infoNetForm.get('name').value.trim();
+        let description = this.infoNetForm.get('description').value.trim();
+        let tags = this.infoNetForm.get('tags').value.trim();
 
-      if (name != this.infoNet.name || description != this.infoNet.description || tags != this.infoNet.tags.join(', ')) {
-        //  >= 1 values differ from the original data, don't close the modal
-        return; // TODO: open a warning modal
+        if (name != this.infoNet.name ||
+          description != this.infoNet.description ||
+          (!this.infoNet.tags && tags) ||
+          (this.infoNet.tags && tags != this.infoNet.tags.join(', '))) {
+            // at least one value differs from the original data and not only
+            // by leading or trailing whitespaces, don't close the modal!
+            return; // TODO: open a warning modal
       }
     } else if (event && event.srcElement.id !== 'infoNetSettingsModal') {
       return; // a click from the modal itself, don't close the modal
@@ -89,4 +95,4 @@ export class InfoNetSettingsModal implements OnInit{
 
     this.closeModal();
   }
-}
+  }
