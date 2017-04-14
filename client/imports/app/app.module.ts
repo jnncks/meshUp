@@ -30,7 +30,8 @@ import {
 import {
   DashboardComponent,
   DashboardCategoryComponent,
-  DashboardCardComponent
+  DashboardCardComponent,
+  DashboardNewGraphComponent
 } from './dashboard';
 import {
   NetComponent
@@ -86,6 +87,7 @@ import {
     DashboardComponent,
     DashboardCategoryComponent,
     DashboardCardComponent,
+    DashboardNewGraphComponent,
     NetComponent,
     GraphComponent,
     RouteWithNamePipe,

@@ -1,24 +1,23 @@
+@import './mixins';
+
 $card-background-color: #ffffff;
 $card-border-color: #eeeeee;
 
-@mixin card-border {
+@mixin card-border($width: 1px, $color: $card-border-color) {
   border-radius: .3rem;
-  border-width: 1px;
+  border-width: $width;
   border-style: solid;
-  border-color: $card-border-color;
+  border-color: $color;
 }
 
-@mixin card-padding {
-  padding: 1rem;
+@mixin card-padding($offset: 0px) {
+  padding: calc(1rem - #{$offset});
 }
 
 @mixin card-shadow($hover: false) {
   box-shadow: 0 .2rem .4rem 0 rgba(0,0,0,.1);
 
   @if $hover == true {
-    -webkit-transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
-    transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
-    
     &::after {
       content: '';
       position: absolute;
@@ -30,8 +29,7 @@ $card-border-color: #eeeeee;
       box-sizing: border-box;
       box-shadow: 0 .4rem .8rem 0 rgba(0,0,0,.15);
       opacity: 0;
-      -webkit-transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
-      transition: all 0.2s cubic-bezier(.165, .84, .44, 1);
+      @include transition($properties: opacity);
     }
 
     &:hover::after {

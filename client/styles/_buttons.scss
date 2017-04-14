@@ -1,4 +1,6 @@
 @import './colors';
+@import './mixins';
+
 @mixin buttons ($bg-color: $background, $color: $primary-color, $hover-bg-color: $primary-color, $hover-color: $primary-color-text,  $margin-h: 0) {
   &__button {
     color: $color;
@@ -12,8 +14,9 @@
     padding-top: .5rem;
     padding-bottom: .5rem;
     font-size: normal;
+    @include transition($properties: (color, background-color, border-color));
 
-    &:hover {
+    &:not([disabled]):hover {
       color: $hover-color;
       background-color: $hover-bg-color;
       border-color: $hover-bg-color;
@@ -23,11 +26,6 @@
       color: transparentize($color, 0.5);
       border-color: transparentize($color, 0.5);
       cursor: not-allowed;
-
-      &:hover {
-        color: transparentize($color, 0.5);
-        background-color: $bg-color;
-      }
     }
   }
 }

@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import { trigger, state, style, animate, transition, keyframes} from '@angular/core';
 
 import { LogoutModalComponent } from './logout-modal.component';
 
@@ -11,7 +12,23 @@ import styleUrl from './menu-panel.component.scss';
 @Component({
   selector: 'menu-panel',
   template,
-  styles: [ styleUrl ]
+  styles: [ styleUrl ],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        animate('0.125s ease', keyframes([
+          style({opacity: 0}),
+          style({opacity: 1})
+        ]))
+      ]),
+      transition(':leave', [
+        animate('0.125s ease', keyframes([
+          style({opacity: 1}),
+          style({opacity: 0})
+        ]))
+      ])
+    ])
+  ]
 })
 export class MenuPanelComponent implements OnInit, OnChanges{
   @Input() visible: boolean;

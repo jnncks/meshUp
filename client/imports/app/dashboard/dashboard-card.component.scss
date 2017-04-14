@@ -1,6 +1,7 @@
 @import '../../../styles/colors';
 @import '../../../styles/cards';
 @import '../../../styles/buttons';
+@import '../../../styles/mixins';
 
 .card {
   flex-shrink: 1;
@@ -40,6 +41,7 @@
         width: 1.254em;
         transform: translate(0, -.125em);
         fill: $primary-text-color;
+        @include transition($properties: fill);
 
         &:hover {
           fill: $primary-color;
@@ -70,6 +72,11 @@
       &__toggle {
         text-decoration: underline;
         cursor: pointer;
+        @include transition($properties: color);
+
+        &:hover {
+          color: $primary-color;
+        }
       }
 
       p+p {

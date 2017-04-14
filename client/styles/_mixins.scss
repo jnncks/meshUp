@@ -64,3 +64,10 @@ $selectionColor: $primary-text-color;
     color: $color;
   }
 }
+
+@mixin transition($properties, $duration: 0.2s) {
+  -webkit-transition: all $duration cubic-bezier(.165, .84, .44, 1);
+  -webkit-transition-property: $properties;
+  transition: all $duration cubic-bezier(.165, .84, .44, 1);
+  transition-property: $properties;
+}

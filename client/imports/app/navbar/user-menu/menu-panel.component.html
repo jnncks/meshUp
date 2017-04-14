@@ -1,3 +1,3 @@
-<div class="menu-panel" [hidden]="!visible">
+<div class="menu-panel" *ngIf="visible" [@fadeInOut]>
   <button class="menu-panel__item" (click)="openLogoutModal()" (blur)="onBlur($event)">abmelden</button>
 </div>

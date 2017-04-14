@@ -1,5 +1,6 @@
 @import '../../../../styles/colors';
 @import '../../../../styles/layout-variables';
+@import '../../../../styles/mixins';
 
 .menu-panel {
   width: 100%;
@@ -21,6 +22,7 @@
     border: none;
     color: $primary-color-text;
     text-align: left;
+    @include transition($properties: background-color);
 
     &:hover {
       background-color: $primary-color-light;

@@ -1,6 +1,7 @@
 @import '../../../styles/breakpoints';
 @import '../../../styles/buttons';
 @import '../../../styles/colors';
+@import '../../../styles/mixins';
 
 .login {
   margin-left: auto;
@@ -65,6 +66,7 @@
       padding-right: 1rem;
       padding-top: .5rem;
       padding-bottom: .5rem;
+      @include transition($properties: border-color);
 
       &:focus {
         border-color: $primary-color-light;

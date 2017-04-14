@@ -1,5 +1,6 @@
 @import '../../../styles/layout-variables';
 @import '../../../styles/colors';
+@import '../../../styles/mixins';
 
 .bar {
   display: flex;
@@ -40,6 +41,7 @@
         padding-right: 1rem;
         color: $primary-color-text;
         text-decoration: underline;
+        @include transition($properties: color);
 
         &:hover {
           color: $primary-color-secondary-text;

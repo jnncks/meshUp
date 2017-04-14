@@ -1,5 +1,6 @@
 @import '../../../../styles/layout-variables';
 @import '../../../../styles/colors';
+@import '../../../../styles/mixins';
 
 .profile-button {
   display: flex;
@@ -8,6 +9,7 @@
   margin: 0;
   padding-left: .6rem;
   padding-right: .6rem;
+  @include transition($properties: background-color);
 
   &:hover {
     cursor: pointer;
