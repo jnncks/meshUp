@@ -1,5 +1,5 @@
-@import './colors';
-@import './mixins';
+@import 'colors';
+@import 'mixins';
 
 @mixin buttons ($bg-color: $background, $color: $primary-color, $hover-bg-color: $primary-color, $hover-color: $primary-color-text,  $margin-h: 0) {
   &__button {
