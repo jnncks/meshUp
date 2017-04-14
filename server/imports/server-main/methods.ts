@@ -3,16 +3,16 @@ import { check, Match } from 'meteor/check';
 
 // collections
 import {
-  InfoNetCategoryCollection,
-  InfoNetCollection,
-  InfoNetMetaCollection
+  InfoGraphCategoryCollection,
+  InfoGraphCollection,
+  InfoGraphMetaCollection
 } from '../../../both/collections';
 
 // models
 import {
-  InfoNetCategory,
-  InfoNet,
-  InfoNetMeta
+  InfoGraphCategory,
+  InfoGraph,
+  InfoGraphMeta
 } from '../../../both/models';
 
 
@@ -22,60 +22,60 @@ const nonEmptyString = Match.Where((str) => {
 });
 
 Meteor.methods({
-  updateInfoNetMeta(infoNetMeta: InfoNetMeta): void {
+  updateInfoGraphMeta(infoGraphMeta: InfoGraphMeta): void {
     if (!this.userId) {
       throw new Meteor.Error('unauthorized',
-        'User must be logged in to update meta information of infoNets');
+        'User must be logged in to update meta information of infoGraphs');
     }
 
-    if (infoNetMeta) {
-      check(infoNetMeta._id, nonEmptyString);
+    if (infoGraphMeta) {
+      check(infoGraphMeta._id, nonEmptyString);
 
-      if (infoNetMeta.owner !== this.userId) {
+      if (infoGraphMeta.owner !== this.userId) {
         throw new Meteor.Error('no-permission',
-          'The user has no permission to update the infoNet meta information');
+          'The user has no permission to update the infoGraph meta information');
       }
 
-      const infoNetMetaExists = !!InfoNetMetaCollection.find({
-        _id: infoNetMeta._id
+      const infoGraphMetaExists = !!InfoGraphMetaCollection.find({
+        _id: infoGraphMeta._id
       }).count();
 
-      if (!infoNetMetaExists) {
-        throw new Meteor.Error('infoNet-non-existent',
-          'The ID of the supplied InfoNetMeta does not exist');
+      if (!infoGraphMetaExists) {
+        throw new Meteor.Error('infoGraph-non-existent',
+          'The ID of the supplied infoGraphMeta does not exist');
       }
 
-      console.log(infoNetMeta._id)
-      InfoNetMetaCollection.update({ _id: infoNetMeta._id }, infoNetMeta, (err) => {
+      console.log(infoGraphMeta._id)
+      InfoGraphMetaCollection.update({ _id: infoGraphMeta._id }, infoGraphMeta, (err) => {
         throw new Meteor.Error(err);
       });
     }
   },
 
-  deleteInfoNetCategory(categoryId: Mongo.ObjectID): void {
+  deleteInfoGraphCategory(categoryId: Mongo.ObjectID): void {
     check(categoryId, nonEmptyString);
 
-    const categoryExists = !!InfoNetCategoryCollection.collection.find(categoryId).count();
+    const categoryExists = !!InfoGraphCategoryCollection.collection.find(categoryId).count();
 
     if (!categoryExists) {
-      throw new Meteor.Error('category-not-exists',
+      throw new Meteor.Error('category-non-existent',
         'Category doesn\'t exist');
     }
 
-    InfoNetCategoryCollection.collection.remove(categoryId);
+    InfoGraphCategoryCollection.collection.remove(categoryId);
   },
 
-  // currently, this handles only InfoNetMeta entries!
-  deleteInfoNet(infoNetId: Mongo.ObjectID): void {
-    check(infoNetId, nonEmptyString);
+  // currently, this handles only InfoGraphMeta entries!
+  deleteInfoGraph(infoGraphId: Mongo.ObjectID): void {
+    check(infoGraphId, nonEmptyString);
 
-    const InfoNetExists = !!InfoNetMetaCollection.collection.find(infoNetId).count();
+    const InfoGraphExists = !!InfoGraphMetaCollection.collection.find(infoGraphId).count();
 
-    if (!InfoNetExists) {
-      throw new Meteor.Error('infonet-not-exists',
-        'InfoNet doesn\'t exist');
+    if (!InfoGraphExists) {
+      throw new Meteor.Error('infoGraph-non-existent',
+        'infoGraph doesn not exist');
     }
 
-    InfoNetMetaCollection.collection.remove(infoNetId);
+    InfoGraphMetaCollection.collection.remove(infoGraphId);
   }
 });

@@ -2,37 +2,37 @@ import { Injectable } from '@angular/core';
 import { MeteorObservable } from 'meteor-rxjs';
 import { Observable } from 'rxjs';
 
-import { InfoNet, InfoNetMeta } from '../../../../both/models';
-import { InfoNetCollection, InfoNetMetaCollection } from '../../../../both/collections';
+import { InfoGraph, InfoGraphMeta } from '../../../../both/models';
+import { InfoGraphCollection, InfoGraphMetaCollection } from '../../../../both/collections';
 
 
 /**
- * The NetService provides InfoNet und InfoNetMeta data.
+ * The NetService provides InfoGraph und InfoGraphMeta data.
  * Also, it allows removal of collection entries.
  */
 @Injectable()
 export class NetService {
-  private _net: Observable<InfoNet>;
+  private _Graph: Observable<InfoGraph>;
 
   constructor() {
     // subscribe to the collections
-    MeteorObservable.subscribe('InfoNetCollection').subscribe();
-    MeteorObservable.subscribe('InfoNetMetaCollection').subscribe();
+    MeteorObservable.subscribe('InfoGraphCollection').subscribe();
+    MeteorObservable.subscribe('InfoGraphMetaCollection').subscribe();
 
   }
 
   /**
-   * Returns an Observable of the requested InfoNet which is selected via
-   * the given ID of the related InfoNetMeta element.
+   * Returns an Observable of the requested InfoGraph which is selected via
+   * the given ID of the related InfoGraphMeta element.
    * 
-   * @param  {Mongo.ObjectID} netMetaId the id of the related InfoNetMeta item
+   * @param  {Mongo.ObjectID} GraphMetaId the id of the related InfoGraphMeta item
    * 
-   * @returns Observable<InfoNet>
+   * @returns Observable<InfoGraph>
    */
-  public getInfoNet(netMetaId: Mongo.ObjectID): Observable<InfoNet> {
-    this._net = InfoNetCollection.find({metaId: netMetaId}, {limit: 1})
-      .map(infoNet => infoNet[0]); // map the first element to an Observable
-    return this._net;
+  public getInfoGraph(GraphMetaId: Mongo.ObjectID): Observable<InfoGraph> {
+    this._Graph = InfoGraphCollection.find({metaId: GraphMetaId}, {limit: 1})
+      .map(infoGraph => infoGraph[0]); // map the first element to an Observable
+    return this._Graph;
   }
 
   /**

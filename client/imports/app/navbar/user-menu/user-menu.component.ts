@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import template from './user-menu.component.html';
 import styleUrl from './user-menu.component.scss';
@@ -9,6 +9,7 @@ import styleUrl from './user-menu.component.scss';
   styles: [ styleUrl ]
 })
 export class UserMenuComponent {
+  @Input() visible: boolean;
   toggleState: boolean;
 
   constructor() {

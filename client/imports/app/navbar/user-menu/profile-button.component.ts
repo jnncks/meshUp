@@ -28,7 +28,6 @@ export class ProfileButtonComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.toggled)
       this.toggled = changes.toggled.currentValue;
- 
   }
 
   getUserName(): string {

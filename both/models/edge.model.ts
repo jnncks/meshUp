@@ -1,6 +1,6 @@
 import { Node } from './node.model';
 
-export interface Relation {
+export interface Edge {
   _id?: Mongo.ObjectID;
   type?: string;
   source: Mongo.ObjectID;

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { NetService } from './net.service';
 
-import { InfoNet, InfoNetMeta} from '../../../../both/models';
+import { InfoGraph, InfoGraphMeta} from '../../../../both/models';
 
 import template from './net.component.html';
 import styleUrl from './net.component.scss';
@@ -15,8 +15,8 @@ import styleUrl from './net.component.scss';
   styles: [ styleUrl ]
 })
 export class NetComponent implements OnInit {
-  private _net: Observable<InfoNet>;
-  private _netMetaId: Mongo.ObjectID;
+  private _graph: Observable<InfoGraph>;
+  private _graphMetaId: Mongo.ObjectID;
 
   constructor(private _route: ActivatedRoute, private _router: Router, private _netService: NetService) {
   }
@@ -24,7 +24,7 @@ export class NetComponent implements OnInit {
   ngOnInit() {
     this._route.params
       .subscribe((params: Params) => {
-        this._net = this._netService.getInfoNet(params.id).zone();
+        this._graph = this._netService.getInfoGraph(params.id).zone();
       });
   }
 }

@@ -3,43 +3,43 @@ import { MeteorObservable } from 'meteor-rxjs';
 import { Observable } from 'rxjs';
 
 import {
-  InfoNetCategory,
-  InfoNetMeta,
+  InfoGraphCategory,
+  InfoGraphMeta,
   User
 } from '../../../../both/models';
 
 import {
-  InfoNetCategoryCollection,
-  InfoNetMetaCollection,
+  InfoGraphCategoryCollection,
+  InfoGraphMetaCollection,
   UsersCollection
 } from '../../../../both/collections';
 
 
 /**
- * The DashboardService provides InfoNetCategory und InfoNetMeta data.
+ * The DashboardService provides InfoGraphCategory und InfoGraphMeta data.
  * Also, it allows removal of collection entries.
  */
 @Injectable()
 export class DashboardService {
-  private _categories: Observable<InfoNetCategory[]>;
+  private _categories: Observable<InfoGraphCategory[]>;
 
   constructor() {
     // subscribe to the collections
-    MeteorObservable.subscribe('InfoNetCategoryCollection').subscribe();
-    MeteorObservable.subscribe('InfoNetMetaCollection').subscribe();
+    MeteorObservable.subscribe('InfoGraphCategoryCollection').subscribe();
+    MeteorObservable.subscribe('InfoGraphMetaCollection').subscribe();
     MeteorObservable.subscribe('UsersCollection').subscribe();
 
     // merge streams of categories and their contents
-    this._categories = InfoNetCategoryCollection
+    this._categories = InfoGraphCategoryCollection
       .find({})
-      .mergeMap((categories: InfoNetCategory[]) => {
+      .mergeMap((categories: InfoGraphCategory[]) => {
         return Observable.combineLatest(
-          ...categories.map((category: InfoNetCategory) =>
-            InfoNetMetaCollection
+          ...categories.map((category: InfoGraphCategory) =>
+            InfoGraphMetaCollection
               .find({categoryId: category._id})
               .startWith(null)
-              .map(infoNetMetas => {
-                if (infoNetMetas) category.items = infoNetMetas;
+              .map(infoGraphMetas => {
+                if (infoGraphMetas) category.items = infoGraphMetas;
                 return category;
               })
           )
@@ -51,23 +51,23 @@ export class DashboardService {
 
   /**
    * Returns an Observable for the aggregated streams of the categories
-   * collections and the contents (InfoNetMeta elements) of those categories.
+   * collections and the contents (InfoGraphMeta elements) of those categories.
    * 
-   * @returns Observable<InfoNetCategory[]>
+   * @returns Observable<InfoGraphCategory[]>
    */
-  public getInfoNetCategories(): Observable<InfoNetCategory[]> {
+  public getInfoGraphCategories(): Observable<InfoGraphCategory[]> {
     return this._categories;
   }
   
   /**
-   * Removes the give InfoNetCategory but not its InfoNets.
+   * Removes the given infoGraphCategory but not its infoGraphs.
    * 
-   * TODO: Handle the InfoNets!
+   * TODO: Handle the infoGraphs!
    * 
-   * @param  {InfoNetCategory} category the InfoNetCategory to remove
+   * @param  {InfoGraphCategory} category The InfoGraphCategory to remove.
    */
-  public deleteCategory(category: InfoNetCategory): void {
-    MeteorObservable.call('deleteInfoNetCategory', category._id)
+  public deleteCategory(category: InfoGraphCategory): void {
+    MeteorObservable.call('deleteInfoGraphCategory', category._id)
       .zone()
       .subscribe({
         error: (e: Error) => {
@@ -79,14 +79,14 @@ export class DashboardService {
   }
 
   /**
-   * Removes the given InfoNet from the InfoNetCollection.
+   * Removes the given InfoGraph from the InfoGraphCollection.
    * 
-   * TODO: Currently only removes the InfoNetMeta entry!
+   * TODO: Currently only removes the InfoGraphMeta entry!
    * 
-   * @param  {InfoNetMeta} infoNet the InfoNet to remove
+   * @param  {InfoGraphMeta} infoGraph the InfoGraph to remove
    */
-  public deleteInfoNet(infoNet: InfoNetMeta): void {
-    MeteorObservable.call('deleteInfoNet', infoNet._id)
+  public deleteInfoGraph(infoGraph: InfoGraphMeta): void {
+    MeteorObservable.call('deleteInfoGraph', infoGraph._id)
       .zone()
       .subscribe({
         error: (e: Error) => {
@@ -102,7 +102,12 @@ export class DashboardService {
       UsersCollection.find(
         {_id: userId},
         {limit: 1, fields: { profile: 1, } }
-      ).map(users => users[0].profile.name)
+      ).map(users => {
+        if(!users.length) {
+          return '';
+        }
+        return users[0].profile.name;
+      })
     );
   }
 

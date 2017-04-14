@@ -6,7 +6,7 @@
   </h2>
   <p class="category__description">{{ category.description }}</p>
   <div class="category__cards">
-    <dashboard-card *ngFor="let card of category.items" [infoNet]="card">
+    <dashboard-card *ngFor="let card of category.items" [infoGraph]="card">
     </dashboard-card>
   </div>
 </div>

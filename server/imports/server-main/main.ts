@@ -4,17 +4,17 @@ import { Accounts } from 'meteor/accounts-base';
 // collections
 import {
   UsersCollection,
-  InfoNetCategoryCollection,
-  InfoNetMetaCollection,
-  InfoNetCollection
+  InfoGraphCategoryCollection,
+  InfoGraphMetaCollection,
+  InfoGraphCollection
 } from '../../../both/collections';
 
 // models
 import {
   User,
-  InfoNetCategory,
-  InfoNetMeta,
-  InfoNet
+  InfoGraphCategory,
+  InfoGraphMeta,
+  InfoGraph
 } from '../../../both/models';
 
 
@@ -27,13 +27,13 @@ export class Main {
 
   initFakeData(): void {
     if (Meteor.users.find({}).count() === 0) {
-      console.log('no users found')
+      console.log('no users found, creating a test user')
       Accounts.createUser({
         username: 'test',
         email: 'test@test.test',
         password: 'test',
         profile: {
-          name: 'Testuser'
+          name: 'Wolfgang von Testland'
         }
       });
     }
@@ -44,15 +44,15 @@ export class Main {
     const privateCategoryMetaIds: Mongo.ObjectID[] = [];
 
     // generate some fake categories if the collection is empty
-    if (InfoNetCategoryCollection.collection.find({}).count() === 0) {
-     lectureId = InfoNetCategoryCollection.collection.insert(
+    if (InfoGraphCategoryCollection.collection.find({}).count() === 0) {
+     lectureId = InfoGraphCategoryCollection.collection.insert(
         {
           name: 'Vorlesungen',
           description: 'Alle Netze, die mit Vorlesungen zu tun haben.'
         }
       );
 
-      privateCategoryId = InfoNetCategoryCollection.collection.insert(
+      privateCategoryId = InfoGraphCategoryCollection.collection.insert(
         {
           name: 'Privat',
           description: 'Meine privaten Netze.'
@@ -60,13 +60,13 @@ export class Main {
       );
     }
 
-    // generate some fake InfoNetMeta elements if the collection is empty
-    if (InfoNetMetaCollection.collection.find({}).count() === 0) {
+    // generate some fake InfoGraphMeta elements if the collection is empty
+    if (InfoGraphMetaCollection.collection.find({}).count() === 0) {
 
       let user = Meteor.users.findOne({});
 
-      // lecture InfoNets meta info
-      const lecturesMeta: InfoNetMeta[] = [{
+      // lecture InfoGraphs meta info
+      const lecturesMeta: InfoGraphMeta[] = [{
         name: 'Einführung in die Medieninformatik',
         description: 'Was gehört alles zum Medieninformatik-Studium dazu?',
         owner: '',
@@ -100,13 +100,13 @@ export class Main {
         categoryId: lectureId
       }];
 
-      lecturesMeta.forEach((obj: InfoNetMeta) => {
-        let id = InfoNetMetaCollection.collection.insert(obj)
+      lecturesMeta.forEach((obj: InfoGraphMeta) => {
+        let id = InfoGraphMetaCollection.collection.insert(obj)
         lectureMetaIds.push(id);
       });
 
-      // lecture InfoNets
-      const lectures: InfoNet[] = [{
+      // lecture InfoGraphs
+      const lectures: InfoGraph[] = [{
         metaId: lectureMetaIds[0]
       }, {
         metaId: lectureMetaIds[1]
@@ -116,12 +116,12 @@ export class Main {
         metaId: lectureMetaIds[3]
       }];
 
-      lectures.forEach((obj: InfoNet) => {
-        InfoNetCollection.collection.insert(obj);
+      lectures.forEach((obj: InfoGraph) => {
+        InfoGraphCollection.collection.insert(obj);
       });
 
-      // privateCategory InfoNets meta info
-      const privateNetsMeta: InfoNetMeta[] = [{
+      // privateCategory InfoGraphs meta info
+      const privateGraphsMeta: InfoGraphMeta[] = [{
         name: 'Todo-Liste',
         description: 'Arbeit, Arbeit!',
         tags: [ 'Arbeit', 'Todos', 'Liste', 'Test', 'Test' ],
@@ -140,20 +140,20 @@ export class Main {
         categoryId: privateCategoryId
       }];
 
-      privateNetsMeta.forEach((obj: InfoNetMeta) => {
-        let id = InfoNetMetaCollection.collection.insert(obj)
+      privateGraphsMeta.forEach((obj: InfoGraphMeta) => {
+        let id = InfoGraphMetaCollection.collection.insert(obj)
         privateCategoryMetaIds.push(id);
       });
 
-      // lecture InfoNets
-      const privateNets: InfoNet[] = [{
+      // lecture InfoGraphs
+      const privateGraphs: InfoGraph[] = [{
         metaId: privateCategoryMetaIds[0]
       }, {
         metaId: privateCategoryMetaIds[1]
       }];
 
-      privateNets.forEach((obj: InfoNet) => {
-        InfoNetCollection.collection.insert(obj);
+      privateGraphs.forEach((obj: InfoGraph) => {
+        InfoGraphCollection.collection.insert(obj);
       });
     }
   }

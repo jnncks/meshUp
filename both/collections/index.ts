@@ -1,5 +1,5 @@
 // expose all existing collections
 export * from './users.collection';
-export * from './infonet.collection';
-export * from './infonetcategory.collection';
-export * from './infonetmeta.collection';
+export * from './info-graph.collection';
+export * from './info-graph-meta.collection';
+export * from './info-graph-category.collection';

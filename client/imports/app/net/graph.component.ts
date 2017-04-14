@@ -1,20 +1,20 @@
 import {
-  Component,
-  Input,
   AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
   OnChanges,
   SimpleChanges,
   ViewChild,
-  ElementRef,
-  ViewEncapsulation
+  ViewEncapsulation,
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import * as d3 from 'd3';
 
-import { InfoNet, Node, Relation } from '../../../../both/models';
+import { Edge, InfoGraph, Node } from '../../../../both/models';
 
-import template from './graph.component.html';
 import styleUrl from './graph.component.scss';
+import template from './graph.component.html';
 
 @Component({
   selector: 'meshup-graph',
@@ -24,14 +24,14 @@ import styleUrl from './graph.component.scss';
 })
 export class GraphComponent implements AfterViewInit, OnChanges {
   @ViewChild('graphContainer') private _graphContainer: ElementRef;
-  @Input() graphData: InfoNet;
+  @Input() graphData: InfoGraph;
   private _graph: any;
   private _width: number;
   private _height: number;
   //private _scale: number;
   //private _center: {x: number, y: number};
   private _testNodes: Node[];
-  private _testEdges: Relation[];
+  private _testEdges: Edge[];
 
   constructor() {
     this._testNodes = [

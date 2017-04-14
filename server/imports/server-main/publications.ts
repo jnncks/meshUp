@@ -4,17 +4,17 @@ import { Mongo } from 'meteor/mongo';
 // collections
 import {
   UsersCollection,
-  InfoNetCategoryCollection,
-  InfoNetMetaCollection,
-  InfoNetCollection
+  InfoGraphCategoryCollection,
+  InfoGraphMetaCollection,
+  InfoGraphCollection
 } from '../../../both/collections';
 
 // models
 import {
   User,
-  InfoNetCategory,
-  InfoNetMeta,
-  InfoNet
+  InfoGraphCategory,
+  InfoGraphMeta,
+  InfoGraph
 } from '../../../both/models';
 
 Meteor.publish('UsersCollection', function(): Mongo.Cursor<User> {
@@ -29,20 +29,20 @@ Meteor.publish('UsersCollection', function(): Mongo.Cursor<User> {
   });
 });
 
-Meteor.publish('InfoNetCategoryCollection', function(): Mongo.Cursor<InfoNetCategory> {
+Meteor.publish('InfoGraphCategoryCollection', function(): Mongo.Cursor<InfoGraphCategory> {
   if (!this.userId) {
     return;
   }
 
-  return InfoNetCategoryCollection.collection.find({});
+  return InfoGraphCategoryCollection.collection.find({});
 });
 
-Meteor.publish('InfoNetMetaCollection', function(): Mongo.Cursor<InfoNetMeta> {
+Meteor.publish('InfoGraphMetaCollection', function(): Mongo.Cursor<InfoGraphMeta> {
   if (!this.userId) {
     return;
   }
   
-  return InfoNetMetaCollection.collection.find({
+  return InfoGraphMetaCollection.collection.find({
     $or: [
       {owner: this.userId},
       {collaborators: this.userId}
@@ -50,10 +50,10 @@ Meteor.publish('InfoNetMetaCollection', function(): Mongo.Cursor<InfoNetMeta> {
   });
 });
 
- Meteor.publish('InfoNetCollection', function(): Mongo.Cursor<InfoNet> {
+ Meteor.publish('InfoGraphCollection', function(): Mongo.Cursor<InfoGraph> {
   if (!this.userId) {
     return;
   }
 
-  return InfoNetCollection.collection.find({});
+  return InfoGraphCollection.collection.find({});
  });

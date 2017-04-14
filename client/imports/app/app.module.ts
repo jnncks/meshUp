@@ -39,8 +39,8 @@ import {
   GraphComponent
 } from './net/graph.component';
 import {
-  InfoNetSettingsModal
-} from './shared/info-net-settings-modal.component';
+  InfoGraphSettingsModal
+} from './shared/info-graph-settings-modal.component';
 
 /* Services */
 import {
@@ -53,8 +53,8 @@ import {
   DashboardService
 } from './dashboard/dashboard.service';
 import {
-  InfoNetService
-} from './shared/info-net.service';
+  InfoGraphService
+} from './shared/info-graph.service';
 import {
   NetService
 } from './net/net.service';
@@ -81,7 +81,7 @@ import {
     MenuPanelComponent,
     ProfileButtonComponent,
     LogoutModalComponent,
-    InfoNetSettingsModal,
+    InfoGraphSettingsModal,
     UserMenuComponent,
     DashboardComponent,
     DashboardCategoryComponent,
@@ -100,7 +100,7 @@ import {
     AuthService,
     AuthGuard,
     DashboardService,
-    InfoNetService,
+    InfoGraphService,
     NetService
   ],
   /* Modules */
@@ -129,10 +129,10 @@ import {
         ]
       },
       {
-        path: 'net/:id',
+        path: 'graph/:id',
         component: NetComponent,
         data: {
-          name: 'Netview'
+          name: 'Graphview'
         },
         canActivate: [
           AuthGuard

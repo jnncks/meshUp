@@ -1,11 +1,11 @@
-<div class="modal" id="infoNetSettingsModal" *ngIf="!hidden" [@fadeInOut] (click)="cancel($event)">
+<div class="modal" id="infoGraphSettingsModal" *ngIf="!hidden" [@fadeInOut] (click)="cancel($event)">
 	<div class="modal__dialog">
 
 		<div class="modal__dialog__title" *ngIf="modalTitle">
       <h2>{{ modalTitle }}</h2>
     </div>
 
-    <form class="modal__dialog__form" [formGroup]="infoNetForm">
+    <form class="modal__dialog__form" [formGroup]="infoGraphForm">
       <label for="name">Titel</label>
       <input formControlName="name" name="name" type="text" placeholder="Titel des Informationsnetzes">
 

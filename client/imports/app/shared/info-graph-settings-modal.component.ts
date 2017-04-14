@@ -3,14 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { trigger, state, style, animate, transition, keyframes} from '@angular/core';
 
 import { Modal } from './modal.module';
-import { InfoNetService } from './info-net.service';
-import { InfoNetMeta } from '../../../../both/models';
+import { InfoGraphService } from './info-graph.service';
+import { InfoGraphMeta } from '../../../../both/models';
 
-import template from './info-net-settings-modal.component.html';
-import styleUrl from './info-net-settings-modal.component.scss';
+import template from './info-graph-settings-modal.component.html';
+import styleUrl from './info-graph-settings-modal.component.scss';
 
 @Component({
-  selector: 'info-net-settings-modal',
+  selector: 'info-graph-settings-modal',
   template,
   styles: [styleUrl],
   animations: [
@@ -31,22 +31,22 @@ import styleUrl from './info-net-settings-modal.component.scss';
   ]
 })
 @Modal()
-export class InfoNetSettingsModal implements OnInit{
+export class InfoGraphSettingsModal implements OnInit{
   // properties inherited from the ModalContainer
   destroy: Function;
   closeModal: Function;
   hidden: boolean;
 
   // custom properties
-  @Input() infoNet: InfoNetMeta;
+  @Input() infoGraph: InfoGraphMeta;
   modalTitle: string;
-  infoNetForm: FormGroup;
+  infoGraphForm: FormGroup;
   
-  constructor(@Inject(FormBuilder) fb: FormBuilder, private _infoNetService: InfoNetService) {
+  constructor(@Inject(FormBuilder) fb: FormBuilder, private _infoGraphService: InfoGraphService) {
     this.modalTitle = 'Informationsetz bearbeiten';
 
     // set up the form group
-    this.infoNetForm = fb.group({
+    this.infoGraphForm = fb.group({
       name: ['', Validators.required],
       description: '',
       tags: ''
@@ -56,17 +56,17 @@ export class InfoNetSettingsModal implements OnInit{
   }
 
   /**
-   * Populates the input fields with the infoNetMeta data passed to the input.
+   * Populates the input fields with the infoGraphMeta data passed to the input.
    */
   ngOnInit() {
-    this.infoNetForm.patchValue({
-      name: this.infoNet.name,
-      description: this.infoNet.description
+    this.infoGraphForm.patchValue({
+      name: this.infoGraph.name,
+      description: this.infoGraph.description
     });
 
-    if (this.infoNet.tags) {
-      this.infoNetForm.patchValue({
-        tags: this.infoNet.tags.join(', ')
+    if (this.infoGraph.tags) {
+      this.infoGraphForm.patchValue({
+        tags: this.infoGraph.tags.join(', ')
       });
     }
     
@@ -77,17 +77,17 @@ export class InfoNetSettingsModal implements OnInit{
    * Saves the form data if anything has changed and closes the modal.
    */
   save(): void {
-    if (this.infoNetForm.dirty) {
-      let infoNetUpdate: InfoNetMeta = {
-        ...this.infoNet,
-        name: this.infoNetForm.get('name').value.trim(),
-        description: this.infoNetForm.get('description').value.trim(),
-        tags: this.infoNetForm.get('tags').value.split(',')
+    if (this.infoGraphForm.dirty) {
+      let infoGraphUpdate: InfoGraphMeta = {
+        ...this.infoGraph,
+        name: this.infoGraphForm.get('name').value.trim(),
+        description: this.infoGraphForm.get('description').value.trim(),
+        tags: this.infoGraphForm.get('tags').value.split(',')
                 .map((tag) => tag.trim()),
         lastUpdated: new Date()
       }
 
-      this._infoNetService.updateInfoNetMeta(infoNetUpdate);
+      this._infoGraphService.updateInfoGraphMeta(infoGraphUpdate);
     }
 
     this.closeModal();
@@ -106,21 +106,21 @@ export class InfoNetSettingsModal implements OnInit{
    */
   cancel(event?: Event): void {
     if (event &&
-      event.target['id'] === 'infoNetSettingsModal' &&
-      this.infoNetForm.dirty) {
-        let name = this.infoNetForm.get('name').value.trim();
-        let description = this.infoNetForm.get('description').value.trim();
-        let tags = this.infoNetForm.get('tags').value.trim();
+      event.target['id'] === 'infoGraphSettingsModal' &&
+      this.infoGraphForm.dirty) {
+        let name = this.infoGraphForm.get('name').value.trim();
+        let description = this.infoGraphForm.get('description').value.trim();
+        let tags = this.infoGraphForm.get('tags').value.trim();
 
-        if (name != this.infoNet.name ||
-          description != this.infoNet.description ||
-          (!this.infoNet.tags && tags) ||
-          (this.infoNet.tags && tags != this.infoNet.tags.join(', '))) {
+        if (name != this.infoGraph.name ||
+          description != this.infoGraph.description ||
+          (!this.infoGraph.tags && tags) ||
+          (this.infoGraph.tags && tags != this.infoGraph.tags.join(', '))) {
             // at least one value differs from the original data and not only
             // by leading or trailing whitespaces, don't close the modal!
             return; // TODO: open a warning modal
       }
-    } else if (event && event.target['id'] !== 'infoNetSettingsModal') {
+    } else if (event && event.target['id'] !== 'infoGraphSettingsModal') {
       return; // a click from the modal itself, don't close the modal
     }
 

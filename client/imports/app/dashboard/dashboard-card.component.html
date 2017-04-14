@@ -1,23 +1,23 @@
 <div class="card">
   <div class="card__content">
     <h3 class="card__content__title">
-      {{ infoNet.name }}
-      <svg class="card__content__title__settings-icon" *ngIf="infoNet.owner === user._id" (click)="openSettingsModal(infoNet)">
+      {{ infoGraph.name }}
+      <svg class="card__content__title__settings-icon" *ngIf="user && infoGraph.owner === user._id" (click)="openSettingsModal(infoGraph)">
         <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_settings_24px" />
       </svg>
     </h3>
     <p class="card__content__subtitle">
-      von {{ getUserName(infoNet.owner) | async }}
+      von {{ getUserName(infoGraph.owner) | async }}
       <br>
-      letzte Änderung am {{ infoNet.lastUpdated | date: 'd.MM.yyyy' }}
-      um {{ infoNet.lastUpdated | date: 'H:mm'}}
+      letzte Änderung am {{ infoGraph.lastUpdated | date: 'd.MM.yyyy' }}
+      um {{ infoGraph.lastUpdated | date: 'H:mm'}}
     </p>
-    <p>{{ infoNet.description }}</p>
+    <p>{{ infoGraph.description }}</p>
     <div class="card__content__tags">
       <p><strong>Tags:</strong></p>
       <p *ngIf="tags">
         {{ tags | arrayToList }}<!-- no whitespace
-     --><span *ngIf="infoNet.tags && tags.length < infoNet.tags.length"><!-- no whitespace
+     --><span *ngIf="infoGraph.tags && tags.length < infoGraph.tags.length"><!-- no whitespace
        -->, …&ensp;
           <strong class="card__content__tags__toggle"  (click)="toggleMoreTags()">alle Tags anzeigen</strong>
         </span>
@@ -32,6 +32,6 @@
     </div>
   </div>
   <div class="card__buttons">
-    <button class="card__buttons__button" (click)="viewNet()">betrachten</button>
+    <button class="card__buttons__button" (click)="viewGraph()">betrachten</button>
   </div>
 </div>

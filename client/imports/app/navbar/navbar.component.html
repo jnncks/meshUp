@@ -9,5 +9,5 @@
       <a routerLink="{{ page.path }}">{{ page.data.name }}</a>
     </li>
   </ul>
-  <user-menu></user-menu>
+  <user-menu [visible]="isLoggedIn()"></user-menu>
 </div>

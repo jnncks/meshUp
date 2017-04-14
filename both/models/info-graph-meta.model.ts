@@ -1,6 +1,6 @@
-import { InfoNet, InfoNetCategory, User } from './';
+import { InfoGraph, InfoGraphCategory, User } from './';
 
-export interface InfoNetMeta {
+export interface InfoGraphMeta {
   _id?: Mongo.ObjectID;
   name: string;
   description?: string;

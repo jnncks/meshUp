@@ -6,12 +6,12 @@ import { Meteor } from 'meteor/meteor';
 import { DashboardService } from './dashboard.service';
 import { ModalService } from '../shared/modal.module';
 
-import { InfoNetSettingsModal } from '../shared/info-net-settings-modal.component';
+import { InfoGraphSettingsModal } from '../shared/info-graph-settings-modal.component';
 
-import { InfoNetMeta } from '../../../../both/models';
+import { InfoGraphMeta } from '../../../../both/models';
 
 import {
-  InfoNetMetaCollection
+  InfoGraphMetaCollection
 } from '../../../../both/collections';
 
 import template from './dashboard-card.component.html';
@@ -24,7 +24,7 @@ import styleUrl from './dashboard-card.component.scss';
 })
 export class DashboardCardComponent implements OnChanges {
   user: Meteor.User;
-  @Input() infoNet: InfoNetMeta;
+  @Input() infoGraph: InfoGraphMeta;
   tags: string[];
 
   constructor(private _router: Router, private _dashboardService: DashboardService, private _modalService: ModalService) {
@@ -33,24 +33,24 @@ export class DashboardCardComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.infoNet && changes.infoNet.currentValue.tags)
-      this.tags = changes.infoNet.currentValue.tags.slice(0,5);
+    if (changes.infoGraph && changes.infoGraph.currentValue.tags)
+      this.tags = changes.infoGraph.currentValue.tags.slice(0,5);
   }
 
-  deleteNet(infoNet: InfoNetMeta): void {
-    let number = this._dashboardService.deleteInfoNet(infoNet);
+  deleteGraph(infoGraph: InfoGraphMeta): void {
+    let number = this._dashboardService.deleteInfoGraph(infoGraph);
   }
 
-  viewNet(infoNet: InfoNetMeta = this.infoNet): void {
-    this._router.navigate(['/net', infoNet._id]);
+  viewGraph(infoGraph: InfoGraphMeta = this.infoGraph): void {
+    this._router.navigate(['/graph', infoGraph._id]);
   }
 
   /**
    * Opens a confirmation modal to prevent accidental logout actions.
    */
-  openSettingsModal(infoNet: InfoNetMeta): void {
-    this._modalService.create(InfoNetSettingsModal, {
-      infoNet: infoNet
+  openSettingsModal(infoGraph: InfoGraphMeta): void {
+    this._modalService.create(InfoGraphSettingsModal, {
+      infoGraph: infoGraph
     });
   }
 
@@ -62,8 +62,8 @@ export class DashboardCardComponent implements OnChanges {
   }
 
   toggleMoreTags() {
-    if (this.tags.length < this.infoNet.tags.length) {
-      this.tags = this.infoNet.tags; // insert all tags
+    if (this.tags.length < this.infoGraph.tags.length) {
+      this.tags = this.infoGraph.tags; // insert all tags
     } else {
       this.tags = this.tags.slice(0,5); // keep only the first 5 tags
     }

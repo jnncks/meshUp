@@ -5,11 +5,11 @@ import { Meteor } from 'meteor/meteor';
 
 import { DashboardService } from './dashboard.service';
 
-import { InfoNetMeta, InfoNetCategory } from '../../../../both/models';
+import { InfoGraphMeta, InfoGraphCategory } from '../../../../both/models';
 
 import {
-  InfoNetMetaCollection,
-  InfoNetCategoryCollection
+  InfoGraphMetaCollection,
+  InfoGraphCategoryCollection
 } from '../../../../both/collections';
 
 import template from './dashboard.component.html';
@@ -24,7 +24,7 @@ export class DashboardComponent implements OnInit {
   title: string;
   greeting: string;
   user: Meteor.User;
-  categories: Observable<InfoNetCategory[]>;
+  categories: Observable<InfoGraphCategory[]>;
 
   constructor(private _router: Router, private _dashboardService: DashboardService) {
     this.title = 'Home';
@@ -33,11 +33,11 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    // get the categories and their contents (InfoNetMeta elements)
-    this.categories = this._dashboardService.getInfoNetCategories().zone();
+    // get the categories and their contents (InfoGraphMeta elements)
+    this.categories = this._dashboardService.getInfoGraphCategories().zone();
   }
 
-  deleteCategory(category: InfoNetCategory): void {
+  deleteCategory(category: InfoGraphCategory): void {
     let number = this._dashboardService.deleteCategory(category);
   }
 
