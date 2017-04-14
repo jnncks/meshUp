@@ -45,7 +45,6 @@ Meteor.methods({
           'The ID of the supplied infoGraphMeta does not exist');
       }
 
-      console.log(infoGraphMeta._id)
       InfoGraphMetaCollection.update({ _id: infoGraphMeta._id }, infoGraphMeta, (err) => {
         throw new Meteor.Error(err);
       });

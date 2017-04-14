@@ -29,15 +29,16 @@
       justify-content: space-between;
       font-size: 1.25em;
       font-weight: 600;
-      margin-top: 0.67em;
-      margin-bottom: 0.67em;
+      margin-top: .67em;
+      margin-bottom: .67em;
 
       &__settings-icon {
-        flex-basis: 1em;
+        flex-basis: 1.25em;
         flex-grow: 0;
         flex-shrink: 0;
-        height: 1em;
-        width: 1em;
+        height: 1.25em;
+        width: 1.254em;
+        transform: translate(0, -.125em);
         fill: $primary-text-color;
 
         &:hover {
@@ -49,7 +50,7 @@
 
     &__subtitle {
       color: $secondary-text-color;
-      font-size: 0.75em;
+      font-size: .75em;
       font-weight: 500;
       font-style: italic;
       margin-top: 1em;
@@ -61,7 +62,7 @@
       flex-direction: row;
       align-items: flex-start;
       color: $secondary-text-color;
-      font-size: 0.75em;
+      font-size: .75em;
       font-weight: 500;
       margin-top: 1em;
       margin-bottom: 1em;

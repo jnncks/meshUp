@@ -31,12 +31,15 @@ export class DashboardService {
 
     // merge streams of categories and their contents
     this._categories = InfoGraphCategoryCollection
-      .find({})
+      .find({}, { sort: [['name', 'asc'], ['description', 'asc']] })
       .mergeMap((categories: InfoGraphCategory[]) => {
         return Observable.combineLatest(
           ...categories.map((category: InfoGraphCategory) =>
             InfoGraphMetaCollection
-              .find({categoryId: category._id})
+              .find(
+                {categoryId: category._id},
+                { sort: [['name', 'asc'], ['lastUpdated', 'desc']] }
+              )
               .startWith(null)
               .map(infoGraphMetas => {
                 if (infoGraphMetas) category.items = infoGraphMetas;
