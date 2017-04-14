@@ -22,6 +22,36 @@ const nonEmptyString = Match.Where((str) => {
 });
 
 Meteor.methods({
+  updateInfoNetMeta(infoNetMeta: InfoNetMeta): void {
+    if (!this.userId) {
+      throw new Meteor.Error('unauthorized',
+        'User must be logged in to update meta information of infoNets');
+    }
+
+    if (infoNetMeta) {
+      check(infoNetMeta._id, nonEmptyString);
+
+      if (infoNetMeta.owner !== this.userId) {
+        throw new Meteor.Error('no-permission',
+          'The user has no permission to update the infoNet meta information');
+      }
+
+      const infoNetMetaExists = !!InfoNetMetaCollection.find({
+        _id: infoNetMeta._id
+      }).count();
+
+      if (!infoNetMetaExists) {
+        throw new Meteor.Error('infoNet-non-existent',
+          'The ID of the supplied InfoNetMeta does not exist');
+      }
+
+      console.log(infoNetMeta._id)
+      InfoNetMetaCollection.update({ _id: infoNetMeta._id }, infoNetMeta, (err) => {
+        throw new Meteor.Error(err);
+      });
+    }
+  },
+
   deleteInfoNetCategory(categoryId: Mongo.ObjectID): void {
     check(categoryId, nonEmptyString);
 

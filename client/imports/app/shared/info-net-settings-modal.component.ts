@@ -1,11 +1,9 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { trigger, state, style, animate, transition, keyframes} from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import 'rxjs/add/operator/debounceTime';
 
 import { Modal } from './modal.module';
-
+import { InfoNetService } from './info-net.service';
 import { InfoNetMeta } from '../../../../both/models';
 
 import template from './info-net-settings-modal.component.html';
@@ -34,16 +32,20 @@ import styleUrl from './info-net-settings-modal.component.scss';
 })
 @Modal()
 export class InfoNetSettingsModal implements OnInit{
+  // properties inherited from the ModalContainer
   destroy: Function;
   closeModal: Function;
   hidden: boolean;
+
+  // custom properties
   @Input() infoNet: InfoNetMeta;
   modalTitle: string;
   infoNetForm: FormGroup;
-
   
-  constructor(@Inject(FormBuilder) fb: FormBuilder) {
+  constructor(@Inject(FormBuilder) fb: FormBuilder, private _infoNetService: InfoNetService) {
     this.modalTitle = 'Informationsetz bearbeiten';
+
+    // set up the form group
     this.infoNetForm = fb.group({
       name: ['', Validators.required],
       description: '',
@@ -53,6 +55,9 @@ export class InfoNetSettingsModal implements OnInit{
     // TODO: collaborators
   }
 
+  /**
+   * Populates the input fields with the infoNetMeta data passed to the input.
+   */
   ngOnInit() {
     this.infoNetForm.patchValue({
       name: this.infoNet.name,
@@ -64,18 +69,44 @@ export class InfoNetSettingsModal implements OnInit{
         tags: this.infoNet.tags.join(', ')
       });
     }
-      
-    //this.collaborators = this.infoNetInput.collaborators
+    
+    // TODO: collaborators
   }
 
-  save() {
+  /**
+   * Saves the form data if anything has changed and closes the modal.
+   */
+  save(): void {
+    if (this.infoNetForm.dirty) {
+      let infoNetUpdate: InfoNetMeta = {
+        ...this.infoNet,
+        name: this.infoNetForm.get('name').value.trim(),
+        description: this.infoNetForm.get('description').value.trim(),
+        tags: this.infoNetForm.get('tags').value.split(',')
+                .map((tag) => tag.trim()),
+        lastUpdated: new Date()
+      }
+
+      this._infoNetService.updateInfoNetMeta(infoNetUpdate);
+    }
+
     this.closeModal();
-    this.destroy();
   }
 
-  cancel(event): void {
+  /**
+   * Closes the modal without saving the data, unless the form data has been
+   * changed by the user. Leading and trailing whitespaces added by the user
+   * are not taken into account.
+   * 
+   * Depending on the click source, the DOM Event should be passed to the
+   * method to check whether the click originated from the backdrop or from
+   * the actual modal itself.
+   * 
+   * @param  {Event} [event] The event for determining the click target.
+   */
+  cancel(event?: Event): void {
     if (event &&
-      event.srcElement.id === 'infoNetSettingsModal' &&
+      event.target['id'] === 'infoNetSettingsModal' &&
       this.infoNetForm.dirty) {
         let name = this.infoNetForm.get('name').value.trim();
         let description = this.infoNetForm.get('description').value.trim();
@@ -89,10 +120,10 @@ export class InfoNetSettingsModal implements OnInit{
             // by leading or trailing whitespaces, don't close the modal!
             return; // TODO: open a warning modal
       }
-    } else if (event && event.srcElement.id !== 'infoNetSettingsModal') {
+    } else if (event && event.target['id'] !== 'infoNetSettingsModal') {
       return; // a click from the modal itself, don't close the modal
     }
 
     this.closeModal();
   }
-  }
+}

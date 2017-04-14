@@ -53,6 +53,9 @@ import {
   DashboardService
 } from './dashboard/dashboard.service';
 import {
+  InfoNetService
+} from './shared/info-net.service';
+import {
   NetService
 } from './net/net.service';
 
@@ -97,6 +100,7 @@ import {
     AuthService,
     AuthGuard,
     DashboardService,
+    InfoNetService,
     NetService
   ],
   /* Modules */

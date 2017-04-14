@@ -29,7 +29,7 @@
   &__dialog {
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 4 * #{$navbar-height});
+    max-height: calc(100vh - 3 * #{$navbar-height});
     min-height: 10vh;
     width: 25rem;
     max-width: 25rem;

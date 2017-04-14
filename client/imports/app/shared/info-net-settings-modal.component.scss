@@ -29,9 +29,10 @@
   &__dialog {
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 4 * #{$navbar-height});
+    max-height: calc(100vh - 3 * #{$navbar-height});
     min-height: 10vh;
-    max-width: 100%;
+    width: 100%;
+    max-width: 45rem;
     z-index: 999;
     @include card-padding;
     background-color: $card-background-color;
@@ -43,18 +44,15 @@
       max-height: calc(100vh - 2 * #{$navbar-height})
     }
 
-    @include for-size(desktop-up) {
-      max-width: 55rem;
-    }
-
     @include for-size(big-desktop-up) {
-      max-width: 65rem;
+      max-width: 60rem;
     }
 
     &__form {
       display: flex;
       flex-direction: column;
       margin-bottom: 2rem;
+      min-height: 4rem;
       overflow-y: auto;
 
       label,
@@ -89,6 +87,7 @@
       }
 
       textarea {
+        min-height: calc(1.6em + 1rem);
         resize: vertical;
       }
     }
