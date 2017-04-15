@@ -47,6 +47,11 @@ export class InfoGraphCreationModalComponent implements OnInit{
   infoGraphForm: FormGroup;
   nonEmptyString: RegExp = /(\w+\s*)+/;
   
+  /**
+   * @constructor
+   * @param  {FormBuilder} fb
+   * @param  {InfoGraphService} _infoGraphService
+   */
   constructor(@Inject(FormBuilder) fb: FormBuilder,
     private _infoGraphService: InfoGraphService) {
       this.modalTitle = 'Neues Informationsetz erstellen';
@@ -67,8 +72,11 @@ export class InfoGraphCreationModalComponent implements OnInit{
   }
 
   /**
-   * Gets all available infoGraphCategories and populates the selected category
-   * with the category of the modal input.
+   * Gets all available infoGraphCategories and populates the selected
+   * category with the category of the modal input after the component
+   * has been instantiated.
+   * 
+   * @method ngOnInit
    */
   ngOnInit() {
     this.categories = this._infoGraphService.getInfoGraphCategories();
@@ -101,16 +109,34 @@ export class InfoGraphCreationModalComponent implements OnInit{
   }
 
   /**
-   * Saves the form data if anything has changed and closes the modal.
+   * Stores the new infoGraph in the different collections:
+   *   1. Creates a new category document if necessery.
+   *   2. Creates the infoGraphMeta document.
+   *   3. Creates the infoGraph document.
+   * Subsequently, closes the modal and navigates (TODO!) to the graphView.
+   * 
+   * @method save
    */
   save(): void {
-    // TODO: handle existing categories
-    this._infoGraphService.createNewCategory({
-      name: String(this.infoGraphForm.get('newCategory').value).trim(),
-      description: '',
-      owner: Meteor.userId()
-    })
-    .concatMap((categoryId: Mongo.ObjectID) => {
+    let catId: Observable<Mongo.ObjectID>;
+
+    // determine whether a new category document must be created
+    if (this.infoGraphForm.get('category').value._id === 'NEW_CATEGORY') {
+      // create a new category document and pass an Observable of the ID to catId
+      catId =  this._infoGraphService.createNewCategory({
+        name: String(this.infoGraphForm.get('newCategory').value).trim(),
+        description: '',
+        owner: Meteor.userId()
+      });
+    } else {
+      // pass an Observable of the ID of the existing category to catId
+      catId =  Observable.of(this.infoGraphForm.get('category').value._id);
+    }
+
+    // pass the category's ID to the new infoGraphMeta document
+    catId
+      .concatMap((categoryId: Mongo.ObjectID) => {
+      // create a new infoGraphMeta and return an Observable of its ID
       return this._infoGraphService.createNewInfoGraphMeta({
         name: String(this.infoGraphForm.get('name').value).trim(),
         description: String(this.infoGraphForm.get('description').value).trim(),
@@ -123,28 +149,30 @@ export class InfoGraphCreationModalComponent implements OnInit{
         lastUpdated: new Date()
       });
     })
+
+    // pass the infoGraphMeta's ID to the new infoGraph document
     .concatMap((metaId: Mongo.ObjectID) => {
+      // create a new infoGraph and return an Observable of its ID
       return this._infoGraphService.createNewInfoGraph({
         metaId: metaId
       });
     })
     .subscribe((graphId: Mongo.ObjectID) => {
-      // navigate to the graph view
-      console.log(graphId);
-    })
+      // TODO: navigate to the graph view
+    });
     
     this.closeModal();
   }
 
   /**
    * Closes the modal without saving the data, unless the form data has been
-   * changed by the user. Leading and trailing whitespaces added by the user
-   * are not taken into account.
+   * changed by the user.
    * 
    * Depending on the click source, the DOM Event should be passed to the
    * method to check whether the click originated from the backdrop or from
    * the actual modal itself.
    * 
+   * @method cancel
    * @param  {Event} [event] The event for determining the click target.
    */
   cancel(event?: Event): void {
