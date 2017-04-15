@@ -31,7 +31,7 @@ import styleUrl from './info-graph-settings-modal.component.scss';
   ]
 })
 @Modal()
-export class InfoGraphSettingsModal implements OnInit{
+export class InfoGraphSettingsModalComponent implements OnInit{
   // properties inherited from the ModalContainer
   destroy: Function;
   closeModal: Function;

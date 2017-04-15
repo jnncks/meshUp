@@ -40,8 +40,11 @@ import {
   GraphComponent
 } from './net/graph.component';
 import {
-  InfoGraphSettingsModal
+  InfoGraphSettingsModalComponent
 } from './shared/info-graph-settings-modal.component';
+import {
+  InfoGraphCreationModalComponent
+} from './shared/info-graph-creation-modal.component';
 
 /* Services */
 import {
@@ -82,7 +85,8 @@ import {
     MenuPanelComponent,
     ProfileButtonComponent,
     LogoutModalComponent,
-    InfoGraphSettingsModal,
+    InfoGraphSettingsModalComponent,
+    InfoGraphCreationModalComponent,
     UserMenuComponent,
     DashboardComponent,
     DashboardCategoryComponent,

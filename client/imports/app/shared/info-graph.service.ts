@@ -24,12 +24,52 @@ export class InfoGraphService {
   }
 
   /**
+   * Returns all available categories.
+   * 
+   * @returns Observable
+   */
+  getInfoGraphCategories(): Observable<InfoGraphCategory[]> {
+    return InfoGraphCategoryCollection
+      .find({}, { sort: ['name', 'asc'] }).zone();
+  }
+
+  createNewCategory(category: InfoGraphCategory): Observable<Mongo.ObjectID> {
+    return MeteorObservable.call('createInfoGraphCategory', category)
+      .zone()
+      .map((id: Mongo.ObjectID) => {
+          return id;
+       }, (err: Error) => {
+          this._handleError(err);
+       });
+  }
+
+  createNewInfoGraphMeta(meta: InfoGraphMeta): Observable<Mongo.ObjectID> {
+    return MeteorObservable.call('createInfoGraphMeta', meta)
+      .zone()
+      .map((res: Mongo.ObjectID) => {
+          return res;
+       }, (err: Error) => {
+          this._handleError(err);
+       });
+  }
+
+  createNewInfoGraph(graph: InfoGraph): Observable<Mongo.ObjectID> {
+    return MeteorObservable.call('createInfoGraph', graph)
+      .zone()
+      .map((res: Mongo.ObjectID) => {
+          return res;
+       }, (err: Error) => {
+          this._handleError(err);
+       });
+  }
+
+  /**
    * Updates InfoGraphMeta data by calling the server's update method.
    * 
    * @param  {InfoGraphMeta} infoGraphMeta The updated InfoGraphMeta element.
    */
-  updateInfoGraphMeta(infoGraphMeta: InfoGraphMeta) {
-    MeteorObservable.call('updateInfoGraphMeta', infoGraphMeta)
+  updateInfoGraphMeta(meta: InfoGraphMeta): void {
+    MeteorObservable.call('updateInfoGraphMeta', meta)
       .zone()
       .subscribe({
         error: (e: Error) => {
@@ -37,7 +77,7 @@ export class InfoGraphService {
             this._handleError(e);
           }
         }
-    });
+      });
   }
 
   /**

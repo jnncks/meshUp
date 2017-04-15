@@ -100,7 +100,7 @@ export class DashboardService {
     });
   }
 
-  public getUserName(userId): Observable<User> {
+  public getUserName(userId): Observable<string> {
     return Observable.from(
       UsersCollection.find(
         {_id: userId},

@@ -1,4 +1,4 @@
-<div class="modal" id="infoGraphSettingsModal" *ngIf="!hidden" [@fadeInOut] (click)="cancel($event)">
+<div class="modal" id="infoGraphCreationModal" *ngIf="!hidden" [@fadeInOut] (click)="cancel($event)">
 	<div class="modal__dialog">
 
 		<div class="modal__dialog__title" *ngIf="modalTitle">
@@ -13,6 +13,15 @@
       <textarea formControlName="description" name="description" placeholder="Beschreibung des Informationsnetzes" rows="4">
       </textarea>
 
+      <label for="category">Kategorie</label>
+      <select formControlName="category" name="category" [(ngModel)]="selectedCategory">
+        <option [ngValue]="{_id: 'NEW_CATEGORY'}">neue Kategorie erstellen</option>
+        <option *ngFor="let item of categories | async" [ngValue]="item">{{item.name}}</option>
+      </select>
+
+      <label *ngIf="selectedCategory && selectedCategory._id === 'NEW_CATEGORY'" for="newCategory">Neue Kategorie</label>
+      <input *ngIf="selectedCategory && selectedCategory._id === 'NEW_CATEGORY'" formControlName="newCategory" name="newCategory" type="text" placeholder="Name der neuen Kategorie">
+
       <label for="tags">Tags (durch Kommata getrennt)</label>
       <textarea formControlName="tags" name="tags" placeholder="Tags für das Informationsnetz" rows="3">
       </textarea>
@@ -20,7 +29,7 @@
 
   	<div class="modal__dialog__buttons">
     	<button class="modal__dialog__buttons__button" (click)="cancel()">abbrechen</button>
-   		<button class="modal__dialog__buttons__button" (click)="save()">Änderungen speichern</button>
+   		<button class="modal__dialog__buttons__button" (click)="save()" [disabled]="infoGraphForm.invalid">Änderungen speichern</button>
   	</div>
 
   </div>

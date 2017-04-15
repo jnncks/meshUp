@@ -1,4 +1,4 @@
-<div class="category" *ngIf="user && category">
+<div class="category" *ngIf="user">
   <h2 class="category__title">{{ category.name }}
     <svg class="category__title__settings-icon" *ngIf="category.owner === user._id">
       <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_settings_24px" />
@@ -8,5 +8,7 @@
   <div class="category__cards">
     <dashboard-card *ngFor="let card of category.items" [infoGraph]="card">
     </dashboard-card>
+    <dashboard-new-graph [categoryId]="category._id">
+    </dashboard-new-graph>
   </div>
 </div>

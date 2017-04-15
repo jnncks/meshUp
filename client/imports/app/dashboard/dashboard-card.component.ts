@@ -6,7 +6,7 @@ import { Meteor } from 'meteor/meteor';
 import { DashboardService } from './dashboard.service';
 import { ModalService } from '../shared/modal.module';
 
-import { InfoGraphSettingsModal } from '../shared/info-graph-settings-modal.component';
+import { InfoGraphSettingsModalComponent } from '../shared/info-graph-settings-modal.component';
 
 import { InfoGraphMeta } from '../../../../both/models';
 
@@ -49,7 +49,7 @@ export class DashboardCardComponent implements OnChanges {
    * Opens a confirmation modal to prevent accidental logout actions.
    */
   openSettingsModal(infoGraph: InfoGraphMeta): void {
-    this._modalService.create(InfoGraphSettingsModal, {
+    this._modalService.create(InfoGraphSettingsModalComponent, {
       infoGraph: infoGraph
     });
   }

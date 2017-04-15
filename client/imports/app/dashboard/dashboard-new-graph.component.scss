@@ -1,0 +1,51 @@
+@import '../../../styles/colors';
+@import '../../../styles/cards';
+@import '../../../styles/buttons';
+@import '../../../styles/mixins';
+
+.card {
+  flex-shrink: 1;
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  height: calc(100% - 2rem);
+  background-color: $card-background-color;
+  @include card-padding;
+  @include card-border;
+  @include card-shadow;
+  color: $secondary-text-color;
+  @include transition($properties: (color, border-color));
+  text-align: center;
+
+  &:hover {
+    cursor: pointer;
+    @include card-border($width: 2px, $color: $primary-color-light);
+    @include card-padding($offset: 1px);
+    color: $primary-color;
+
+    .card__content__icon {
+      fill: $primary-color-light;
+    }
+  } 
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+
+    &__icon {
+      width: 10em;
+      height: 10em;
+      fill: $divider-color;
+      @include transition($properties: fill);
+    }
+  }
+}
