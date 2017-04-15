@@ -84,7 +84,8 @@ Meteor.methods({
       }
 
       InfoGraphMetaCollection.collection.update({ _id: infoGraphMeta._id }, infoGraphMeta, (err) => {
-        throw new Meteor.Error(err);
+        if (err)
+          throw new Meteor.Error(err);
       });
     }
   },
