@@ -1,5 +1,9 @@
-import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
+import {
+  Meteor
+} from 'meteor/meteor';
+import {
+  Mongo
+} from 'meteor/mongo';
 
 // collections
 import {
@@ -17,11 +21,11 @@ import {
   InfoGraph
 } from '../../../both/models';
 
-Meteor.publish('UsersCollection', function(): Mongo.Cursor<User> {
+Meteor.publish('UsersCollection', function (): Mongo.Cursor < User > {
   if (!this.userId) {
     return;
   }
- 
+
   return UsersCollection.collection.find({}, {
     fields: {
       profile: 1
@@ -29,7 +33,7 @@ Meteor.publish('UsersCollection', function(): Mongo.Cursor<User> {
   });
 });
 
-Meteor.publish('InfoGraphCategoryCollection', function(): Mongo.Cursor<InfoGraphCategory> {
+Meteor.publish('InfoGraphCategoryCollection', function (): Mongo.Cursor < InfoGraphCategory > {
   if (!this.userId) {
     return;
   }
@@ -37,23 +41,30 @@ Meteor.publish('InfoGraphCategoryCollection', function(): Mongo.Cursor<InfoGraph
   return InfoGraphCategoryCollection.collection.find({});
 });
 
-Meteor.publish('InfoGraphMetaCollection', function(): Mongo.Cursor<InfoGraphMeta> {
+Meteor.publish('InfoGraphMetaCollection', function (): Mongo.Cursor < InfoGraphMeta > {
   if (!this.userId) {
     return;
   }
-  
+
   return InfoGraphMetaCollection.collection.find({
-    $or: [
-      {owner: this.userId},
-      {collaborators: this.userId}
+    $or: [{
+        owner: this.userId
+      },
+      {
+        collaborators: this.userId
+      }
     ]
   });
 });
 
- Meteor.publish('InfoGraphCollection', function(): Mongo.Cursor<InfoGraph> {
+Meteor.publish('InfoGraphCollection', function (graphId): Mongo.Cursor < InfoGraph > {
   if (!this.userId) {
     return;
   }
 
-  return InfoGraphCollection.collection.find({});
- });
+  return InfoGraphCollection.collection.find({
+    metaId: graphId
+  }, {
+    limit: 1
+  });
+});

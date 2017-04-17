@@ -8,31 +8,43 @@ import { InfoGraphCollection, InfoGraphMetaCollection } from '../../../../both/c
 
 /**
  * The NetService provides InfoGraph und InfoGraphMeta data.
- * Also, it allows removal of collection entries.
  */
 @Injectable()
 export class NetService {
-  private _Graph: Observable<InfoGraph>;
+  private _graph: Observable<InfoGraph>;
 
   constructor() {
-    // subscribe to the collections
-    MeteorObservable.subscribe('InfoGraphCollection').subscribe();
-    MeteorObservable.subscribe('InfoGraphMetaCollection').subscribe();
-
+    // TODO: actually use this collection for infoGraph settings
+    //MeteorObservable.subscribe('InfoGraphMetaCollection');
   }
 
   /**
-   * Returns an Observable of the requested InfoGraph which is selected via
-   * the given ID of the related InfoGraphMeta element.
+   * Subscribes to the InfoGraphCollection and assigns an Observable of the
+   * requested infoGraph to the private graph object.
    * 
-   * @param  {string} GraphMetaId the id of the related InfoGraphMeta item
-   * 
+   * @param  {string} graphMetaId the id of the related InfoGraphMeta item
+   */
+  public setCurrentInfoGraph(graphMetaId): void {
+    // set up the subscriptions
+    const graphs = MeteorObservable.subscribe('InfoGraphCollection', graphMetaId);
+    const autorun = MeteorObservable.autorun();
+
+    // update the data whenever there was a change
+    Observable.merge(graphs, autorun).subscribe(() => {
+      this._graph = InfoGraphCollection.find({metaId: graphMetaId}, {limit: 1})
+        .map(infoGraph => infoGraph[0]); // Observable of the first and only element
+    })
+   
+  }
+
+  /**
+   * Returns the private graph object, an Observable of the currently
+   * assigned infoGraph.
+   *
    * @returns Observable<InfoGraph>
    */
-  public getInfoGraph(GraphMetaId: string): Observable<InfoGraph> {
-    this._Graph = InfoGraphCollection.find({metaId: GraphMetaId}, {limit: 1})
-      .map(infoGraph => infoGraph[0]); // map the first element to an Observable
-    return this._Graph;
+  public getCurrentInfoGraph(): Observable<InfoGraph> {
+    return this._graph;
   }
 
   /**

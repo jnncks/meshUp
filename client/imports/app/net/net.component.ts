@@ -24,7 +24,8 @@ export class NetComponent implements OnInit {
   ngOnInit() {
     this._route.params
       .subscribe((params: Params) => {
-        this._graph = this._netService.getInfoGraph(params.id).zone();
+        this._netService.setCurrentInfoGraph(params.id);
+        this._graph = this._netService.getCurrentInfoGraph().zone();
       });
   }
 }
