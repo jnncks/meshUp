@@ -16,11 +16,11 @@ import { InfoGraphCollection, InfoGraphMetaCollection, InfoGraphCategoryCollecti
 export class InfoGraphService {
 
   constructor() {
-    // subscribe to the collections
-    MeteorObservable.subscribe('InfoGraphCategoryCollection').subscribe();
-    MeteorObservable.subscribe('InfoGraphMetaCollection').subscribe();
-    MeteorObservable.subscribe('InfoGraphCollection').subscribe();
-    MeteorObservable.subscribe('UsersCollection').subscribe();
+    // setup the subscriptions
+    const categories = MeteorObservable.subscribe('InfoGraphCategoryCollection');
+    const metas = MeteorObservable.subscribe('InfoGraphMetaCollection');
+    const graphs = MeteorObservable.subscribe('InfoGraphCollection');
+    const users = MeteorObservable.subscribe('UsersCollection');
   }
 
   /**

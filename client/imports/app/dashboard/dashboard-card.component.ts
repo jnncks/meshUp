@@ -10,10 +10,6 @@ import { InfoGraphSettingsModalComponent } from '../shared/info-graph-settings-m
 
 import { InfoGraphMeta } from '../../../../both/models';
 
-import {
-  InfoGraphMetaCollection
-} from '../../../../both/collections';
-
 import template from './dashboard-card.component.html';
 import styleUrl from './dashboard-card.component.scss';
 

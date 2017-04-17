@@ -24,32 +24,37 @@ export class DashboardService {
   private _categories: Observable<InfoGraphCategory[]>;
 
   constructor() {
-    // subscribe to the collections
-    MeteorObservable.subscribe('InfoGraphCategoryCollection').subscribe();
-    MeteorObservable.subscribe('InfoGraphMetaCollection').subscribe();
-    MeteorObservable.subscribe('UsersCollection').subscribe();
+    // set up the subscriptions
+    const categories = MeteorObservable.subscribe('InfoGraphCategoryCollection');
+    const metas = MeteorObservable.subscribe('InfoGraphMetaCollection');
+    const users = MeteorObservable.subscribe('UsersCollection');
+    const autorun = MeteorObservable.autorun();
 
-    // merge streams of categories and their contents
-    this._categories = InfoGraphCategoryCollection
-      .find({}, { sort: [['name', 'asc'], ['description', 'asc']] })
-      .mergeMap((categories: InfoGraphCategory[]) => {
-        return Observable.combineLatest(
-          ...categories.map((category: InfoGraphCategory) =>
-            InfoGraphMetaCollection
-              .find(
-                {categoryId: category._id},
-                { sort: [['name', 'asc'], ['lastUpdated', 'desc']] }
+    // update the data whenever there is a change in one of the subscriptions
+    Observable.merge(categories, metas, users, autorun)
+      .subscribe(() => {
+        // merge streams of categories and their contents
+        this._categories = InfoGraphCategoryCollection
+          .find({}, { sort: [['name', 'asc'], ['description', 'asc']] })
+          .mergeMap((categories: InfoGraphCategory[]) => {
+            return Observable.combineLatest(
+              ...categories.map((category: InfoGraphCategory) =>
+                InfoGraphMetaCollection
+                  .find(
+                    {categoryId: category._id},
+                    { sort: [['name', 'asc'], ['lastUpdated', 'desc']] }
+                  )
+                  .startWith(null)
+                  .map(infoGraphMetas => {
+                    if (infoGraphMetas) category.items = infoGraphMetas;
+                    return category;
+                  })
               )
-              .startWith(null)
-              .map(infoGraphMetas => {
-                if (infoGraphMetas) category.items = infoGraphMetas;
-                return category;
-              })
-          )
-        )
-      })
-       // debounce data (and thus UI) updates for better performance;
-      .debounce(() => Observable.interval(50));
+            )
+          })
+          // debounce data (and thus UI) updates for better performance;
+          .debounce(() => Observable.interval(50));
+      });
   }
 
   /**

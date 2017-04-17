@@ -7,10 +7,6 @@ import { DashboardService } from './dashboard.service';
 
 import { InfoGraphCategory } from '../../../../both/models';
 
-import {
-  InfoGraphMetaCollection
-} from '../../../../both/collections';
-
 import template from './dashboard-category.component.html';
 import styleUrl from './dashboard-category.component.scss';
 

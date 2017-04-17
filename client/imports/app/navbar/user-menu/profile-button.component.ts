@@ -14,12 +14,11 @@ import styleUrl from './profile-button.component.scss';
 })
 export class ProfileButtonComponent implements OnChanges {
   @Input() toggled: boolean;
-  autorunComputation: Tracker.Computation;
-  user: Meteor.User;
-  userId: string;
-  isLoggingIn: boolean;
-  isLoggedIn: boolean;
-  loggedOut: boolean;
+  private _autorunComputation: Tracker.Computation;
+  private _user: Meteor.User;
+  private _userId: string;
+  private _isLoggingIn: boolean;
+  public isLoggedIn: boolean;
 
   constructor(private _zone: NgZone) {
     this._initAutorun();
@@ -31,7 +30,7 @@ export class ProfileButtonComponent implements OnChanges {
   }
 
   getUserName(): string {
-    let user: Meteor.User = this.user;
+    let user: Meteor.User = this._user;
 
     if (!user)
       return '';
@@ -49,7 +48,7 @@ export class ProfileButtonComponent implements OnChanges {
   }
 
   getUserImage(): string {
-    let user: Meteor.User = this.user;
+    let user: Meteor.User = this._user;
 
     if (!user)
       return '';
@@ -61,11 +60,11 @@ export class ProfileButtonComponent implements OnChanges {
   }
 
   _initAutorun() {
-    this.autorunComputation = Tracker.autorun(() => {
+    this._autorunComputation = Tracker.autorun(() => {
       this._zone.run(() => {
-        this.user = Meteor.user();
-        this.userId = Meteor.userId();
-        this.isLoggingIn = Meteor.loggingIn();
+        this._user = Meteor.user();
+        this._userId = Meteor.userId();
+        this._isLoggingIn = Meteor.loggingIn();
         this.isLoggedIn = !!Meteor.user();
       })
     });
