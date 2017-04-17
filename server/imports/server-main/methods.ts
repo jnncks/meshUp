@@ -22,7 +22,7 @@ const nonEmptyString = Match.Where((str) => {
 });
 
 Meteor.methods({
-  createInfoGraphCategory(category: InfoGraphCategory): Mongo.ObjectID {
+  createInfoGraphCategory(category: InfoGraphCategory): string {
     if (!this.userId) {
       throw new Meteor.Error('unauthorized',
         'User must be logged in to create infoGraphCategorie documents');
@@ -42,7 +42,7 @@ Meteor.methods({
     }
   },
 
-  createInfoGraphMeta(meta: InfoGraphMeta): Mongo.ObjectID {
+  createInfoGraphMeta(meta: InfoGraphMeta): string {
     if (!this.userId) {
       throw new Meteor.Error('unauthorized',
         'User must be logged in create InfoGraphMeta documents');
@@ -51,7 +51,7 @@ Meteor.methods({
     return InfoGraphMetaCollection.collection.insert(meta);
   },
 
-  createInfoGraph(graph: InfoGraph): Mongo.ObjectID {
+  createInfoGraph(graph: InfoGraph): string {
     if (!this.userId) {
       throw new Meteor.Error('unauthorized',
         'User must be logged in create InfoGraph documents');
@@ -90,7 +90,7 @@ Meteor.methods({
     }
   },
 
-  deleteInfoGraphCategory(categoryId: Mongo.ObjectID): void {
+  deleteInfoGraphCategory(categoryId: string): void {
     check(categoryId, nonEmptyString);
 
     const categoryExists = !!InfoGraphCategoryCollection.collection.find(categoryId).count();
@@ -104,7 +104,7 @@ Meteor.methods({
   },
 
   // currently, this handles only InfoGraphMeta entries!
-  deleteInfoGraph(infoGraphId: Mongo.ObjectID): void {
+  deleteInfoGraph(infoGraphId: string): void {
     check(infoGraphId, nonEmptyString);
 
     const InfoGraphExists = !!InfoGraphMetaCollection.collection.find(infoGraphId).count();

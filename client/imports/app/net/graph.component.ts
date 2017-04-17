@@ -35,32 +35,32 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
   constructor() {
     this._testNodes = [
-      { _id: '1', x: 100, y: 100, title: 'test0', content: '', creationDate: new Date(), lastEdited: new Date() },
-      { _id: '2', x: 930, y: 102, title: 'test1', content: '', creationDate: new Date(), lastEdited: new Date() },
-      { _id: '3', x: 1200, y: 849, title: 'test2', content: '', creationDate: new Date(), lastEdited: new Date() },
-      { _id: '4', x: 293, y: 467, title: 'test3', content: '', creationDate: new Date(), lastEdited: new Date() },
-      { _id: '5', x: 945, y: 586, title: 'tes4t', content: '', creationDate: new Date(), lastEdited: new Date() },
-      { _id: '6', x: 396, y: 298, title: 'test5', content: '', creationDate: new Date(), lastEdited: new Date() },
-      { _id: '7', x: 869, y: 1293, title: 'test6', content: '', creationDate: new Date(), lastEdited: new Date() },
-      { _id: '8', x: 764, y: 231, title: 'test7', content: '', creationDate: new Date(), lastEdited: new Date() },
-      { _id: '9', x: 1293, y: 1053, title: 'test8', content: '', creationDate: new Date(), lastEdited: new Date() },
-      { _id: '10', x: 1409, y: 434, title: 'test9', content: '', creationDate: new Date(), lastEdited: new Date() },
-      { _id: '11', x: 678, y: 874, title: 'test10', content: '', creationDate: new Date(), lastEdited: new Date() }
+      { _id: '1', x: 100, y: 100, title: 'test0', content: '', created: new Date(), lastUpdated: new Date() },
+      { _id: '2', x: 930, y: 102, title: 'test1', content: '', created: new Date(), lastUpdated: new Date() },
+      { _id: '3', x: 1200, y: 849, title: 'test2', content: '', created: new Date(), lastUpdated: new Date() },
+      { _id: '4', x: 293, y: 467, title: 'test3', content: '', created: new Date(), lastUpdated: new Date() },
+      { _id: '5', x: 945, y: 586, title: 'tes4t', content: '', created: new Date(), lastUpdated: new Date() },
+      { _id: '6', x: 396, y: 298, title: 'test5', content: '', created: new Date(), lastUpdated: new Date() },
+      { _id: '7', x: 869, y: 1293, title: 'test6', content: '', created: new Date(), lastUpdated: new Date() },
+      { _id: '8', x: 764, y: 231, title: 'test7', content: '', created: new Date(), lastUpdated: new Date() },
+      { _id: '9', x: 1293, y: 1053, title: 'test8', content: '', created: new Date(), lastUpdated: new Date() },
+      { _id: '10', x: 1409, y: 434, title: 'test9', content: '', created: new Date(), lastUpdated: new Date() },
+      { _id: '11', x: 678, y: 874, title: 'test10', content: '', created: new Date(), lastUpdated: new Date() }
     ];
 
     this._testEdges = [
-      { source: '1', target: '6', creationDate: new Date() },
-      { source: '1', target: '9', creationDate: new Date() },
-      { source: '2', target: '3', creationDate: new Date() },
-      { source: '6', target: '2', creationDate: new Date() },
-      { source: '7', target: '8', creationDate: new Date() },
-      { source: '10', target: '1', creationDate: new Date() },
-      { source: '11', target: '4', creationDate: new Date() },
-      { source: '5', target: '8', creationDate: new Date() },
-      { source: '9', target: '10', creationDate: new Date() },
-      { source: '10', target: '3', creationDate: new Date() },
-      { source: '11', target: '6', creationDate: new Date() },
-      { source: '7', target: '4', creationDate: new Date() },
+      { source: '1', target: '6', created: new Date() },
+      { source: '1', target: '9', created: new Date() },
+      { source: '2', target: '3', created: new Date() },
+      { source: '6', target: '2', created: new Date() },
+      { source: '7', target: '8', created: new Date() },
+      { source: '10', target: '1', created: new Date() },
+      { source: '11', target: '4', created: new Date() },
+      { source: '5', target: '8', created: new Date() },
+      { source: '9', target: '10', created: new Date() },
+      { source: '10', target: '3', created: new Date() },
+      { source: '11', target: '6', created: new Date() },
+      { source: '7', target: '4', created: new Date() },
     ];
   }
 
@@ -132,10 +132,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .enter()
       .append('line')
       .attr('class', 'edge')
-      .attr('x1', d => this._testNodes[Number(d.source) - 1].x)
-      .attr('y1', d => this._testNodes[Number(d.source) - 1].y)
-      .attr('x2', d => this._testNodes[Number(d.target) - 1].x)
-      .attr('y2', d => this._testNodes[Number(d.target) - 1].y);
+      .attr('x1', d => Number(this._testNodes[Number(d.source) - 1].x))
+      .attr('y1', d => Number(this._testNodes[Number(d.source) - 1].y))
+      .attr('x2', d => Number(this._testNodes[Number(d.target) - 1].x))
+      .attr('y2', d => Number(this._testNodes[Number(d.target) - 1].y));
      
      // draw the nodes
      g.selectAll('circle .node')
@@ -144,8 +144,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .append('svg:circle')
       .attr('class', 'node')
       .attr('id', d => String(d._id))
-      .attr('cx', d => d.x)
-      .attr('cy', d => d.y)
+      .attr('cx', d => Number(d.x))
+      .attr('cy', d => Number(d.y))
       .attr('r', '75px');
   }
 

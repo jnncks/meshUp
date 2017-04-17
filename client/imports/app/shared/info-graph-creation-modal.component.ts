@@ -118,7 +118,7 @@ export class InfoGraphCreationModalComponent implements OnInit{
    * @method save
    */
   save(): void {
-    let catId: Observable<Mongo.ObjectID>;
+    let catId: Observable<string>;
 
     // determine whether a new category document must be created
     if (this.infoGraphForm.get('category').value._id === 'NEW_CATEGORY') {
@@ -135,7 +135,7 @@ export class InfoGraphCreationModalComponent implements OnInit{
 
     // pass the category's ID to the new infoGraphMeta document
     catId
-      .concatMap((categoryId: Mongo.ObjectID) => {
+      .concatMap((categoryId: string) => {
       // create a new infoGraphMeta and return an Observable of its ID
       return this._infoGraphService.createNewInfoGraphMeta({
         name: String(this.infoGraphForm.get('name').value).trim(),
@@ -151,13 +151,13 @@ export class InfoGraphCreationModalComponent implements OnInit{
     })
 
     // pass the infoGraphMeta's ID to the new infoGraph document
-    .concatMap((metaId: Mongo.ObjectID) => {
+    .concatMap((metaId: string) => {
       // create a new infoGraph and return an Observable of its ID
       return this._infoGraphService.createNewInfoGraph({
         metaId: metaId
       });
     })
-    .subscribe((graphId: Mongo.ObjectID) => {
+    .subscribe((graphId: string) => {
       // TODO: navigate to the graph view
     });
     

@@ -25,11 +25,11 @@ export class NetService {
    * Returns an Observable of the requested InfoGraph which is selected via
    * the given ID of the related InfoGraphMeta element.
    * 
-   * @param  {Mongo.ObjectID} GraphMetaId the id of the related InfoGraphMeta item
+   * @param  {string} GraphMetaId the id of the related InfoGraphMeta item
    * 
    * @returns Observable<InfoGraph>
    */
-  public getInfoGraph(GraphMetaId: Mongo.ObjectID): Observable<InfoGraph> {
+  public getInfoGraph(GraphMetaId: string): Observable<InfoGraph> {
     this._Graph = InfoGraphCollection.find({metaId: GraphMetaId}, {limit: 1})
       .map(infoGraph => infoGraph[0]); // map the first element to an Observable
     return this._Graph;

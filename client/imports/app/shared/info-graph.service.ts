@@ -33,30 +33,30 @@ export class InfoGraphService {
       .find({}, { sort: ['name', 'asc'] }).zone();
   }
 
-  createNewCategory(category: InfoGraphCategory): Observable<Mongo.ObjectID> {
+  createNewCategory(category: InfoGraphCategory): Observable<string> {
     return MeteorObservable.call('createInfoGraphCategory', category)
       .zone()
-      .map((id: Mongo.ObjectID) => {
+      .map((id: string) => {
           return id;
        }, (err: Error) => {
           this._handleError(err);
        });
   }
 
-  createNewInfoGraphMeta(meta: InfoGraphMeta): Observable<Mongo.ObjectID> {
+  createNewInfoGraphMeta(meta: InfoGraphMeta): Observable<string> {
     return MeteorObservable.call('createInfoGraphMeta', meta)
       .zone()
-      .map((res: Mongo.ObjectID) => {
+      .map((res: string) => {
           return res;
        }, (err: Error) => {
           this._handleError(err);
        });
   }
 
-  createNewInfoGraph(graph: InfoGraph): Observable<Mongo.ObjectID> {
+  createNewInfoGraph(graph: InfoGraph): Observable<string> {
     return MeteorObservable.call('createInfoGraph', graph)
       .zone()
-      .map((res: Mongo.ObjectID) => {
+      .map((res: string) => {
           return res;
        }, (err: Error) => {
           this._handleError(err);

@@ -1,7 +1,7 @@
 import { InfoGraph, InfoGraphCategory, User } from './';
 
 export interface InfoGraphMeta {
-  _id?: Mongo.ObjectID;
+  _id?: string;
   name: string;
   description?: string;
   tags?: string[];
@@ -9,5 +9,5 @@ export interface InfoGraphMeta {
   collaborators: string[];
   created: Date;
   lastUpdated: Date;
-  categoryId?: Mongo.ObjectID;
+  categoryId?: string;
 }

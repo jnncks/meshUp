@@ -1,8 +1,8 @@
 import { InfoGraphMeta } from './';
 
 export interface InfoGraphCategory {
-  _id?: Mongo.ObjectID;
-  owner?: Mongo.ObjectID;
+  _id?: string;
+  owner?: string;
   name: string;
   description: string;
   items?: InfoGraphMeta[];

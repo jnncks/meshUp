@@ -16,7 +16,7 @@ import styleUrl from './net.component.scss';
 })
 export class NetComponent implements OnInit {
   private _graph: Observable<InfoGraph>;
-  private _graphMetaId: Mongo.ObjectID;
+  private _graphMetaId: string;
 
   constructor(private _route: ActivatedRoute, private _router: Router, private _netService: NetService) {
   }

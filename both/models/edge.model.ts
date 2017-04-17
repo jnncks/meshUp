@@ -1,10 +1,10 @@
 import { Node } from './node.model';
 
 export interface Edge {
-  _id?: Mongo.ObjectID;
+  _id?: string;
   type?: string;
-  source: Mongo.ObjectID;
-  target: Mongo.ObjectID;
-  creator?: Mongo.ObjectID;
-  creationDate: Date;
+  source: string;
+  target: string;
+  creator?: string;
+  created: Date;
 }
