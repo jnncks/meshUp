@@ -34,11 +34,8 @@ import {
   DashboardNewGraphComponent
 } from './dashboard';
 import {
-  NetComponent
-} from './net/net.component';
-import {
-  GraphComponent
-} from './net/graph.component';
+  GraphViewComponent, GraphComponent
+} from './graph-view';
 import {
   InfoGraphSettingsModalComponent
 } from './shared/info-graph-settings-modal.component';
@@ -60,8 +57,8 @@ import {
   InfoGraphService
 } from './shared/info-graph.service';
 import {
-  NetService
-} from './net/net.service';
+  GraphViewService
+} from './graph-view';
 
 /* Pipes */
 import {
@@ -92,7 +89,7 @@ import {
     DashboardCategoryComponent,
     DashboardCardComponent,
     DashboardNewGraphComponent,
-    NetComponent,
+    GraphViewComponent,
     GraphComponent,
     RouteWithNamePipe,
     ArrayToListPipe
@@ -107,7 +104,7 @@ import {
     AuthGuard,
     DashboardService,
     InfoGraphService,
-    NetService
+    GraphViewService
   ],
   /* Modules */
   imports: [
@@ -136,7 +133,7 @@ import {
       },
       {
         path: 'graph/:id',
-        component: NetComponent,
+        component: GraphViewComponent,
         data: {
           name: 'Graphview'
         },

@@ -10,7 +10,7 @@ import { InfoGraphCollection, InfoGraphMetaCollection } from '../../../../both/c
  * The NetService provides InfoGraph und InfoGraphMeta data.
  */
 @Injectable()
-export class NetService {
+export class GraphViewService {
   private _graph: Observable<InfoGraph>;
 
   constructor() {
