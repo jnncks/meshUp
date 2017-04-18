@@ -31,8 +31,9 @@ export class GraphViewService {
 
     // update the data whenever there was a change
     Observable.merge(graphs, autorun).subscribe(() => {
+      // Observable of the first and only element
       this._graph = InfoGraphCollection.find({metaId: graphMetaId}, {limit: 1})
-        .map(infoGraph => infoGraph[0]); // Observable of the first and only element
+        .map(graph => graph[0]);
     })
    
   }

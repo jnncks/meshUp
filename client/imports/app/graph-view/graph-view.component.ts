@@ -28,7 +28,7 @@ export class GraphViewComponent implements OnInit {
     this._route.params
       .subscribe((params: Params) => {
         this._graphViewService.setCurrentInfoGraph(params.id);
-        this._graph = this._graphViewService.getCurrentInfoGraph().zone();
+        this._graph = this._graphViewService.getCurrentInfoGraph();
       });
   }
 }
