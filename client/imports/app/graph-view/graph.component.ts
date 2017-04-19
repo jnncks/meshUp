@@ -40,7 +40,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     this.initGraph();
 
     if (this.graphData) {
-      this.updateGraph();
+      this.updateGraph(true);
     }
 
     // handle window resize events
@@ -79,10 +79,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         .on('zoom', () => this.handleZoom())
     );
 
-    svg.call(
-      d3.drag()
-        .on('drag', () => this.handleDrag())
-    );
+    // somehow d3.zoom() does also dragging
+    // svg.call(
+    //   d3.drag()
+    //     .on('drag', () => this.handleDrag())
+    // );
 
   }
 
@@ -91,14 +92,16 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * Appends new nodes and edges or updates properties of existing nodes.
    * 
    * @method updateGraph
+   * @param  {boolean} centerDrawing Whether the drawing should be centered.
    */
-  updateGraph(): void {
+  updateGraph(centerDrawing: boolean = false): void {
 
     if (!this.graphData || !this.graphData.nodes || !this.graphData.nodes.length)
       return;
 
     let element = this._graphContainer.nativeElement;
-    let g = d3.select(element).select('svg').select('g.graph');
+    let svg = d3.select(element).select('svg');
+    let g = svg.select('g.graph');
 
     // draw the edges
     g.selectAll('.line')
@@ -141,6 +144,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('cx', (d: Node) => d.x)
       .attr('cy', (d: Node) => d.y)
       .attr('r', '75px');
+
+    if (centerDrawing) {
+      console.log(g);
+    }
   }
 
   /**
@@ -165,13 +172,34 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method handleZoom
    */
   handleZoom = () => {
-    let svg = d3.select(this._graphContainer.nativeElement)
-                .select('svg')
-                .select('g.graph');
+    let element: HTMLDivElement = this._graphContainer.nativeElement;
+    let containerWidth = element.offsetWidth;
+    let containerHeight = element.offsetHeight;
+
+    // our properly typed svg elements
+    let svg = d3.select(element).select<SVGElement>('svg');
+    let g = svg.select<SVGGElement>('g.graph');
+
+    // current transform params
     let transform = d3.event.transform;
-    svg.attr('transform', transform);
+    let t = transform;
+    let s = transform.k; // scale factor
+
+    // the bounding box of the graph group
+    let bbox = g.node().getBBox();
+
+    // calculate the translation so that the graph stays in the view
+    t.x = Math.max(
+            (-bbox.x * s - bbox.width * s + bbox.width / 3 * Math.sqrt(s)),
+            Math.min(t.x, containerWidth - bbox.width / 3 * Math.sqrt(s)));
+    t.y = Math.max(
+            (-bbox.y * s - bbox.height * s + bbox.height / 3 * Math.sqrt(s)),
+            Math.min(t.y, containerHeight - bbox.height / 3 * Math.sqrt(s)));
+
+    g.attr('transform', t);
   }
 
+  // TODO: unused!
   /**
    * Handles drag callbacks: translates the graph group ('g.graph').
    * 
