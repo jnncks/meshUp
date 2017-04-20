@@ -7,10 +7,21 @@ import { Route } from '@angular/router';
  * e.g. `{ path: 'home', component: HomeComponent, data: { name: 'Home' } }`
  * will be kept in the array, whereas `{ path: '**', redirectTo: '/home' }`
  * will be filtered from the array.
-*/
+ * 
+ * @class RouteWithNamePipe
+ * @implements {PipeTransform}
+ */
 @Pipe({name: 'routeWithName'})
 export class RouteWithNamePipe implements PipeTransform {
-  transform(routes: Route[]) {
+
+  /**
+   * Filters the routes.
+   * 
+   * @method transform
+   * @param {Route[]} routes 
+   * @return {Route[]} The filtered routes.
+   */
+  transform(routes: Route[]): Route[] {
     return routes.filter((route) => route.data);
   }
 }

@@ -6,15 +6,20 @@ import { InfoGraph, InfoGraphMeta, InfoGraphCategory, User } from '../../../../b
 import { InfoGraphCollection, InfoGraphMetaCollection, InfoGraphCategoryCollection, UsersCollection } from '../../../../both/collections';
 
 /**
- * The InfoGraph service. [WIP]
- * 
  * Handles creation, renmoval and updating of InfoGraphCategory, InfoGraph and
  * InfoGraphMeta documents in the designated collections.
  * 
+ * @class InfoGraphService
  */
 @Injectable()
 export class InfoGraphService {
 
+  /**
+   * Creates an instance of the InfoGraphService.
+   * Prepares the subscriptions.
+   * 
+   * @constructor
+   */
   constructor() {
     // setup the subscriptions
     const categories = MeteorObservable.subscribe('InfoGraphCategoryCollection');
@@ -24,15 +29,23 @@ export class InfoGraphService {
   }
 
   /**
-   * Returns all available categories.
+   * Returns an Observable of all available categories.
    * 
-   * @returns Observable
+   * @method getInfoGraphCategories
+   * @return Observable<InfoGraphCategory[]>
    */
   getInfoGraphCategories(): Observable<InfoGraphCategory[]> {
     return InfoGraphCategoryCollection
       .find({}, { sort: ['name', 'asc'] }).zone();
   }
 
+  /**
+   * Creates a new category document and returns an Observable of its ID.
+   * 
+   * @method createNewCategory
+   * @param  {InfoGraphCategory} category The new category document.
+   * @return {Observable<string>} The document's ID.
+   */
   createNewCategory(category: InfoGraphCategory): Observable<string> {
     return MeteorObservable.call('createInfoGraphCategory', category)
       .zone()
@@ -43,6 +56,13 @@ export class InfoGraphService {
        });
   }
 
+  /**
+   * Creates a new infoGraphMeta document and returns an Observable of its ID.
+   * 
+   * @method createNewInfoGraphMeta
+   * @param  {InfoGraphMeta} meta The new infoGraphMeta document.
+   * @return {Observable<string>} The document's ID.
+   */
   createNewInfoGraphMeta(meta: InfoGraphMeta): Observable<string> {
     return MeteorObservable.call('createInfoGraphMeta', meta)
       .zone()
@@ -53,6 +73,13 @@ export class InfoGraphService {
        });
   }
 
+  /**
+   * Creates a new infoGraph document and returns an Observable of its ID.
+   * 
+   * @method createNewInfoGraph
+   * @param  {InfoGraph} graph The new infoGraph document.
+   * @return {Observable<string>} The document's ID.
+   */
   createNewInfoGraph(graph: InfoGraph): Observable<string> {
     return MeteorObservable.call('createInfoGraph', graph)
       .zone()
@@ -64,9 +91,10 @@ export class InfoGraphService {
   }
 
   /**
-   * Updates InfoGraphMeta data by calling the server's update method.
+   * Updates a InfoGraphMeta document by calling the server's update method.
    * 
-   * @param  {InfoGraphMeta} infoGraphMeta The updated InfoGraphMeta element.
+   * @method updateInfoGraphMeta
+   * @param  {InfoGraphMeta} meta The updated InfoGraphMeta document.
    */
   updateInfoGraphMeta(meta: InfoGraphMeta): void {
     MeteorObservable.call('updateInfoGraphMeta', meta)
@@ -82,9 +110,9 @@ export class InfoGraphService {
 
   /**
    * Handles errors.
-   * 
    * Currently, the errors are print in the console.
    * 
+   * @method _handleError
    * @param  {Error} e The error to handle.
    */
   private _handleError(e: Error): void {

@@ -9,8 +9,14 @@ import template from './login.component.html';
 import styleUrl from './login.component.scss';
 
 /**
+ * 
+ */
+/**
  * Displays an login form and navigates to the home page when the user is
  * is logged.
+ * 
+ * @class LoginComponent
+ * @implements {OnInit}
  */
 @Component({
   template,
@@ -22,10 +28,24 @@ export class LoginComponent implements OnInit {
   public user: string;
   public password: string;
 
+  /**
+   * Creates an instance of the LoginComponent.
+   * 
+   * @constructor
+   * @param {AuthService} _authService The AuthService.
+   * @param {Router} _router The Router.
+   */
   constructor(private _authService: AuthService, private _router: Router) {
   }
 
-  ngOnInit() {
+  /**
+   * Called when the component is initialized.
+   * Navigates to the dashboard if the user is logged in.
+   * Otherwise, sets up the different fields.
+   * 
+   * @method ngOnInit
+   */
+  ngOnInit(): void {
     // navigate to the homepage if the user is already logged in
     if (Meteor.user()) {
       this._router.navigateByUrl('home');
@@ -44,6 +64,7 @@ export class LoginComponent implements OnInit {
    * Logs the user in via the form data using the AuthService.
    * If successfully logged in, navigates to the home page.
    * 
+   * @method login
    * @param  {string} user the username or email
    * @param  {string} password the user's password
    */
@@ -60,7 +81,8 @@ export class LoginComponent implements OnInit {
   /**
    * Handles errors (currently by logging them to the console).
    * 
-   * @param  {Error} e
+   * @method handleError
+   * @param  {Error} e The error to handle.
    */
   handleError(e: Error): void {
     console.error(e);

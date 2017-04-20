@@ -14,15 +14,21 @@ import {
   UsersCollection
 } from '../../../../both/collections';
 
-
 /**
  * The DashboardService provides InfoGraphCategory und InfoGraphMeta data.
  * Also, it allows removal of collection entries.
+ * 
+ * @class DashboardService
  */
 @Injectable()
 export class DashboardService {
   private _categories: Observable<InfoGraphCategory[]>;
 
+  /**
+   * Creates an instance of the DashboardService.
+   * 
+   * @constructor
+   */
   constructor() {
     // set up the subscriptions
     const categories = MeteorObservable.subscribe('InfoGraphCategoryCollection');
@@ -61,7 +67,8 @@ export class DashboardService {
    * Returns an Observable for the aggregated streams of the categories
    * collections and the contents (InfoGraphMeta elements) of those categories.
    * 
-   * @returns Observable<InfoGraphCategory[]>
+   * @method getInfoGraphCategories
+   * @return Observable<InfoGraphCategory[]>
    */
   public getInfoGraphCategories(): Observable<InfoGraphCategory[]> {
     return this._categories;
@@ -70,11 +77,11 @@ export class DashboardService {
   /**
    * Removes the given infoGraphCategory but not its infoGraphs.
    * 
-   * TODO: Handle the infoGraphs!
-   * 
+   * @method deleteCategory
    * @param  {InfoGraphCategory} category The InfoGraphCategory to remove.
    */
   public deleteCategory(category: InfoGraphCategory): void {
+    // TODO: Handle the infoGraphs!
     MeteorObservable.call('deleteInfoGraphCategory', category._id)
       .zone()
       .subscribe({
@@ -89,11 +96,11 @@ export class DashboardService {
   /**
    * Removes the given InfoGraph from the InfoGraphCollection.
    * 
-   * TODO: Currently only removes the InfoGraphMeta entry!
-   * 
-   * @param  {InfoGraphMeta} infoGraph the InfoGraph to remove
+   * @method deleteInfoGraph
+   * @param  {InfoGraphMeta} infoGraph The InfoGraph to remove.
    */
   public deleteInfoGraph(infoGraph: InfoGraphMeta): void {
+    // TODO: Currently only removes the InfoGraphMeta entry!
     MeteorObservable.call('deleteInfoGraph', infoGraph._id)
       .zone()
       .subscribe({
@@ -105,7 +112,14 @@ export class DashboardService {
     });
   }
 
-  public getUserName(userId): Observable<string> {
+  /**
+   * Returns an Observable of the name of the user whose ID has been passed in.
+   * 
+   * @method getUserName
+   * @param  {string} userId The ID of the user whose name will be returned.
+   * @return {Observable<string>}
+   */
+  public getUserName(userId: string): Observable<string> {
     return Observable.from(
       UsersCollection.find(
         {_id: userId},
@@ -122,7 +136,8 @@ export class DashboardService {
   /**
    * Handles errors. Currently, the errors are print in the console.
    * 
-   * @param  {Error} e the error to handle
+   * @method _handleError
+   * @param  {Error} e The error to handle.
    */
   private _handleError(e: Error): void {
     console.error(e);

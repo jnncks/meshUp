@@ -11,8 +11,14 @@ import { InfoGraphCategory, InfoGraphMeta, InfoGraph } from '../../../../both/mo
 import template from './info-graph-creation-modal.component.html';
 import styleUrl from './info-graph-creation-modal.component.scss';
 
+/**
+ * A modal which allows creating a new infoGraph.
+ * 
+ * @class InfoGraphCreationModalComponent
+ * @implements {OnInit}
+ */
 @Component({
-  selector: 'info-graph-settings-modal',
+  selector: 'info-graph-creation-modal',
   template,
   styles: [styleUrl],
   animations: [
@@ -48,9 +54,11 @@ export class InfoGraphCreationModalComponent implements OnInit{
   nonEmptyString: RegExp = /(\w+\s*)+/;
   
   /**
+   * Creates an instance of InfoGraphCreationModalComponent.
+   * 
    * @constructor
-   * @param  {FormBuilder} fb
-   * @param  {InfoGraphService} _infoGraphService
+   * @param  {FormBuilder} fb The FormBuilder.
+   * @param  {InfoGraphService} _infoGraphService The InfoGraphService.
    */
   constructor(@Inject(FormBuilder) fb: FormBuilder,
     private _infoGraphService: InfoGraphService) {
@@ -72,13 +80,14 @@ export class InfoGraphCreationModalComponent implements OnInit{
   }
 
   /**
+   * Called when the component is initialized.
    * Gets all available infoGraphCategories and populates the selected
    * category with the category of the modal input after the component
    * has been instantiated.
    * 
    * @method ngOnInit
    */
-  ngOnInit() {
+  ngOnInit(): void {
     this.categories = this._infoGraphService.getInfoGraphCategories();
     this.categories
       .map(categories => {

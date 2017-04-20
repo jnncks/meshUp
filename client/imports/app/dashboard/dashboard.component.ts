@@ -10,6 +10,12 @@ import { InfoGraphMeta, InfoGraphCategory } from '../../../../both/models';
 import template from './dashboard.component.html';
 import styleUrl from './dashboard.component.scss';
 
+/**
+ * Groups the infoGraphs the user has access to in categories.
+ * 
+ * @class DashboardComponent
+ * @implements {OnInit}
+ */
 @Component({
   selector: 'dashboard',
   template,
@@ -21,21 +27,47 @@ export class DashboardComponent implements OnInit {
   user: Meteor.User;
   categories: Observable<InfoGraphCategory[]>;
 
+  /**
+   * Creates an instance of the DashboardComponent.
+   * 
+   * @param {Router} _router The Router.
+   * @param {DashboardService} _dashboardService The DashboardService.
+   */
   constructor(private _router: Router, private _dashboardService: DashboardService) {
     this.title = 'Home';
     this.greeting = 'Hallo und viel Spaß mit meshUp';
     this.user = Meteor.user();
   }
 
-  ngOnInit() {
+  /**
+   * Called when the component is initialized.
+   * Populates the categories with data from the server.
+   * 
+   * @method ngOnInit
+   */
+  ngOnInit(): void {
     // get the categories and their contents (InfoGraphMeta elements)
     this.categories = this._dashboardService.getInfoGraphCategories().zone();
   }
 
+  /**
+   * Deletes the supplied category.
+   * 
+   * @method deleteCategory
+   * @param {InfoGraphCategory} category The category to delete.
+   */
   deleteCategory(category: InfoGraphCategory): void {
-    let number = this._dashboardService.deleteCategory(category);
+    // TODO: handle the removal properly, e.g. change the category of
+    // the affected infoGraphMeta documents.
+    this._dashboardService.deleteCategory(category);
   }
 
+  /**
+   * Returns the name of the currently logged in user.
+   * 
+   * @method getUserName
+   * @return {string} The name of the currently logged in user.
+   */
   getUserName(): string {
     let user: Meteor.User = this.user;
 

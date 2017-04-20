@@ -10,7 +10,13 @@ import template from './graph-view.component.html';
 import styleUrl from './graph-view.component.scss';
 
 /**
- * The GraphViewComponent serves as a container for the GraphComponent.
+ * 
+ */
+/**
+ * Serves as a container for the GraphComponent.
+ * 
+ * @class GraphViewComponent
+ * @implements {OnInit}
  */
 @Component({
   selector: 'graph-view',
@@ -21,10 +27,23 @@ export class GraphViewComponent implements OnInit {
   private _graph: Observable<InfoGraph>;
   private _graphMetaId: string;
 
+  /**
+   * Creates an instance of the GraphViewComponent.
+   * 
+   * @param {ActivatedRoute} _route The currently active route.
+   * @param {Router} _router The Router.
+   * @param {GraphViewService} _graphViewService The GraphViewService.
+   */
   constructor(private _route: ActivatedRoute, private _router: Router, private _graphViewService: GraphViewService) {
   }
   
-  ngOnInit() {
+  /**
+   * Called when the component is initialized.
+   * Populates the _graph object.
+   * 
+   * @method ngOnInit
+   */
+  ngOnInit(): void {
     this._route.params
       .subscribe((params: Params) => {
         this._graphViewService.setCurrentInfoGraph(params.id);

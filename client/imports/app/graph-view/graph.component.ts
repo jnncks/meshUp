@@ -16,6 +16,16 @@ import { Edge, InfoGraph, Node } from '../../../../both/models';
 import styleUrl from './graph.component.scss';
 import template from './graph.component.html';
 
+/**
+ * Displays the graph via D3.js as a SVG group with both nodes and edges
+ * and allows different interactions with it.
+ * 
+ * The graph data is passed through the graphData input to the component.
+ * 
+ * @class GraphComponent
+ * @implements {AfterViewInit}
+ * @implements {OnChanges}
+ */
 @Component({
   selector: 'meshup-graph',
   template,
@@ -29,14 +39,26 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _width: number;
   private _height: number;
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
-  //private _center: {x: number, y: number};
-  private _testNodes: Node[];
-  private _testEdges: Edge[];
 
+  /**
+   * Creates an instance of the GraphComponent.
+   * 
+   * @constructor
+   */
   constructor() {
   }
 
-  ngAfterViewInit() {
+/**
+ * Called after the view has been initialized.
+ * Prepares the SVG element.
+ * 
+ * Note: This is important! The ViewChild _graphContainer can't be accessed
+ *       prior to this event. Therefore, this is the earliest point in time
+ *       where we can append our SVG element to the _graphContainer.
+ * 
+ * @method ngAfterViewInit
+ */
+  ngAfterViewInit(): void {
     this.initGraph();
 
     if (this.graphData) {
@@ -49,7 +71,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .subscribe(() => this.handleWindowResize());
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  /**
+   * Handles input changes:
+   * Currently, it only triggers an update of the graphData.
+   * 
+   * @method ngOnChanges
+   * @param  {SimpleChanges} changes An event of changed properties.
+   */
+  ngOnChanges(changes: SimpleChanges): void {
     this.updateGraph();
   }
 
@@ -60,7 +89,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * 
    * @method initGraph
    */
-  initGraph() {
+  initGraph(): void {
     let element = this._graphContainer.nativeElement;
     this._width = element.offsetWidth;
     this._height = element.offsetHeight;
@@ -74,7 +103,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // set up the zoom behavior on the svg element
     this._scale = d3.zoom()
-        .scaleExtent([0.05, 5])
+        .scaleExtent([0.1, 5])
         .on('zoom', () => this.handleZoom());
 
     svg.call(this._scale);
@@ -92,9 +121,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * Appends new nodes and edges or updates properties of existing nodes.
    * 
    * @method updateGraph
-   * @param  {boolean} centerDrawing Whether the drawing should be centered.
+   * @param  {boolean} centerGraph Whether the graph should be centered.
    */
-  updateGraph(centerDrawing: boolean = false): void {
+  updateGraph(centerGraph: boolean = false): void {
 
     if (!this.graphData || !this.graphData.nodes || !this.graphData.nodes.length)
       return;
@@ -145,7 +174,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('cy', (d: Node) => d.y)
       .attr('r', '75px');
 
-    if (centerDrawing) {
+    if (centerGraph) {
       this.fitContainer();
     }
   }
@@ -155,7 +184,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * 
    * @method fitContainer
    */
-  fitContainer() {
+  fitContainer(): void {
     let element = this._graphContainer.nativeElement;
     let svg = d3.select(element).select<SVGElement>('svg');
     let g = svg.select<SVGGElement>('g.graph');
@@ -163,29 +192,33 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // reset the transformation
     svg.call(this._scale.transform, d3.zoomIdentity)
 
+    // get boundaries of the container and the graph group
     let containerWidth = element.offsetWidth;
     let containerHeight = element.offsetHeight;
     let bbox = g.node().getBBox();
 
+    // calculate the scale
     const padding = 0.05; // 5 percent
     let scale = (1 - padding) * Math.min(
       containerWidth / bbox.width,
       containerHeight/ bbox.height
     );
 
+    // calculate the x and y offsets to center the graph
     let widthOffset =
       (containerWidth - bbox.width * scale)/2 - bbox.x * scale;
     let heightOffset =
       (containerHeight - bbox.height * scale)/2 - bbox.y * scale;
 
+    // put everything together and emit the event
     let t: d3.ZoomTransform = d3.zoomIdentity
       .translate(widthOffset, heightOffset).scale(scale);
-  
+
     svg.call(this._scale.transform, t);
   }
 
   /**
-   * Resizes the svg when the window has been resized.
+   * Resizes the SVG element when the window has been resized.
    * 
    * @method handleWindowResize
    */
@@ -206,33 +239,34 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method handleZoom
    */
   handleZoom = () => {
-    if (d3.event && d3.event.transform) {
-      let element: HTMLDivElement = this._graphContainer.nativeElement;
-      let containerWidth = element.offsetWidth;
-      let containerHeight = element.offsetHeight;
+    if (!d3.event  || !d3.event.transform)
+      return;
 
-      // our properly typed svg elements
-      let svg = d3.select(element).select<SVGElement>('svg');
-      let g = svg.select<SVGGElement>('g.graph');
+    let element: HTMLDivElement = this._graphContainer.nativeElement;
+    let containerWidth = element.offsetWidth;
+    let containerHeight = element.offsetHeight;
 
-      // the bounding box of the graph group
-      let bbox = g.node().getBBox();
+    // our properly typed SVG elements
+    let svg = d3.select(element).select<SVGElement>('svg');
+    let g = svg.select<SVGGElement>('g.graph');
 
-      // the requested transformation (t) and scale (s)
-      let t = d3.event.transform;
-      let s = t.k;
+    // the bounding box of the graph group
+    let bbox = g.node().getBBox();
 
-      // calculate the transformation so that the graph stays in the view
-      t.x = Math.max(
-              (-bbox.x * s - bbox.width * s + bbox.width / 3 * Math.sqrt(s)),
-              Math.min(t.x, containerWidth - bbox.width / 3 * Math.sqrt(s)));
-      t.y = Math.max(
-              (-bbox.y * s - bbox.height * s + bbox.height / 3 * Math.sqrt(s)),
-              Math.min(t.y, containerHeight - bbox.height / 3 * Math.sqrt(s)));
+    // the requested transformation (t) and scale (s)
+    let t = d3.event.transform;
+    let s = t.k;
+
+    // calculate the transformation so that the graph stays in the view
+    t.x = Math.max(
+            (-bbox.x * s - bbox.width * s + bbox.width / 3 * Math.sqrt(s)),
+            Math.min(t.x, containerWidth - bbox.width / 3 * Math.sqrt(s)));
+    t.y = Math.max(
+            (-bbox.y * s - bbox.height * s + bbox.height / 3 * Math.sqrt(s)),
+            Math.min(t.y, containerHeight - bbox.height / 3 * Math.sqrt(s)));
       
-      // update the transform attribute of the svg graph group
-      g.attr('transform', t);
-    }
+    // update the transform attribute of the SVG graph group
+    g.attr('transform', t);
   }
 
   // TODO: unused!

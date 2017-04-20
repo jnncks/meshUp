@@ -7,12 +7,19 @@ import { InfoGraphCollection, InfoGraphMetaCollection } from '../../../../both/c
 
 
 /**
- * The NetService provides InfoGraph und InfoGraphMeta data.
+ * Provides InfoGraph und InfoGraphMeta data.
+ * 
+ * @class GraphViewService
  */
 @Injectable()
 export class GraphViewService {
   private _graph: Observable<InfoGraph>;
 
+  /**
+   * Creates an instance of the GraphViewService.
+   * 
+   * @constructor
+   */
   constructor() {
     // TODO: actually use this collection for infoGraph settings
     //MeteorObservable.subscribe('InfoGraphMetaCollection');
@@ -22,7 +29,8 @@ export class GraphViewService {
    * Subscribes to the InfoGraphCollection and assigns an Observable of the
    * requested infoGraph to the private graph object.
    * 
-   * @param  {string} graphMetaId the id of the related InfoGraphMeta item
+   * @method setCurrentInfoGraph
+   * @param  {string} graphMetaId The ID of the related InfoGraphMeta document.
    */
   public setCurrentInfoGraph(graphMetaId): void {
     // set up the subscriptions
@@ -34,14 +42,14 @@ export class GraphViewService {
       // Observable of the first and only element
       this._graph = InfoGraphCollection.find({metaId: graphMetaId}, {limit: 1})
         .map(graph => graph[0]);
-    })
-   
+    });
   }
 
   /**
    * Returns the private graph object, an Observable of the currently
    * assigned infoGraph.
-   *
+   * 
+   * @method getCurrentInfoGraph
    * @returns Observable<InfoGraph>
    */
   public getCurrentInfoGraph(): Observable<InfoGraph> {
@@ -51,7 +59,8 @@ export class GraphViewService {
   /**
    * Handles errors. Currently, the errors are print in the console.
    * 
-   * @param  {Error} e the error to handle
+   * @method _handleError
+   * @param  {Error} e The error to handle.
    */
   private _handleError(e: Error): void {
     console.error(e);

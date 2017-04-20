@@ -7,6 +7,13 @@ import { Observable } from 'rxjs';
 import template from './profile-button.component.html';
 import styleUrl from './profile-button.component.scss';
 
+/**
+ * Displays a button with the user's profile image and name.
+ * Toggles the MenuPanel when clicked.
+ * 
+ * @class ProfileButtonComponent
+ * @implements {OnChanges}
+ */
 @Component({
   selector: 'profile-button',
   template,
@@ -20,15 +27,33 @@ export class ProfileButtonComponent implements OnChanges {
   private _isLoggingIn: boolean;
   public isLoggedIn: boolean;
 
+  /**
+   * Creates an instance of the ProfileButtonComponent.
+   * 
+   * @constructor
+   * @param {NgZone} _zone
+   */
   constructor(private _zone: NgZone) {
     this._initAutorun();
   }
 
+  /**
+   * Handles input changes.
+   * 
+   * @method ngOnChanges
+   * @param  {SimpleChanges} changes An event of changed properties.
+   */
   ngOnChanges(changes: SimpleChanges) {
     if (changes.toggled)
       this.toggled = changes.toggled.currentValue;
   }
 
+  /**
+   * Returns the name of the currently logged in user.
+   * 
+   * @method getUserName
+   * @return {string} The name of the currently logged in user.
+   */
   getUserName(): string {
     let user: Meteor.User = this._user;
 
@@ -47,6 +72,12 @@ export class ProfileButtonComponent implements OnChanges {
     return '';
   }
 
+  /**
+   * Returns an URL to the profile image of the currently logged in user.
+   * 
+   * @method getUserImage
+   * @returns {string} The URL of the user's profile image.
+   */
   getUserImage(): string {
     let user: Meteor.User = this._user;
 
@@ -59,7 +90,14 @@ export class ProfileButtonComponent implements OnChanges {
     return '';
   }
 
-  _initAutorun() {
+
+  /**
+   * Populates the private _user object with the user document
+   * of the currently logged in user.
+   * 
+   * @method _initAutorun
+   */
+  _initAutorun(): void {
     this._autorunComputation = Tracker.autorun(() => {
       this._zone.run(() => {
         this._user = Meteor.user();

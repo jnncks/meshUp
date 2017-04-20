@@ -9,6 +9,12 @@ import { InfoGraphMeta } from '../../../../both/models';
 import template from './info-graph-settings-modal.component.html';
 import styleUrl from './info-graph-settings-modal.component.scss';
 
+/**
+ * A modal which allows updating the settings of a infoGraph.
+ * 
+ * @class InfoGraphSettingsModalComponent
+ * @implements {OnInit}
+ */
 @Component({
   selector: 'info-graph-settings-modal',
   template,
@@ -42,6 +48,14 @@ export class InfoGraphSettingsModalComponent implements OnInit{
   modalTitle: string;
   infoGraphForm: FormGroup;
   
+  /**
+   * Creates an instance of the InfoGraphSettingsModalComponent.
+   * Initializes the form group.
+   * 
+   * @constructor
+   * @param {FormBuilder} fb The FormBuilder.
+   * @param {InfoGraphService} _infoGraphService The InfoGraphService.
+   */
   constructor(@Inject(FormBuilder) fb: FormBuilder, private _infoGraphService: InfoGraphService) {
     this.modalTitle = 'Informationsetz bearbeiten';
 
@@ -56,9 +70,12 @@ export class InfoGraphSettingsModalComponent implements OnInit{
   }
 
   /**
+   * Called when the component is initialized.
    * Populates the input fields with the infoGraphMeta data passed to the input.
+   * 
+   * @method ngOnInit
    */
-  ngOnInit() {
+  ngOnInit(): void {
     this.infoGraphForm.patchValue({
       name: this.infoGraph.name,
       description: this.infoGraph.description
@@ -75,6 +92,8 @@ export class InfoGraphSettingsModalComponent implements OnInit{
 
   /**
    * Saves the form data if anything has changed and closes the modal.
+   * 
+   * @method save
    */
   save(): void {
     if (this.infoGraphForm.dirty) {
@@ -102,6 +121,7 @@ export class InfoGraphSettingsModalComponent implements OnInit{
    * method to check whether the click originated from the backdrop or from
    * the actual modal itself.
    * 
+   * @method cancel
    * @param  {Event} [event] The event for determining the click target.
    */
   cancel(event?: Event): void {

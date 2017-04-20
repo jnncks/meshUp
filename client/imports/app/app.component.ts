@@ -8,6 +8,12 @@ import { ModalPlaceholderComponent } from './shared/modal.module';
 import template from './app.component.html';
 import styleUrl from './app.component.scss';
 
+/**
+ * The app.
+ * 
+ * @class AppComponent
+ * @implements {OnInit}
+ */
 @Component({
   selector: 'app',
   template,
@@ -17,6 +23,14 @@ export class AppComponent implements OnInit {
   pages: Route[];
   appName: string;
 
+  /**
+   * Creates an instance of AppComponent.
+   * 
+   * @constructor
+   * @param {Router} _router The Router
+   * @param {ActivatedRoute} _activatedRoute The ActivatedRoute.
+   * @param {Title} _titleService The TitleService.
+   */
   constructor(
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
@@ -25,6 +39,11 @@ export class AppComponent implements OnInit {
       this.appName = 'meshUp';
   }
 
+  /**
+   * Called when the component is initialized.
+   * 
+   * @method ngOnInit
+   */
   ngOnInit() {
     // set the page title on initilization
     this._titleService.setTitle(this.appName);
