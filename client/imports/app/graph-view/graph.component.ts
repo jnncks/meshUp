@@ -160,12 +160,15 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     let svg = d3.select(element).select<SVGElement>('svg');
     let g = svg.select<SVGGElement>('g.graph');
 
+    // reset the transformation
+    svg.call(this._scale.transform, d3.zoomIdentity)
+
     let containerWidth = element.offsetWidth;
     let containerHeight = element.offsetHeight;
     let bbox = g.node().getBBox();
 
-    const paddingFactor = 0.95;
-    let scale = paddingFactor * Math.min(
+    const padding = 0.05; // 5 percent
+    let scale = (1 - padding) * Math.min(
       containerWidth / bbox.width,
       containerHeight/ bbox.height
     );
@@ -178,8 +181,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     let t: d3.ZoomTransform = d3.zoomIdentity
       .translate(widthOffset, heightOffset).scale(scale);
   
-    this._scale.transform(g, t);
-    this.handleZoom()
+    svg.call(this._scale.transform, t);
   }
 
   /**
@@ -204,44 +206,38 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method handleZoom
    */
   handleZoom = () => {
-    let element: HTMLDivElement = this._graphContainer.nativeElement;
-    let containerWidth = element.offsetWidth;
-    let containerHeight = element.offsetHeight;
-
-    // our properly typed svg elements
-    let svg = d3.select(element).select<SVGElement>('svg');
-    let g = svg.select<SVGGElement>('g.graph');
-
-    let t;
-
     if (d3.event && d3.event.transform) {
-      t = d3.event.transform;
-      let s = t.k;
+      let element: HTMLDivElement = this._graphContainer.nativeElement;
+      let containerWidth = element.offsetWidth;
+      let containerHeight = element.offsetHeight;
+
+      // our properly typed svg elements
+      let svg = d3.select(element).select<SVGElement>('svg');
+      let g = svg.select<SVGGElement>('g.graph');
 
       // the bounding box of the graph group
       let bbox = g.node().getBBox();
 
-      // calculate the translation so that the graph stays in the view
+      // the requested transformation (t) and scale (s)
+      let t = d3.event.transform;
+      let s = t.k;
+
+      // calculate the transformation so that the graph stays in the view
       t.x = Math.max(
               (-bbox.x * s - bbox.width * s + bbox.width / 3 * Math.sqrt(s)),
               Math.min(t.x, containerWidth - bbox.width / 3 * Math.sqrt(s)));
       t.y = Math.max(
               (-bbox.y * s - bbox.height * s + bbox.height / 3 * Math.sqrt(s)),
               Math.min(t.y, containerHeight - bbox.height / 3 * Math.sqrt(s)));
-    } else {
-      t = d3.zoomIdentity;
-      let currentTransform = d3.zoomTransform(g.node());
-      t.x += currentTransform.x;
-      t.y += currentTransform.y;
-      t.k = currentTransform.k;
+      
+      // update the transform attribute of the svg graph group
+      g.attr('transform', t);
     }
-
-    g.attr('transform', t);
   }
 
   // TODO: unused!
   /**
-   * Handles drag callbacks: translates the graph group ('g.graph').
+   * Handles drag callbacks... .
    * 
    * @method handleDrag
    */
@@ -249,6 +245,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     let svg = d3.select(this._graphContainer.nativeElement)
                 .select('svg')
                 .select('g.graph');
+    // TODO: this is wrong and should target single nodes!
     svg.attr('cx', d3.event.x)
        .attr('cy', d3.event.y);
   }
