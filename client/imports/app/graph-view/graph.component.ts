@@ -41,6 +41,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _graph: any;
   private _width: number;
   private _height: number;
+  // make sure that the radius is the same as in the scss file!
+  private _nodeRadius: number = 100;
+  private _nodeContentSize: number = 0.95 // 95% of the node's size
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
 
   /**
@@ -141,46 +144,67 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .data(this.graphData.edges)
       .enter()
       .append('line')
-      .attr('class', 'edge')
-      .attr('x1', (d: Edge) => {
-        let source: Node = this.graphData.nodes.filter((node: Node) => {
-          return node._id === d.source;
-        })[0];
-        return source.x;
-      })
-      .attr('y1', (d: Edge) => {
-        let source: Node = this.graphData.nodes.filter((node: Node) => {
-          return node._id === d.source;
-        })[0];
-        return source.y;
-      })
-      .attr('x2', (d: Edge) => {
-        let target: Node = this.graphData.nodes.filter((node: Node) => {
-          return node._id === d.target;
-        })[0];
-        return target.x;
-      })
-      .attr('y2', (d: Edge) => {
-        let target: Node = this.graphData.nodes.filter((node: Node) => {
-          return node._id === d.target;
-        })[0];
-        return target.y;
-      });
+        .attr('class', 'edge')
+        .attr('x1', (d: Edge) => {
+          let source: Node = this.graphData.nodes.filter((node: Node) => {
+            return node._id === d.source;
+          })[0];
+          return source.x;
+        })
+        .attr('y1', (d: Edge) => {
+          let source: Node = this.graphData.nodes.filter((node: Node) => {
+            return node._id === d.source;
+          })[0];
+          return source.y;
+        })
+        .attr('x2', (d: Edge) => {
+          let target: Node = this.graphData.nodes.filter((node: Node) => {
+            return node._id === d.target;
+          })[0];
+          return target.x;
+        })
+        .attr('y2', (d: Edge) => {
+          let target: Node = this.graphData.nodes.filter((node: Node) => {
+            return node._id === d.target;
+          })[0];
+          return target.y;
+        });
      
      // draw the nodes
      g.selectAll('circle .node')
       .data(this.graphData.nodes)
       .enter()
       .append('svg:circle')
-      .attr('class', 'node')
-      .attr('id', (d: Node) => d._id)
-      .attr('cx', (d: Node) => d.x)
-      .attr('cy', (d: Node) => d.y)
-      .attr('r', '75px')
-      .on('click', (node: Node) => this._modalService.create(NodeModalComponent, {
-        node: node
-      }));
+        .attr('class', 'node')
+        .attr('id', (d: Node) => d._id)
+        .attr('cx', (d: Node) => d.x)
+        .attr('cy', (d: Node) => d.y)
+        .attr('r', this._nodeRadius)
+        .on('click', (node: Node) => this._modalService.create(NodeModalComponent, {
+          node: node
+        }));
 
+     //draw the text in front of the nodes
+     g.selectAll('foreignObject .node__content')
+      .data(this.graphData.nodes)
+      .enter()
+      .append('foreignObject')
+        .attr('class', 'node__content')
+        .attr('x', (d: Node) => d.x - this._nodeRadius * this._nodeContentSize)
+        .attr('y', (d: Node) => d.y - this._nodeRadius *this._nodeContentSize)
+        .on('click', (node: Node) => this._modalService.create(NodeModalComponent, {
+          node: node
+        })) 
+        .append('xhtml:div')
+          .html((d: Node) => {
+            return `<span class="node__content__title">
+                      ${d.title}
+                    </span><br>
+                    <span>
+                      ${d.content}
+                    </span>`;
+          });
+      
     if (centerGraph) {
       this.fitContainer();
     }
