@@ -34,7 +34,7 @@ import {
   DashboardNewGraphComponent
 } from './dashboard';
 import {
-  GraphViewComponent, GraphComponent
+  GraphViewComponent, GraphComponent, NodeModalComponent
 } from './graph-view';
 import {
   InfoGraphSettingsModalComponent
@@ -91,6 +91,7 @@ import {
     DashboardNewGraphComponent,
     GraphViewComponent,
     GraphComponent,
+    NodeModalComponent,
     RouteWithNamePipe,
     ArrayToListPipe
   ],

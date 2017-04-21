@@ -1,0 +1,15 @@
+<div class="modal" id="nodeModal" *ngIf="!hidden" [@fadeInOut] (click)="close($event)">
+	<div class="modal__dialog">
+
+		<div class="modal__dialog__title" *ngIf="node.title">
+      <h2>{{ node.title }}</h2>
+    </div>
+		<div class="modal__dialog__content" *ngIf="node.content">
+			{{ node.content }}
+		</div>
+  	<div class="modal__dialog__buttons">
+   		<button class="modal__dialog__buttons__button" (click)="close()">schließen</button>
+  	</div>
+
+  </div>
+</div>

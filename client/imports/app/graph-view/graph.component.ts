@@ -11,6 +11,9 @@ import {
 import { Observable } from 'rxjs';
 import * as d3 from 'd3';
 
+import { ModalService } from '../shared/modal.module';
+import { NodeModalComponent } from './node-modal.component';
+
 import { Edge, InfoGraph, Node } from '../../../../both/models';
 
 import styleUrl from './graph.component.scss';
@@ -43,9 +46,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   /**
    * Creates an instance of the GraphComponent.
    * 
+   * @param {ModalService} _modalService 
    * @constructor
    */
-  constructor() {
+  constructor(private _modalService: ModalService) {
   }
 
 /**
@@ -172,7 +176,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('id', (d: Node) => d._id)
       .attr('cx', (d: Node) => d.x)
       .attr('cy', (d: Node) => d.y)
-      .attr('r', '75px');
+      .attr('r', '75px')
+      .on('click', (node: Node) => this._modalService.create(NodeModalComponent, {
+        node: node
+      }));
 
     if (centerGraph) {
       this.fitContainer();
