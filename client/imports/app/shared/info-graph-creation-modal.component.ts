@@ -186,11 +186,11 @@ export class InfoGraphCreationModalComponent implements OnInit{
    */
   cancel(event?: Event): void {
     if (event &&
-      event.target['id'] === 'infoGraphCreationModal' &&
+      event.srcElement.id === 'infoGraphCreationModal' &&
       this.infoGraphForm.dirty) {
         // TODO: open a warning modal and better checks
         return;
-    } else if (event && event.target['id'] !== 'infoGraphCreationModal') {
+    } else if (event && event.srcElement.id !== 'infoGraphCreationModal') {
       return; // a click from the modal itself, don't close the modal
     }
 

@@ -54,8 +54,8 @@ export class UserMenuComponent {
    * @param {Event} event 
    */
   onBlur(event: Event): void {
-     // check whether the blur event has been emitted by clicking a child element
-    if (event && event.srcElement && event.srcElement.classList[0] === 'user-menu') {
+    // check whether the blur event has been emitted by clicking a child element
+    if (event && event['relatedTarget']) {
       // don't close the menu
       return;
     }
