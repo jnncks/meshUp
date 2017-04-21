@@ -1,3 +1,13 @@
+@import '../../../../../node_modules/mathsass/dist/_math.scss';
+
+@mixin text-size-scale {
+  @for $i from 1 through 50 {
+     &[transform*="scale(#{$i*0.1}"] {
+      font-size: (125% - 1% * sqrt(250*$i));
+     }
+  }
+}
+
 @mixin circle($radius) {
   width: $radius*2;
   height: $radius*2;
@@ -48,6 +58,7 @@ $node-size-adjustment: 0.95;
     &__content {
       cursor: pointer;
       @include circle($radius: $node-radius * $node-size-adjustment);
+      overflow: hidden;
 
       &__title {
         font-size: 1.25em;
@@ -60,6 +71,8 @@ $node-size-adjustment: 0.95;
     stroke-width: 4px;
     stroke: #6c6c6c;
   }
+
+  @include text-size-scale();
 }
 
 .is-grabbing {

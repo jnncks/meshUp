@@ -197,8 +197,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         })) 
         .append('xhtml:div')
           .html((d: Node) => {
+            let title = d.title;
+            if (title.length > 23)
+              title = `${title.substr(0, 23)}…`;
+
             return `<span class="node__content__title">
-                      ${d.title}
+                      ${title}
                     </span><br>
                     <span>
                       ${d.content}
