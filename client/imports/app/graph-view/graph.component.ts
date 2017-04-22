@@ -184,34 +184,102 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           node: node
         }));
 
-     //draw the text in front of the nodes
-     g.selectAll('foreignObject .node__content')
+     // draw the content in front of the nodes
+     g.selectAll('g .node__content')
       .data(this.graphData.nodes)
       .enter()
-      .append('foreignObject')
+      .append('g')
         .attr('class', 'node__content')
-        .attr('x', (d: Node) => d.x - this._nodeRadius * this._nodeContentSize)
-        .attr('y', (d: Node) => d.y - this._nodeRadius *this._nodeContentSize)
         .on('click', (node: Node) => this._modalService.create(NodeModalComponent, {
           node: node
-        })) 
-        .append('xhtml:div')
-          .html((d: Node) => {
-            let title = d.title;
-            if (title.length > 23)
-              title = `${title.substr(0, 23)}…`;
-
-            return `<span class="node__content__title">
-                      ${title}
-                    </span><br>
-                    <span>
-                      ${d.content}
-                    </span>`;
-          });
+        }))
+        .each(this.renderNodeContent)
       
     if (centerGraph) {
       this.fitContainer();
     }
+  }
+
+  /**
+   * Appends text elements (title and content) to the graph which are
+   * contained within the nodes circles.
+   * 
+   * Note: This is rather sketched out than properly implemented. Could be done
+   *       way better by calculating actual sizes of the text elements instead
+   *       of assuming that the character limits for the  different lines
+   *       defined below are sufficient in most situations.
+   * 
+   * @method renderNodeContent
+   * @param  {Node} d The node data.
+   * @param  {number} i The index in the selection array.
+   * @param  {EnterElement[]} p An array containing the selection's group elements.
+   */
+  renderNodeContent = (d: Node, i: number, p: d3.EnterElement[]) => {
+    // define the max amount of lines with their max character amount
+    const maxCTitle = [10, 14, 16]; // title lines
+    const maxCContent = [36, 35, 33, 32, 27, 18]; // content lines
+
+    // add the title
+    let titleArr = d.title.split(' ');
+    let lines = this.generateTextLines(titleArr, maxCTitle);
+    let element = d3.select(p[i])
+
+    for (let k = 0; k < lines.length; k++) {
+      element.append('text')
+        .attr('class', 'node__content__title')
+        .attr('x', d.x - 25)
+        .attr('y', d.y - 60 + k * 16)
+        .text(lines[k]);
+    }
+
+    // add the content
+    let contentArr = d.content.split(' ');
+    lines = this.generateTextLines(contentArr, maxCContent);
+    
+    for (let k = 0; k < lines.length; k++) {
+      element.append('text')
+        .attr('class', 'node__content__text')
+        .attr('x', d.x - 95 + Math.pow(1.3 * k, 2))
+        .attr('y', d.y + k * 16)
+        .text(lines[k]);        
+    }
+  }
+
+  /**
+   * Returns an array of Strings where each array entry is composed of the
+   * maximum amount of words of the input array while considering the maximum
+   * character count of each line. Doesn't break words.
+   * 
+   * @method generateTextLines
+   * @param {string[]} textArr The text split into single words.
+   * @param {number[]} maxC An array of the maximum character count per line.
+   * @returns {string[]}
+   */
+  generateTextLines(textArr: string[], maxC: number[]): string[] {
+    let newArr = textArr;
+    let lines: string[] = [];
+
+    for (let i = 0; i < maxC.length; i++) {
+      // check whether there's still some text left
+      if (newArr.length) {
+        // create a new array entry
+        lines.push('');
+
+        // add as many words as possible (considering the max line length)
+        while (newArr.length && (lines[i].length + newArr[0].length) <= maxC[i]) {
+          lines[i] += ' ' + String(newArr.splice(0, 1));
+        }
+
+        // if it's the last line and there is some text left, add an ellipsis
+        if (i === maxC.length - 1 && newArr.length && lines[i].length < maxC[i]) {
+          lines[i] += '…';
+        } else if (i === maxC.length - 1 && newArr.length) {
+          lines[i] = lines[i].substr(0, maxC[i] - 2) + '…';
+        }
+      }
+    }
+
+    return lines;
   }
 
   /**
