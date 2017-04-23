@@ -1,3 +1,5 @@
+@import '../../../styles/colors';
+
 .graph-container {
   height: 100%;
   width: 100%;
@@ -6,22 +8,39 @@
 
 .graph {
   .node {
-    fill: #ffffff;
-    stroke: #777777;
-    stroke-width: 4px;
     cursor: pointer;
+
+    circle {
+      &.outer {
+        display: none;
+      }
+
+      &.inner {
+        fill: #ffffff;
+        stroke: #777777;
+        stroke-width: 4px;
+      }
+    }
 
     &__content {
        &__title {
         font-size: 13px;
         font-weight: 700;
-        cursor: pointer;
       }
 
       &__text {
         font-size: 11px;
-        cursor: pointer;
         overflow: hidden;
+      }
+    }
+
+    &--selected {
+      circle.outer {
+        display: block;
+        stroke: $accent-color;
+        stroke-width: 4px;
+        stroke-dasharray: 12px;
+        fill: transparent;
       }
     }
   }

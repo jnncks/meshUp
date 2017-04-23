@@ -8,13 +8,23 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { Observable } from 'rxjs';
+import {
+  Observable
+} from 'rxjs';
 import * as d3 from 'd3';
 
-import { ModalService } from '../shared/modal.module';
-import { NodeModalComponent } from './node-modal.component';
+import {
+  ModalService
+} from '../shared/modal.module';
+import {
+  NodeModalComponent
+} from './node-modal.component';
 
-import { Edge, InfoGraph, Node } from '../../../../both/models';
+import {
+  Edge,
+  InfoGraph,
+  Node
+} from '../../../../both/models';
 
 import styleUrl from './graph.component.scss';
 import template from './graph.component.html';
@@ -32,7 +42,7 @@ import template from './graph.component.html';
 @Component({
   selector: 'meshup-graph',
   template,
-  styles: [ styleUrl ],
+  styles: [styleUrl],
   encapsulation: ViewEncapsulation.None
 })
 export class GraphComponent implements AfterViewInit, OnChanges {
@@ -43,7 +53,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _height: number;
   // make sure that the radius is the same as in the scss file!
   private _nodeRadius: number = 100;
-  private _nodeContentSize: number = 0.95 // 95% of the node's size
+  private _outerNodeRadius: number = 108;
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
 
   /**
@@ -52,19 +62,18 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @param {ModalService} _modalService 
    * @constructor
    */
-  constructor(private _modalService: ModalService) {
-  }
+  constructor(private _modalService: ModalService) {}
 
-/**
- * Called after the view has been initialized.
- * Prepares the SVG element.
- * 
- * Note: This is important! The ViewChild _graphContainer can't be accessed
- *       prior to this event. Therefore, this is the earliest point in time
- *       where we can append our SVG element to the _graphContainer.
- * 
- * @method ngAfterViewInit
- */
+  /**
+   * Called after the view has been initialized.
+   * Prepares the SVG element.
+   * 
+   * Note: This is important! The ViewChild _graphContainer can't be accessed
+   *       prior to this event. Therefore, this is the earliest point in time
+   *       where we can append our SVG element to the _graphContainer.
+   * 
+   * @method ngAfterViewInit
+   */
   ngAfterViewInit(): void {
     this.initGraph();
 
@@ -110,8 +119,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // set up the zoom behavior on the svg element
     this._scale = d3.zoom()
-        .scaleExtent([0.1, 5])
-        .on('zoom', () => this.handleZoom());
+      .scaleExtent([0.1, 5])
+      .on('zoom', () => this.handleZoom());
 
     svg.call(this._scale);
 
@@ -144,60 +153,68 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .data(this.graphData.edges)
       .enter()
       .append('line')
-        .attr('class', 'edge')
-        .attr('x1', (d: Edge) => {
-          let source: Node = this.graphData.nodes.filter((node: Node) => {
-            return node._id === d.source;
-          })[0];
-          return source.x;
-        })
-        .attr('y1', (d: Edge) => {
-          let source: Node = this.graphData.nodes.filter((node: Node) => {
-            return node._id === d.source;
-          })[0];
-          return source.y;
-        })
-        .attr('x2', (d: Edge) => {
-          let target: Node = this.graphData.nodes.filter((node: Node) => {
-            return node._id === d.target;
-          })[0];
-          return target.x;
-        })
-        .attr('y2', (d: Edge) => {
-          let target: Node = this.graphData.nodes.filter((node: Node) => {
-            return node._id === d.target;
-          })[0];
-          return target.y;
-        });
-     
-     // draw the nodes
-     g.selectAll('circle .node')
-      .data(this.graphData.nodes)
-      .enter()
-      .append('svg:circle')
-        .attr('class', 'node')
-        .attr('id', (d: Node) => d._id)
-        .attr('cx', (d: Node) => d.x)
-        .attr('cy', (d: Node) => d.y)
-        .attr('r', this._nodeRadius)
-        .on('click', (node: Node) => this._modalService.create(NodeModalComponent, {
-          node: node
-        }));
+      .attr('class', 'edge')
+      .attr('x1', (d: Edge) => {
+        let source: Node = this.graphData.nodes.filter((node: Node) => {
+          return node._id === d.source;
+        })[0];
+        return source.x;
+      })
+      .attr('y1', (d: Edge) => {
+        let source: Node = this.graphData.nodes.filter((node: Node) => {
+          return node._id === d.source;
+        })[0];
+        return source.y;
+      })
+      .attr('x2', (d: Edge) => {
+        let target: Node = this.graphData.nodes.filter((node: Node) => {
+          return node._id === d.target;
+        })[0];
+        return target.x;
+      })
+      .attr('y2', (d: Edge) => {
+        let target: Node = this.graphData.nodes.filter((node: Node) => {
+          return node._id === d.target;
+        })[0];
+        return target.y;
+      });
 
-     // draw the content in front of the nodes
-     g.selectAll('g .node__content')
+    // draw the nodes
+    g.selectAll('g .node')
       .data(this.graphData.nodes)
       .enter()
       .append('g')
-        .attr('class', 'node__content')
-        .on('click', (node: Node) => this._modalService.create(NodeModalComponent, {
-          node: node
-        }))
-        .each(this.renderNodeContent)
-      
+        .attr('class', 'node')
+        .attr('id', (d: Node) => d._id)
+        .each(this.addNode)
+
     if (centerGraph) {
       this.fitContainer();
     }
+  }
+
+  addNode = (d: Node, i: number, g: d3.EnterElement[]) => {
+    let group = d3.select(g[i]);
+
+    group.append('svg:circle')
+      .attr('class', 'outer')
+      .attr('cx', (d: Node) => d.x)
+      .attr('cy', (d: Node) => d.y)
+      .attr('r', this._outerNodeRadius);
+
+    group.append('svg:circle')
+      .attr('class', 'inner')
+      .attr('cx', (d: Node) => d.x)
+      .attr('cy', (d: Node) => d.y)
+      .attr('r', this._nodeRadius);
+
+
+    // draw the content in front of the nodes
+    group.append('g')
+      .attr('class', 'node__content')
+      .each(this.renderNodeContent)
+
+    group.on('mousedown', this.toggleNodeFocus);
   }
 
   /**
@@ -235,13 +252,63 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // add the content
     let contentArr = d.content.split(' ');
     lines = this.generateTextLines(contentArr, maxCContent);
-    
+
     for (let k = 0; k < lines.length; k++) {
       element.append('text')
         .attr('class', 'node__content__text')
         .attr('x', d.x - 95 + Math.pow(1.3 * k, 2))
         .attr('y', d.y + k * 16)
-        .text(lines[k]);        
+        .text(lines[k]);
+    }
+  }
+
+  toggleNodeFocus = (d: Node) => {
+    if (d3.event.button === 2) { // this is a right click
+      d3.event.stopImmediatePropagation();
+      return;
+    }
+
+    if (!d3.event && !d3.event.target && !d3.event.target.parentElement)
+      return;
+
+    // references to important elements
+    let element = this._graphContainer.nativeElement;
+    let svg = d3.select(element).select<SVGElement>('svg');
+    let g = svg.select<SVGGElement>('g.graph');
+
+    // get the Node element of the click source
+    let src = d3.event.target
+    let node: d3.Selection<SVGGElement, any, any, any>;
+
+    if (src.tagName === 'text') {
+      node = d3.select(src.parentElement.parentElement);
+    } else if (src.tagName === 'circle') {
+      node = d3.select(src.parentElement);
+    } else {
+      return;
+    }
+
+    if (node.classed('node') && node.classed('node--selected')) {
+      // don't change a thing
+      return;
+    } else if (node.classed('node')) {
+      // remove any existing focus states
+      g.selectAll('g .node--selected')
+        .classed('node--selected', false)
+        .on('mousedown', null) // reset the click handler
+
+      // apply the focus state
+      node.classed('node--selected', true)
+        .on('mousedown', (node: Node) => {
+          if (d3.event.button === 2) {
+            d3.event.stopImmediatePropagation();
+            return;
+          }
+
+          this._modalService.create(NodeModalComponent, {
+            node: node
+          });
+        });
     }
   }
 
@@ -304,14 +371,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const padding = 0.05; // 5 percent
     let scale = (1 - padding) * Math.min(
       containerWidth / bbox.width,
-      containerHeight/ bbox.height
+      containerHeight / bbox.height
     );
 
     // calculate the x and y offsets to center the graph
     let widthOffset =
-      (containerWidth - bbox.width * scale)/2 - bbox.x * scale;
+      (containerWidth - bbox.width * scale) / 2 - bbox.x * scale;
     let heightOffset =
-      (containerHeight - bbox.height * scale)/2 - bbox.y * scale;
+      (containerHeight - bbox.height * scale) / 2 - bbox.y * scale;
 
     // put everything together and emit the event
     let t: d3.ZoomTransform = d3.zoomIdentity
@@ -342,7 +409,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method handleZoom
    */
   handleZoom = () => {
-    if (!d3.event  || !d3.event.transform)
+    if (!d3.event || !d3.event.transform)
       return;
 
     let element: HTMLDivElement = this._graphContainer.nativeElement;
@@ -362,12 +429,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // calculate the transformation so that the graph stays in the view
     t.x = Math.max(
-            (-bbox.x * s - bbox.width * s + bbox.width / 3 * Math.sqrt(s)),
-            Math.min(t.x, containerWidth - bbox.width / 3 * Math.sqrt(s)));
+      (-bbox.x * s - bbox.width * s + bbox.width / 3 * Math.sqrt(s)),
+      Math.min(t.x, containerWidth - bbox.width / 3 * Math.sqrt(s)));
     t.y = Math.max(
-            (-bbox.y * s - bbox.height * s + bbox.height / 3 * Math.sqrt(s)),
-            Math.min(t.y, containerHeight - bbox.height / 3 * Math.sqrt(s)));
-      
+      (-bbox.y * s - bbox.height * s + bbox.height / 3 * Math.sqrt(s)),
+      Math.min(t.y, containerHeight - bbox.height / 3 * Math.sqrt(s)));
+
     // update the transform attribute of the SVG graph group
     g.attr('transform', t);
   }
@@ -380,10 +447,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    */
   handleDrag = () => {
     let svg = d3.select(this._graphContainer.nativeElement)
-                .select('svg')
-                .select('g.graph');
+      .select('svg')
+      .select('g.graph');
     // TODO: this is wrong and should target single nodes!
     svg.attr('cx', d3.event.x)
-       .attr('cy', d3.event.y);
+      .attr('cy', d3.event.y);
   }
 }
