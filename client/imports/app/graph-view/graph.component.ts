@@ -295,7 +295,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       // remove any existing focus states
       g.selectAll('g .node--selected')
         .classed('node--selected', false)
-        .on('mousedown', null) // reset the click handler
+        .on('mousedown', this.toggleNodeFocus) // reset the click handler
 
       // apply the focus state
       node.classed('node--selected', true)
