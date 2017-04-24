@@ -9,5 +9,11 @@
       <a routerLink="{{ page.path }}">{{ page.data.name }}</a>
     </li>
   </ul>
+  <button class="bar__edit__button" *ngIf="_currentRouteData && _currentRouteData.name === 'Graphview'" (click)="toggleEditing()">
+    <svg>
+      <use xlink:href="icons/svg-sprite-content-symbol.svg#ic_create_24px" />
+    </svg>
+    <span>bearbeiten</span>
+  </button>
   <user-menu [visible]="isLoggedIn()"></user-menu>
 </div>

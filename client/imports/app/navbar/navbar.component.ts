@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
-import { Route } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
+import { Route, ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
 import { AuthService } from '../shared/auth.service';
+import { GraphViewService } from '../graph-view';
 
 import template from './navbar.component.html';
 import styleUrl from './navbar.component.scss';
@@ -9,6 +10,7 @@ import styleUrl from './navbar.component.scss';
 /**
  * Displays the routes as breadcrumbs as well as the user menu.
  * 
+ * @implements {OnInit}
  * @class NavBarComponent
  */
 @Component({
@@ -16,8 +18,10 @@ import styleUrl from './navbar.component.scss';
   template,
   styles: [ styleUrl ]
 })
-export class NavBarComponent{
+export class NavBarComponent implements OnInit{
   @Input() pages: Route[];
+  private _currentRouteData: Object;
+  private _isEditing: boolean = false;
 
   /**
    * Creates an instance of the NavBarComponent.
@@ -27,7 +31,29 @@ export class NavBarComponent{
    * 
    * @memberOf NavBarComponent
    */
-  constructor(private _authService: AuthService) {
+  constructor(private _authService: AuthService, private _router: Router, private _activatedRoute: ActivatedRoute, private _graphViewService: GraphViewService) {
+    this._isEditing = this._graphViewService.getCurrentMode();
+    this._graphViewService.modeChanged.subscribe(isEditing => this._isEditing);
+  }
+
+  ngOnInit() {
+    // update _currentRouteData after route changes
+    this._router.events
+      .filter(event => event instanceof NavigationEnd)
+      .map(() => this._activatedRoute)
+      .map(route => {
+        while (route.firstChild) route = route.firstChild;
+        return route;
+      })
+      .filter(route => route.outlet === 'primary')
+      .mergeMap(route => route.data)
+      .subscribe(routeData => {
+        this._currentRouteData = routeData;
+      });
+    
+    // subscribe to mode changes in the graph view
+    this._graphViewService.modeChanged.subscribe(isEditing =>
+      this._isEditing = isEditing);
   }
 
   /**
@@ -38,5 +64,9 @@ export class NavBarComponent{
    */
   isLoggedIn(): boolean {
     return this._authService.isLoggedIn();
+  }
+
+  toggleEditing() {
+    this._graphViewService.toggleMode();
   }
 }

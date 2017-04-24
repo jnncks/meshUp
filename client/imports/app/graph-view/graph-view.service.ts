@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { MeteorObservable } from 'meteor-rxjs';
 import { Observable } from 'rxjs';
 
@@ -14,6 +14,8 @@ import { InfoGraphCollection, InfoGraphMetaCollection } from '../../../../both/c
 @Injectable()
 export class GraphViewService {
   private _graph: Observable<InfoGraph>;
+  private _isEditing: boolean;
+  public modeChanged = new EventEmitter<boolean>();
 
   /**
    * Creates an instance of the GraphViewService.
@@ -64,5 +66,26 @@ export class GraphViewService {
    */
   private _handleError(e: Error): void {
     console.error(e);
+  }
+
+
+  /**
+   * Toggles between the editing and viewing mode.
+   * 
+   * @method toggleMode
+   */
+  toggleMode(): void {
+    this._isEditing = !this._isEditing;
+    this.modeChanged.emit(this._isEditing);
+  }
+
+  /**
+   * Returns the current mode: true if editing, else false.
+   * 
+   * @method getCurrentMode
+   * @return {boolean} current Mode
+   */
+  getCurrentMode(): boolean {
+    return this._isEditing;
   }
 }

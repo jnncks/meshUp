@@ -48,6 +48,7 @@ import template from './graph.component.html';
 export class GraphComponent implements AfterViewInit, OnChanges {
   @ViewChild('graphContainer') private _graphContainer: ElementRef;
   @Input() graphData: InfoGraph;
+  @Input() isEditing: boolean = false;
   private _graph: any;
   private _width: number;
   private _height: number;
@@ -88,14 +89,17 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   /**
-   * Handles input changes:
-   * Currently, it only triggers an update of the graphData.
+   * Handles input changes.
    * 
    * @method ngOnChanges
    * @param  {SimpleChanges} changes An event of changed properties.
    */
   ngOnChanges(changes: SimpleChanges): void {
-    this.updateGraph();
+    if (changes.isEditing)
+      this.toggleEditing();
+
+    if (changes.graphData)
+      this.updateGraph();
   }
 
   /**
@@ -147,6 +151,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     let element = this._graphContainer.nativeElement;
     let svg = d3.select(element).select<SVGElement>('svg');
     let g = svg.select<SVGGElement>('g.graph');
+
+    // TODO: properly remove/update nodes
 
     // draw the edges
     g.selectAll('.line')
@@ -269,12 +275,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @param  {Node} d
    */
   toggleNodeFocus = (d: Node) => {
-    if (d3.event.button === 2) { // this is a right click
+    if (d3.event && d3.event.button === 2) { // this is a right click
       d3.event.stopImmediatePropagation();
       return;
     }
 
-    if (!d3.event && !d3.event.target && !d3.event.target.parentElement)
+    if (!(d3.event && d3.event.target && d3.event.target.parentElement))
       return;
 
     // references to important elements
@@ -299,62 +305,78 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       return;
     } else if (node.classed('node')) {
       // remove any existing focus states
-      g.selectAll('g .node--selected')
-        .classed('node--selected', false)
-        .select('g .focus-button')
-          .on('mousedown', null) // reset the click handler
-          .remove(); // remove the button group
+      this.removeNodeFocus();
 
       // apply the focus state
       node.classed('node--selected', true)
 
-      // position for the detailButton
-      let detailButtonX = d.x + 35;
-      let detailButtonY = d.y + 35;
+      // add the detailButton if not in editing mode
+      if (!this.isEditing) {
+        // position for the detailButton
+        let detailButtonX = d.x + 35;
+        let detailButtonY = d.y + 35;
 
-      // create a group for the detailButton
-      let detailButton = node.append('svg:g')
-        .attr('id', 'detailButton-' + d._id)
-        .attr('class', 'focus-button');
+        // create a group for the detailButton
+        let detailButton = node.append('svg:g')
+          .attr('id', 'detailButton-' + d._id)
+          .attr('class', 'focus-button');
 
-      // add a rect for the button background
-      let detailButtonBg = detailButton.append('svg:rect')
-        .attr('x', detailButtonX)
-        .attr('y', detailButtonY)
-        .attr('height', '28')
-        .attr('rx', '14');
+        // add a rect for the button background
+        let detailButtonBg = detailButton.append('svg:rect')
+          .attr('x', detailButtonX)
+          .attr('y', detailButtonY)
+          .attr('height', '28')
+          .attr('rx', '14');
 
-      // add the icon
-      let detailButtonIcon = detailButton.append('svg:use')
-        .attr('xlink:href', 'icons/svg-sprite-navigation-symbol.svg#ic_arrow_forward_24px')
-        .attr('x', detailButtonX + 8)
-        .attr('y', detailButtonY + 2)
-        .attr('width', 24)
-        .attr('height', 24);
+        // add the icon
+        let detailButtonIcon = detailButton.append('svg:use')
+          .attr('xlink:href', 'icons/svg-sprite-navigation-symbol.svg#ic_arrow_forward_24px')
+          .attr('x', detailButtonX + 8)
+          .attr('y', detailButtonY + 2)
+          .attr('width', 24)
+          .attr('height', 24);
 
-      // add the button label
-      let detailButtonLabel = detailButton.append<SVGTextElement>('svg:text')
-        .attr('class', 'focus-button__label')
-        .attr('x', detailButtonX + 36)
-        .attr('y', detailButtonY + 20)
-        .text('öffnen');
+        // add the button label
+        let detailButtonLabel = detailButton.append<SVGTextElement>('svg:text')
+          .attr('class', 'focus-button__label')
+          .attr('x', detailButtonX + 36)
+          .attr('y', detailButtonY + 20)
+          .text('öffnen');
 
-      // finally set the rect width according to the text width
-      let labelBoundings: SVGRect = detailButtonLabel.node().getBBox();
-      detailButtonBg.attr('width', 54 + labelBoundings.width);
+        // finally set the rect width according to the text width
+        let labelBoundings: SVGRect = detailButtonLabel.node().getBBox();
+        detailButtonBg.attr('width', 54 + labelBoundings.width);
 
-      // add the mousedown handler
-      detailButton.on('mousedown', (node: Node) => {
-        if (d3.event.button === 2) {
-          d3.event.stopImmediatePropagation();
-          return;
-        }
+        // add the mousedown handler
+        detailButton.on('mousedown', (node: Node) => {
+          if (d3.event.button === 2) {
+            d3.event.stopImmediatePropagation();
+            return;
+          }
 
-        this._modalService.create(NodeModalComponent, {
-          node: node
+          this._modalService.create(NodeModalComponent, {
+            node: node
+          });
         });
-      });
+      }
+
+      // add the editing buttons if in editing mode
+      if (this.isEditing) {
+        // TODO
+      }
     }
+  }
+
+  removeNodeFocus() {
+    let element = this._graphContainer.nativeElement;
+    d3.select(element)
+      .select<SVGElement>('svg')
+      .select<SVGGElement>('g.graph')
+      .selectAll('g .node--selected')
+        .classed('node--selected', false)
+        .select('g .focus-button')
+          .on('mousedown', null) // reset the click handler
+          .remove(); // remove the button group
   }
 
   /**
@@ -392,6 +414,22 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     }
 
     return lines;
+  }
+
+  toggleEditing(): void {
+    // TODO
+
+    let element = this._graphContainer.nativeElement;
+    let svg = d3.select(element).select<SVGElement>('svg');
+    let g = svg.select<SVGGElement>('g.graph');
+
+    // select the currently focused node if there is any
+    let currentFocus: d3.Selection<SVGGElement, any, any, any> = g.select<SVGGElement>('g .node--selected')
+
+    if (currentFocus.node()) {
+      this.removeNodeFocus(); // remove the current focus
+     // TODO: add the focus state back to the node
+    }
   }
 
   /**

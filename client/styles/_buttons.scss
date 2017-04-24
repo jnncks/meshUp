@@ -1,7 +1,7 @@
 @import 'colors';
 @import 'mixins';
 
-@mixin buttons ($bg-color: $background, $color: $primary-color, $hover-bg-color: $primary-color, $hover-color: $primary-color-text,  $margin-h: 0) {
+@mixin buttons ($bg-color: $background, $color: $primary-color, $hover-bg-color: $primary-color, $hover-color: $primary-color-text, $margin-h: 0, $padding-h: .5rem) {
   &__button {
     color: $color;
     background-color: $bg-color;
@@ -11,8 +11,8 @@
     margin-right: $margin-h;
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-top: .5rem;
-    padding-bottom: .5rem;
+    padding-top: $padding-h;
+    padding-bottom: $padding-h;
     font-size: normal;
     @include transition($properties: (color, background-color, border-color));
 
@@ -26,6 +26,13 @@
       color: transparentize($color, 0.5);
       border-color: transparentize($color, 0.5);
       cursor: not-allowed;
+    }
+
+    svg {
+      margin-bottom: -0.2em;
+      width: 1.2em;
+      height: 1.2em;
+      fill: currentColor;
     }
   }
 }

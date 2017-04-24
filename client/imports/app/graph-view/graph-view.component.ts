@@ -26,6 +26,7 @@ import styleUrl from './graph-view.component.scss';
 export class GraphViewComponent implements OnInit {
   private _graph: Observable<InfoGraph>;
   private _graphMetaId: string;
+  public isEditing: boolean = false;
 
   /**
    * Creates an instance of the GraphViewComponent.
@@ -49,5 +50,8 @@ export class GraphViewComponent implements OnInit {
         this._graphViewService.setCurrentInfoGraph(params.id);
         this._graph = this._graphViewService.getCurrentInfoGraph();
       });
+
+    this._graphViewService.modeChanged.subscribe(isEditing =>
+      this.isEditing = isEditing);
   }
 }
