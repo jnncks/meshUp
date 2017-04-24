@@ -53,7 +53,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _height: number;
   // make sure that the radius is the same as in the scss file!
   private _nodeRadius: number = 100;
-  private _outerNodeRadius: number = 108;
+  private _outerNodeRadius: number = 112;
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
 
   /**
@@ -62,7 +62,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @param {ModalService} _modalService 
    * @constructor
    */
-  constructor(private _modalService: ModalService) {}
+  constructor(private _modalService: ModalService) { }
 
   /**
    * Called after the view has been initialized.
@@ -114,7 +114,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('width', element.offsetWidth)
       .attr('height', element.offsetHeight);
 
-    this._graph = svg.append('g')
+    this._graph = svg.append('svg:g')
       .attr('class', 'graph');
 
     // set up the zoom behavior on the svg element
@@ -183,10 +183,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     g.selectAll('g .node')
       .data(this.graphData.nodes)
       .enter()
-      .append('g')
-        .attr('class', 'node')
-        .attr('id', (d: Node) => d._id)
-        .each(this.addNode)
+      .append('svg:g')
+      .attr('class', 'node')
+      .attr('id', (d: Node) => d._id)
+      .each(this.addNode)
 
     if (centerGraph) {
       this.fitContainer();
@@ -210,7 +210,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
 
     // draw the content in front of the nodes
-    group.append('g')
+    group.append('svg:g')
       .attr('class', 'node__content')
       .each(this.renderNodeContent)
 
@@ -242,7 +242,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     let element = d3.select(p[i])
 
     for (let k = 0; k < lines.length; k++) {
-      element.append('text')
+      element.append('svg:text')
         .attr('class', 'node__content__title')
         .attr('x', d.x - 25)
         .attr('y', d.y - 60 + k * 16)
@@ -254,7 +254,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     lines = this.generateTextLines(contentArr, maxCContent);
 
     for (let k = 0; k < lines.length; k++) {
-      element.append('text')
+      element.append('svg:text')
         .attr('class', 'node__content__text')
         .attr('x', d.x - 95 + Math.pow(1.3 * k, 2))
         .attr('y', d.y + k * 16)
@@ -262,6 +262,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     }
   }
 
+  /**
+   * Sets the focus state of a node after removing all other occuring focus states.
+   * 
+   * @method toggleNodeFocus
+   * @param  {Node} d
+   */
   toggleNodeFocus = (d: Node) => {
     if (d3.event.button === 2) { // this is a right click
       d3.event.stopImmediatePropagation();
@@ -288,27 +294,66 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       return;
     }
 
-    if (node.classed('node') && node.classed('node--selected')) {
+    if (node.classed('node--selected')) {
       // don't change a thing
       return;
     } else if (node.classed('node')) {
       // remove any existing focus states
       g.selectAll('g .node--selected')
         .classed('node--selected', false)
-        .on('mousedown', this.toggleNodeFocus) // reset the click handler
+        .select('g .focus-button')
+          .on('mousedown', null) // reset the click handler
+          .remove(); // remove the button group
 
       // apply the focus state
       node.classed('node--selected', true)
-        .on('mousedown', (node: Node) => {
-          if (d3.event.button === 2) {
-            d3.event.stopImmediatePropagation();
-            return;
-          }
 
-          this._modalService.create(NodeModalComponent, {
-            node: node
-          });
+      // position for the detailButton
+      let detailButtonX = d.x + 35;
+      let detailButtonY = d.y + 35;
+
+      // create a group for the detailButton
+      let detailButton = node.append('svg:g')
+        .attr('id', 'detailButton-' + d._id)
+        .attr('class', 'focus-button');
+
+      // add a rect for the button background
+      let detailButtonBg = detailButton.append('svg:rect')
+        .attr('x', detailButtonX)
+        .attr('y', detailButtonY)
+        .attr('height', '28')
+        .attr('rx', '14');
+
+      // add the icon
+      let detailButtonIcon = detailButton.append('svg:use')
+        .attr('xlink:href', 'icons/svg-sprite-navigation-symbol.svg#ic_arrow_forward_24px')
+        .attr('x', detailButtonX + 8)
+        .attr('y', detailButtonY + 2)
+        .attr('width', 24)
+        .attr('height', 24);
+
+      // add the button label
+      let detailButtonLabel = detailButton.append<SVGTextElement>('svg:text')
+        .attr('class', 'focus-button__label')
+        .attr('x', detailButtonX + 36)
+        .attr('y', detailButtonY + 20)
+        .text('öffnen');
+
+      // finally set the rect width according to the text width
+      let labelBoundings: SVGRect = detailButtonLabel.node().getBBox();
+      detailButtonBg.attr('width', 54 + labelBoundings.width);
+
+      // add the mousedown handler
+      detailButton.on('mousedown', (node: Node) => {
+        if (d3.event.button === 2) {
+          d3.event.stopImmediatePropagation();
+          return;
+        }
+
+        this._modalService.create(NodeModalComponent, {
+          node: node
         });
+      });
     }
   }
 

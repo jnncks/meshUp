@@ -1,4 +1,5 @@
 @import '../../../styles/colors';
+@import '../../../styles/mixins';
 
 .graph-container {
   height: 100%;
@@ -34,19 +35,42 @@
       }
     }
 
+    .focus-button {
+      rect, text, use {
+        @include transition($properties: (fill, stroke));
+      }
+
+      rect {
+        fill: $white;
+        stroke: #000;
+        stroke-width: 2px;
+      }
+
+      &:hover {
+        rect {
+          stroke: $accent-color;
+          fill: $accent-color;
+        }
+
+        text, use {
+          fill: $white;
+        }
+      }
+    }
+
     &--selected {
       circle.outer {
         display: block;
         stroke: $accent-color;
         stroke-width: 4px;
-        stroke-dasharray: 12px;
+        stroke-dasharray: 13px;
         fill: transparent;
       }
     }
   }
   .edge {
-    stroke-width: 4px;
-    stroke: #6c6c6c;
+    stroke-width: 6px;
+    stroke: rgba(255, 255, 255, 0.2);
   }
 }
 
