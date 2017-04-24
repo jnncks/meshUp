@@ -125,8 +125,8 @@ export class InfoGraphSettingsModalComponent implements OnInit{
    * @param  {Event} [event] The event for determining the click target.
    */
   cancel(event?: Event): void {
-    if (event &&
-      event.srcElement.id === 'infoGraphSettingsModal' &&
+    if (event && event.target &&
+      event.target['id'] === 'infoGraphSettingsModal' &&
       this.infoGraphForm.dirty) {
         let name = this.infoGraphForm.get('name').value.trim();
         let description = this.infoGraphForm.get('description').value.trim();
@@ -140,7 +140,8 @@ export class InfoGraphSettingsModalComponent implements OnInit{
             // by leading or trailing whitespaces, don't close the modal!
             return; // TODO: open a warning modal
       }
-    } else if (event && event.srcElement.id !== 'infoGraphSettingsModal') {
+    } else if (event && event.target &&
+        event.target['id'] !== 'infoGraphSettingsModal') {
       return; // a click from the modal itself, don't close the modal
     }
 

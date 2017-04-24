@@ -67,7 +67,7 @@ export class NodeModalComponent implements OnInit{
    * @method close
    */
   close(event: Event): void {
-    if (event && event.srcElement.id !== 'nodeModal')
+    if (event && event.target && event.target['id'] !== 'nodeModal')
       return;
 
     this.closeModal();

@@ -77,7 +77,7 @@ export class LogoutModalComponent {
    * @param {Event} event 
    */
   cancel(event: Event): void {
-    if (event && event.srcElement.id !== 'logoutModal')
+    if (event && event.target && event.target['id'] !== 'logoutModal')
       return;
 
     this.closeModal();

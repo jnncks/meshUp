@@ -89,7 +89,7 @@ export class MenuPanelComponent implements OnInit, OnChanges{
    */
   onBlur(event: Event): void {
      // check whether the blur event has been emitted by clicking a related element
-    if (event && event.srcElement.id)
+    if (event && event.target && event.target['id'])
       // don't close the menu
       return;
 
