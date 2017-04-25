@@ -312,40 +312,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
       // add the detailButton if not in editing mode
       if (!this.isEditing) {
-        // position for the detailButton
+        // position of the detailButton
         let detailButtonX = d.x + 35;
         let detailButtonY = d.y + 35;
+        let detailButtonIcon = 'icons/svg-sprite-navigation-symbol.svg#ic_arrow_forward_24px';
 
-        // create a group for the detailButton
-        let detailButton = node.append('svg:g')
-          .attr('id', 'detailButton-' + d._id)
-          .attr('class', 'focus-button');
-
-        // add a rect for the button background
-        let detailButtonBg = detailButton.append('svg:rect')
-          .attr('x', detailButtonX)
-          .attr('y', detailButtonY)
-          .attr('height', '28')
-          .attr('rx', '14');
-
-        // add the icon
-        let detailButtonIcon = detailButton.append('svg:use')
-          .attr('xlink:href', 'icons/svg-sprite-navigation-symbol.svg#ic_arrow_forward_24px')
-          .attr('x', detailButtonX + 8)
-          .attr('y', detailButtonY + 2)
-          .attr('width', 24)
-          .attr('height', 24);
-
-        // add the button label
-        let detailButtonLabel = detailButton.append<SVGTextElement>('svg:text')
-          .attr('class', 'focus-button__label')
-          .attr('x', detailButtonX + 36)
-          .attr('y', detailButtonY + 20)
-          .text('öffnen');
-
-        // finally set the rect width according to the text width
-        let labelBoundings: SVGRect = detailButtonLabel.node().getBBox();
-        detailButtonBg.attr('width', 54 + labelBoundings.width);
+        // create the detailButton
+        let detailButton = this.appendFocusButton(node, d, 'DetailButton',
+          detailButtonX, detailButtonY, detailButtonIcon, 'öffnen');
 
         // add the mousedown handler
         detailButton.on('mousedown', (node: Node) => {
@@ -362,9 +336,78 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
       // add the editing buttons if in editing mode
       if (this.isEditing) {
-        // TODO
+        // positions of the buttons
+        let editButtonX = d.x + 35;
+        let editButtonY = d.y - 35;
+        let editButtonIcon = 'icons/svg-sprite-content-symbol.svg#ic_create_24px';
+        let moveButtonX = d.x + 50;
+        let moveButtonY = d.y;
+        let moveButtonIcon = 'icons/svg-sprite-action-symbol.svg#ic_open_with_24px';
+        let deleteButtonX = d.x + 35;
+        let deleteButtonY = d.y + 35;
+        let deleteButtonIcon = 'icons/svg-sprite-action-symbol.svg#ic_delete_24px';
+
+        // append the buttons
+        let editButton = this.appendFocusButton(node, d, 'EditButton', editButtonX,
+          editButtonY, editButtonIcon, 'bearbeiten');
+        let moveButton = this.appendFocusButton(node, d, 'MoveButton', moveButtonX,
+          moveButtonY, moveButtonIcon, 'verschieben');
+        let deleteButton = this.appendFocusButton(node, d, 'DeleteButton', deleteButtonX,
+          deleteButtonY, deleteButtonIcon, 'entfernen');
+
+        // set up the mousedown handlers
+        // TODO!
       }
     }
+  }
+
+  /**
+   * Appends a button to the passed group 'node' and returns a reference to it.
+   * 
+   * @method appendFocusButton
+   * @param  {d3.Selection<SVGGElement, any, any, any>} node The group to which the button will be appended.
+   * @param  {Node} d The node data.
+   * @param  {string} type The button type (currently used for the ID).
+   * @param  {string} x The x-coordinate of the button.
+   * @param  {string} y The y-coordinate of the button.
+   * @param  {string} iconUrl The icon URL.
+   * @param  {string} label The button label text.
+   * @return {d3.Selection<SVGGElement, any, any, any>} The button group.
+   */
+  appendFocusButton(node: d3.Selection<SVGGElement, any, any, any>, d: Node,
+    type: string, x: number, y: number, iconUrl: string, label: string
+  ): d3.Selection<SVGGElement, any, any, any> {
+    // create a group for the editButton
+    let button = node.append<SVGGElement>('svg:g')
+      .attr('id', type + '-' + d._id)
+      .attr('class', 'focus-button');
+
+    // add a rect for the button background
+    let buttonBg = button.append('svg:rect')
+      .attr('x', x)
+      .attr('y', y)
+      .attr('height', '28')
+      .attr('rx', '14');
+    // add the icon
+    let buttonIcon = button.append('svg:use')
+      .attr('xlink:href', iconUrl)
+      .attr('x', x + 8)
+      .attr('y', y + 2)
+      .attr('width', 24)
+      .attr('height', 24);
+
+    // add the button label
+    let buttonLabel = button.append<SVGTextElement>('svg:text')
+      .attr('class', 'focus-button__label')
+      .attr('x', x + 36)
+      .attr('y', y + 21)
+      .text(label);
+
+    // finally set the rect width according to the text width
+    let labelBoundings: SVGRect = buttonLabel.node().getBBox();
+    buttonBg.attr('width', 54 + labelBoundings.width);
+
+    return button;
   }
 
   removeNodeFocus() {
@@ -374,7 +417,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .select<SVGGElement>('g.graph')
       .selectAll('g .node--selected')
         .classed('node--selected', false)
-        .select('g .focus-button')
+        .selectAll('g .focus-button')
           .on('mousedown', null) // reset the click handler
           .remove(); // remove the button group
   }
