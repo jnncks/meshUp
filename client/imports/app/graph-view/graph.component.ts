@@ -280,25 +280,17 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       return;
     }
 
-    if (!(d3.event && d3.event.target && d3.event.target.parentElement))
-      return;
-
     // references to important elements
     let element = this._graphContainer.nativeElement;
     let svg = d3.select(element).select<SVGElement>('svg');
     let g = svg.select<SVGGElement>('g.graph');
 
     // get the Node element of the click source
-    let src = d3.event.target
-    let node: d3.Selection<SVGGElement, any, any, any>;
+    let node: d3.Selection<SVGGElement, any, any, any> =
+      g.select<SVGGElement>(`g [id='${d._id}'`);
 
-    if (src.tagName === 'text') {
-      node = d3.select(src.parentElement.parentElement);
-    } else if (src.tagName === 'circle') {
-      node = d3.select(src.parentElement);
-    } else {
+    if (!node)
       return;
-    }
 
     if (node.classed('node--selected')) {
       // don't change a thing
@@ -313,7 +305,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       // add the detailButton if not in editing mode
       if (!this.isEditing) {
         // position of the detailButton
-        let detailButtonX = d.x + 35;
+        let detailButtonX = d.x + 60;
         let detailButtonY = d.y + 35;
         let detailButtonIcon = 'icons/svg-sprite-navigation-symbol.svg#ic_arrow_forward_24px';
 
@@ -337,13 +329,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       // add the editing buttons if in editing mode
       if (this.isEditing) {
         // positions of the buttons
-        let editButtonX = d.x + 35;
+        let editButtonX = d.x + 68;
         let editButtonY = d.y - 35;
         let editButtonIcon = 'icons/svg-sprite-content-symbol.svg#ic_create_24px';
-        let moveButtonX = d.x + 50;
+        let moveButtonX = d.x + 72;
         let moveButtonY = d.y;
         let moveButtonIcon = 'icons/svg-sprite-action-symbol.svg#ic_open_with_24px';
-        let deleteButtonX = d.x + 35;
+        let deleteButtonX = d.x + 60;
         let deleteButtonY = d.y + 35;
         let deleteButtonIcon = 'icons/svg-sprite-action-symbol.svg#ic_delete_24px';
 
@@ -405,7 +397,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // finally set the rect width according to the text width
     let labelBoundings: SVGRect = buttonLabel.node().getBBox();
-    buttonBg.attr('width', 54 + labelBoundings.width);
+    buttonBg.attr('width', 48 + labelBoundings.width);
 
     return button;
   }
@@ -471,7 +463,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     if (currentFocus.node()) {
       this.removeNodeFocus(); // remove the current focus
-     // TODO: add the focus state back to the node
+      this.toggleNodeFocus(currentFocus.data()[0])     
     }
   }
 
