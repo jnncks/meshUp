@@ -20,7 +20,7 @@
 
   	<div class="modal__dialog__buttons">
     	<button class="modal__dialog__buttons__button" (click)="cancel()">abbrechen</button>
-   		<button class="modal__dialog__buttons__button" (click)="save()">Änderungen speichern</button>
+   		<button class="modal__dialog__buttons__button" (click)="save()" [disabled]="infoGraphForm.invalid || infoGraphForm.pristine">Änderungen speichern</button>
   	</div>
 
   </div>
