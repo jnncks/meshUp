@@ -133,7 +133,7 @@ import {
         ]
       },
       {
-        path: 'graph/:id',
+        path: 'graph/:id/:mode',
         component: GraphViewComponent,
         data: {
           name: 'Graphview'

@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Route, ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { Route, ActivatedRoute, Router, NavigationEnd, Params } from '@angular/router';
 
 import { AuthService } from '../shared/auth.service';
 import { GraphViewService } from '../graph-view';
+
+import { InfoGraphMeta } from '../../../../both/models';
 
 import template from './navbar.component.html';
 import styleUrl from './navbar.component.scss';
@@ -27,9 +29,10 @@ export class NavBarComponent implements OnInit{
    * Creates an instance of the NavBarComponent.
    * 
    * @constructor
-   * @param {AuthService} _authService The AuthService.
-   * 
-   * @memberOf NavBarComponent
+   * @param {AuthService} _authService 
+   * @param {Router} _router 
+   * @param {ActivatedRoute} _activatedRoute 
+   * @param {GraphViewService} _graphViewService 
    */
   constructor(private _authService: AuthService, private _router: Router, private _activatedRoute: ActivatedRoute, private _graphViewService: GraphViewService) {
     this._isEditing = this._graphViewService.getCurrentMode();
@@ -66,6 +69,11 @@ export class NavBarComponent implements OnInit{
     return this._authService.isLoggedIn();
   }
 
+  /**
+   * Calls the GraphViewService to toggle between plain viewing and editing.
+   * 
+   * @method toggleEditing
+   */
   toggleEditing() {
     this._graphViewService.toggleMode();
   }

@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Meteor } from 'meteor/meteor';
 
@@ -36,7 +36,7 @@ export class DashboardCardComponent implements OnChanges {
    * @param  {DashoardService} _dashboardService The DashboardService.
    * @param  {ModalService} _modalService The ModalService.
   */
-  constructor(private _router: Router, private _dashboardService: DashboardService, private _modalService: ModalService) {
+  constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _dashboardService: DashboardService, private _modalService: ModalService) {
     this.user = Meteor.user();
     this.tags = [];
   }
@@ -68,7 +68,7 @@ export class DashboardCardComponent implements OnChanges {
    * @param  {InfoGraphMeta} infoGraph The infoGraph to display in the graphView.
    */
   viewGraph(infoGraph: InfoGraphMeta = this.infoGraph): void {
-    this._router.navigate(['/graph', infoGraph._id]);
+    this._router.navigate(['../graph', infoGraph._id, 'view'], { relativeTo: this._activatedRoute});
   }
 
   /**

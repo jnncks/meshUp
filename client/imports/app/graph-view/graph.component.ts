@@ -95,11 +95,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @param  {SimpleChanges} changes An event of changed properties.
    */
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.isEditing)
+    if (changes.isEditing) {
       this.toggleEditing();
-
-    if (changes.graphData)
+      return;
+    } else if (changes.graphData) {
       this.updateGraph();
+    }
   }
 
   /**
@@ -452,8 +453,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   toggleEditing(): void {
-    // TODO
-
     let element = this._graphContainer.nativeElement;
     let svg = d3.select(element).select<SVGElement>('svg');
     let g = svg.select<SVGGElement>('g.graph');

@@ -1,4 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
+import { Meteor } from 'meteor/meteor';
 import { MeteorObservable } from 'meteor-rxjs';
 import { Observable } from 'rxjs';
 
@@ -14,17 +16,19 @@ import { InfoGraphCollection, InfoGraphMetaCollection } from '../../../../both/c
 @Injectable()
 export class GraphViewService {
   private _graph: Observable<InfoGraph>;
+  private _graphMeta: Observable<InfoGraphMeta>;
   private _isEditing: boolean;
   public modeChanged = new EventEmitter<boolean>();
 
   /**
    * Creates an instance of the GraphViewService.
    * 
+   * @param {Router} _router 
    * @constructor
    */
-  constructor() {
+  constructor(private _router: Router) {
     // TODO: actually use this collection for infoGraph settings
-    //MeteorObservable.subscribe('InfoGraphMetaCollection');
+    //
   }
 
   /**
@@ -37,10 +41,11 @@ export class GraphViewService {
   public setCurrentInfoGraph(graphMetaId): void {
     // set up the subscriptions
     const graphs = MeteorObservable.subscribe('InfoGraphCollection', graphMetaId);
+    const graphMetas = MeteorObservable.subscribe('InfoGraphMetaCollection');
     const autorun = MeteorObservable.autorun();
 
     // update the data whenever there was a change
-    Observable.merge(graphs, autorun).subscribe(() => {
+    Observable.merge(graphs, graphMetas, autorun).subscribe(() => {
       // Observable of the first and only element
       this._graph = InfoGraphCollection.find({metaId: graphMetaId}, {limit: 1})
         .map(graph => graph[0]);
@@ -75,7 +80,23 @@ export class GraphViewService {
    * @method toggleMode
    */
   toggleMode(): void {
+    let currentRoute: string = this._router.url;
+    if (currentRoute.includes('/edit') || currentRoute.includes('/view'))
+      currentRoute = currentRoute.substring(0, currentRoute.length - 5);
+
+    if (this.getGraphMeta().owner !== Meteor.userId()){
+      // the user has no editing permissions
+      return;
+    }
+    
     this._isEditing = !this._isEditing;
+
+    if (this._isEditing) {
+      this._router.navigate([currentRoute, 'edit']);
+    } else {
+      this._router.navigate([currentRoute, 'view']);
+    }
+
     this.modeChanged.emit(this._isEditing);
   }
 
@@ -87,5 +108,12 @@ export class GraphViewService {
    */
   getCurrentMode(): boolean {
     return this._isEditing;
+  }
+
+  getGraphMeta(): InfoGraphMeta {
+    let metaId: string;
+    this._graph.subscribe(graph => metaId = graph.metaId);
+
+    return InfoGraphMetaCollection.findOne({_id: metaId});
   }
 }

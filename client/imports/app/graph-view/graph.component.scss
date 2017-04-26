@@ -46,6 +46,10 @@
         stroke-width: 2px;
       }
 
+      &__label {
+        font-size: 20px;
+      }
+
       &:hover {
         rect {
           stroke: $accent-color;
