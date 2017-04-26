@@ -1,15 +1,16 @@
 <div class="bar">
   <ul class="bar__pagelist" *ngIf="isLoggedIn()">
-    <li class="bar__pagelist__page" routerLinkActive="bar__pagelist__page--active" *ngFor="let page of (pages | routeWithName); let first = first">
+    <li class="bar__pagelist__page" routerLinkActive="bar__pagelist__page--active" *ngFor="let page of breadcrumbs; let first = first">
       <div class="bar__pagelist__page__divider" *ngIf="!first">
         <svg>
           <use xlink:href="icons/svg-sprite-navigation-symbol.svg#ic_chevron_right_24px" />
         </svg>
       </div>
-      <a routerLink="{{ page.path }}">{{ page.data.name }}</a>
+      <a routerLink="{{ page.url }}" *ngIf="!page.async">{{ page.name }}</a>
+      <a routerLink="{{ page.url }}" *ngIf="page.async">{{ page.nameAsync | async }}</a>
     </li>
   </ul>
-  <button class="bar__edit__button" *ngIf="_currentRouteData && _currentRouteData.name === 'Graphview'" (click)="toggleEditing()">
+  <button class="bar__edit__button" *ngIf="_currentRouteData && _currentRouteData.name === 'Graphview' && !_isEditing" (click)="toggleEditing()">
     <svg>
       <use xlink:href="icons/svg-sprite-content-symbol.svg#ic_create_24px" />
     </svg>

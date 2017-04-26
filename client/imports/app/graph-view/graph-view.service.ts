@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { Meteor } from 'meteor/meteor';
 import { MeteorObservable } from 'meteor-rxjs';
 import { Observable } from 'rxjs';
@@ -27,8 +27,19 @@ export class GraphViewService {
    * @constructor
    */
   constructor(private _router: Router) {
-    // TODO: actually use this collection for infoGraph settings
-    //
+
+    // update the current mode on navigation end
+    this._router.events
+      .filter(event => event instanceof NavigationEnd)
+      .subscribe(event => {
+        if (event.url.endsWith('/edit')) {
+          this._isEditing = true;
+        } else if (event.url.endsWith('/view')) {
+          this._isEditing = false;
+        }
+
+        this.modeChanged.emit(this._isEditing);
+      });
   }
 
   /**
@@ -49,6 +60,8 @@ export class GraphViewService {
       // Observable of the first and only element
       this._graph = InfoGraphCollection.find({metaId: graphMetaId}, {limit: 1})
         .map(graph => graph[0]);
+      this._graphMeta = InfoGraphMetaCollection.find({_id: graphMetaId}, {limit: 1})
+        .map(graphMeta => graphMeta[0]);
     });
   }
 
@@ -85,7 +98,7 @@ export class GraphViewService {
       currentRoute = currentRoute.substring(0, currentRoute.length - 5);
     
     let isOwner: boolean;
-    this.getGraphMeta().subscribe(meta => {
+    this.getCurrentGraphMeta().subscribe(meta => {
       if (meta.owner === Meteor.userId())
         isOwner =  true;
       else
@@ -96,16 +109,12 @@ export class GraphViewService {
       // the user has no editing permissions
       return;
     }
-    
-    this._isEditing = !this._isEditing;
 
-    if (this._isEditing) {
+    if (!this._isEditing) {
       this._router.navigate([currentRoute, 'edit']);
     } else {
       this._router.navigate([currentRoute, 'view']);
     }
-
-    this.modeChanged.emit(this._isEditing);
   }
 
   /**
@@ -118,11 +127,15 @@ export class GraphViewService {
     return this._isEditing;
   }
 
-  getGraphMeta(): Observable<InfoGraphMeta> {
-    let metaId: string;
-    this._graph.subscribe(graph => metaId = graph.metaId);
-
-    return InfoGraphMetaCollection.find({_id: metaId}, {limit: 1})
-        .map(graphMeta => graphMeta[0]);
+  /**
+   * Returns an Observable of the infoGraphMeta of the currently active
+   * infoGraph of the graphView.
+   * 
+   * @method getCurrentGraphMeta
+   * @return {Observable<InfoGraphMeta>} 
+   */
+  getCurrentGraphMeta(): Observable<InfoGraphMeta> {
+    if (this._graphMeta)
+      return this._graphMeta;
   }
 }

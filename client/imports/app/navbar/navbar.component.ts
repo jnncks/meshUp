@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Route, ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { Observable } from 'rxjs';
 
 import { AuthService } from '../shared/auth.service';
 import { GraphViewService } from '../graph-view';
@@ -21,7 +22,12 @@ import styleUrl from './navbar.component.scss';
   styles: [ styleUrl ]
 })
 export class NavBarComponent implements OnInit{
-  @Input() pages: Route[];
+  public breadcrumbs: {
+    url: string,
+    name?: string,
+    nameAsync?: Observable<string>,
+    async?: boolean
+  }[];
   private _currentRouteData: Object;
   private _isEditing: boolean = false;
 
@@ -52,11 +58,14 @@ export class NavBarComponent implements OnInit{
       .mergeMap(route => route.data)
       .subscribe(routeData => {
         this._currentRouteData = routeData;
+        this.updateBreadcrumbs();
       });
     
     // subscribe to mode changes in the graph view
     this._graphViewService.modeChanged.subscribe(isEditing =>
       this._isEditing = isEditing);
+
+    this.updateBreadcrumbs();
   }
 
   /**
@@ -74,7 +83,35 @@ export class NavBarComponent implements OnInit{
    * 
    * @method toggleEditing
    */
-  toggleEditing() {
+  toggleEditing(): void {
     this._graphViewService.toggleMode();
+  }
+
+  updateBreadcrumbs(): void {
+    let currentUrl = this._router.url;
+    let breadcrumbs = [];
+
+    if (!Meteor.userId()) {
+      breadcrumbs.push({url: '/login', name: 'Login'})
+      this.breadcrumbs = breadcrumbs;
+      return;
+    }
+
+    breadcrumbs.push({ url: '/home', name: 'Home' });
+
+    if (currentUrl.includes('/graph')) {
+      breadcrumbs.push({
+        url: currentUrl.replace('/edit', '/view'),
+        nameAsync: this._graphViewService.getCurrentGraphMeta().map(meta => {
+          return meta.name
+        }),
+        async: true
+      });
+    }
+
+    if (currentUrl.includes('/graph') && currentUrl.endsWith('/edit'))
+      breadcrumbs.push({ url: currentUrl, name: 'bearbeiten' });
+    
+    this.breadcrumbs = breadcrumbs;
   }
 }

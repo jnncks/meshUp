@@ -20,7 +20,6 @@ import styleUrl from './app.component.scss';
   styles: [ styleUrl ]
 })
 export class AppComponent implements OnInit {
-  pages: Route[];
   appName: string;
 
   /**
@@ -35,7 +34,6 @@ export class AppComponent implements OnInit {
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
     private _titleService: Title) {
-      this.pages = this._router.config;
       this.appName = 'meshUp';
   }
 
