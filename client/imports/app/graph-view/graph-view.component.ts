@@ -53,17 +53,10 @@ export class GraphViewComponent implements OnInit {
 
         // prevent enabling the editing mode by navigating back to home
         if (params.mode === 'edit') {
-          let isOwner: boolean;
           this._graphViewService.getCurrentGraphMeta().subscribe(meta => {
-            if (meta.owner === Meteor.userId())
-              isOwner =  true;
-            else
-              isOwner =  false;
+            if (meta.owner !== Meteor.userId())
+              this._router.navigate(['/home']);
           });
-    
-          if (!isOwner){
-            this._router.navigate(['../home']);
-          }
         }
       });
     
