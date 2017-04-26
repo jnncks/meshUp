@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Route, ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs';
+import { Meteor } from 'meteor/meteor';
 
 import { AuthService } from '../shared/auth.service';
 import { GraphViewService } from '../graph-view';
@@ -29,7 +30,9 @@ export class NavBarComponent implements OnInit{
     async?: boolean
   }[];
   private _currentRouteData: Object;
+  private _currentGraphMeta: InfoGraphMeta;
   private _isEditing: boolean = false;
+  private _userId: string;
 
   /**
    * Creates an instance of the NavBarComponent.
@@ -40,13 +43,14 @@ export class NavBarComponent implements OnInit{
    * @param {ActivatedRoute} _activatedRoute 
    * @param {GraphViewService} _graphViewService 
    */
-  constructor(private _authService: AuthService, private _router: Router, private _activatedRoute: ActivatedRoute, private _graphViewService: GraphViewService) {
-    this._isEditing = this._graphViewService.getCurrentMode();
-    this._graphViewService.modeChanged.subscribe(isEditing => this._isEditing);
-  }
+  constructor(private _authService: AuthService, private _router: Router, private _activatedRoute: ActivatedRoute, private _graphViewService: GraphViewService) { }
 
   ngOnInit() {
-    // update _currentRouteData after route changes
+    this._userId = Meteor.userId();
+    this._isEditing = this._graphViewService.getCurrentMode();
+    this._graphViewService.modeChanged.subscribe(isEditing => this._isEditing);
+
+    // update some properties after navigation ends
     this._router.events
       .filter(event => event instanceof NavigationEnd)
       .map(() => this._activatedRoute)
@@ -59,13 +63,14 @@ export class NavBarComponent implements OnInit{
       .subscribe(routeData => {
         this._currentRouteData = routeData;
         this.updateBreadcrumbs();
+
+        if (routeData.name === 'Graphview')
+          this.updateInfoGraphMeta();
       });
     
     // subscribe to mode changes in the graph view
     this._graphViewService.modeChanged.subscribe(isEditing =>
       this._isEditing = isEditing);
-
-    this.updateBreadcrumbs();
   }
 
   /**
@@ -113,5 +118,9 @@ export class NavBarComponent implements OnInit{
       breadcrumbs.push({ url: currentUrl, name: 'bearbeiten' });
     
     this.breadcrumbs = breadcrumbs;
+  }
+
+  updateInfoGraphMeta(): void {
+    this._graphViewService.getCurrentGraphMeta().subscribe(meta => this._currentGraphMeta = meta);
   }
 }

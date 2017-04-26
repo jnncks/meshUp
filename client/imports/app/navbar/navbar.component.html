@@ -10,7 +10,12 @@
       <a routerLink="{{ page.url }}" *ngIf="page.async">{{ page.nameAsync | async }}</a>
     </li>
   </ul>
-  <button class="bar__edit__button" *ngIf="_currentRouteData && _currentRouteData.name === 'Graphview' && !_isEditing" (click)="toggleEditing()">
+  <button class="bar__edit__button" *ngIf="_userId &&
+    _currentRouteData &&
+    _currentRouteData.name === 'Graphview' &&
+    _currentGraphMeta &&
+    _currentGraphMeta.owner === _userId &&
+    !_isEditing" (click)="toggleEditing()">
     <svg>
       <use xlink:href="icons/svg-sprite-content-symbol.svg#ic_create_24px" />
     </svg>
