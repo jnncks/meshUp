@@ -1,6 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Observable } from 'rxjs';
+import { Meteor } from 'meteor/meteor';
 
 import { GraphViewService } from './graph-view.service';
 
@@ -49,8 +50,23 @@ export class GraphViewComponent implements OnInit {
       .subscribe((params: Params) => {
         this._graphViewService.setCurrentInfoGraph(params.id);
         this._graph = this._graphViewService.getCurrentInfoGraph();
-      });
 
+        // prevent enabling the editing mode by navigating back to home
+        if (params.mode === 'edit') {
+          let isOwner: boolean;
+          this._graphViewService.getGraphMeta().subscribe(meta => {
+            if (meta.owner === Meteor.userId())
+              isOwner =  true;
+            else
+              isOwner =  false;
+          });
+    
+          if (!isOwner){
+            this._router.navigate(['../home']);
+          }
+        }
+      });
+    
     this._graphViewService.modeChanged.subscribe(isEditing =>
       this.isEditing = isEditing);
   }

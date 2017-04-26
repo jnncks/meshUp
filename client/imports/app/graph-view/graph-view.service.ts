@@ -83,8 +83,16 @@ export class GraphViewService {
     let currentRoute: string = this._router.url;
     if (currentRoute.includes('/edit') || currentRoute.includes('/view'))
       currentRoute = currentRoute.substring(0, currentRoute.length - 5);
-
-    if (this.getGraphMeta().owner !== Meteor.userId()){
+    
+    let isOwner: boolean;
+    this.getGraphMeta().subscribe(meta => {
+      if (meta.owner === Meteor.userId())
+        isOwner =  true;
+      else
+        isOwner =  false;
+    })
+    
+    if (!isOwner){
       // the user has no editing permissions
       return;
     }
@@ -110,10 +118,11 @@ export class GraphViewService {
     return this._isEditing;
   }
 
-  getGraphMeta(): InfoGraphMeta {
+  getGraphMeta(): Observable<InfoGraphMeta> {
     let metaId: string;
     this._graph.subscribe(graph => metaId = graph.metaId);
 
-    return InfoGraphMetaCollection.findOne({_id: metaId});
+    return InfoGraphMetaCollection.find({_id: metaId}, {limit: 1})
+        .map(graphMeta => graphMeta[0]);
   }
 }

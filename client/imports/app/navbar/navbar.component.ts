@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Route, ActivatedRoute, Router, NavigationEnd, Params } from '@angular/router';
+import { Route, ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
 import { AuthService } from '../shared/auth.service';
 import { GraphViewService } from '../graph-view';
