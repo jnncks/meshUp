@@ -17,8 +17,9 @@ import {
   ModalService
 } from '../shared/modal.module';
 import {
-  NodeModalComponent
-} from './node-modal.component';
+  NodeModalComponent,
+  NodeEditModalComponent
+} from './index';
 
 import {
   Edge,
@@ -329,27 +330,33 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
       // add the editing buttons if in editing mode
       if (this.isEditing) {
-        // positions of the buttons
-        let editButtonX = d.x + 68;
-        let editButtonY = d.y - 35;
+        // positions of the buttons        
+        let editButtonX = d.x + 72;
+        let editButtonY = d.y;
         let editButtonIcon = 'icons/svg-sprite-content-symbol.svg#ic_create_24px';
-        let moveButtonX = d.x + 72;
-        let moveButtonY = d.y;
+        let moveButtonX = d.x + 60;
+        let moveButtonY = d.y + 35;
         let moveButtonIcon = 'icons/svg-sprite-action-symbol.svg#ic_open_with_24px';
-        let deleteButtonX = d.x + 60;
-        let deleteButtonY = d.y + 35;
-        let deleteButtonIcon = 'icons/svg-sprite-action-symbol.svg#ic_delete_24px';
 
         // append the buttons
         let editButton = this.appendFocusButton(node, d, 'EditButton', editButtonX,
           editButtonY, editButtonIcon, 'bearbeiten');
         let moveButton = this.appendFocusButton(node, d, 'MoveButton', moveButtonX,
           moveButtonY, moveButtonIcon, 'verschieben');
-        let deleteButton = this.appendFocusButton(node, d, 'DeleteButton', deleteButtonX,
-          deleteButtonY, deleteButtonIcon, 'entfernen');
 
         // set up the mousedown handlers
-        // TODO!
+        editButton.on('mousedown', (node: Node) => {
+          if (d3.event.button === 2) {
+            d3.event.stopImmediatePropagation();
+            return;
+          }
+
+          this._modalService.create(NodeEditModalComponent, {
+            node: node
+          });
+        });
+
+        // TODO: dragHandler
       }
     }
   }

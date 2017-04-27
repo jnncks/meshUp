@@ -10,6 +10,9 @@ import {
 import {
   RouterModule
 } from '@angular/router';
+import {
+  QuillModule
+} from 'ngx-quill';
 
 /* Components */
 import {
@@ -34,7 +37,10 @@ import {
   DashboardNewGraphComponent
 } from './dashboard';
 import {
-  GraphViewComponent, GraphComponent, NodeModalComponent
+  GraphViewComponent,
+  GraphComponent,
+  NodeModalComponent,
+  NodeEditModalComponent
 } from './graph-view';
 import {
   InfoGraphSettingsModalComponent
@@ -92,6 +98,7 @@ import {
     GraphViewComponent,
     GraphComponent,
     NodeModalComponent,
+    NodeEditModalComponent,
     RouteWithNamePipe,
     ArrayToListPipe
   ],
@@ -113,6 +120,7 @@ import {
     FormsModule,
     ReactiveFormsModule,
     ModalModule,
+    QuillModule,
     RouterModule.forRoot([{
         path: '',
         pathMatch: 'full',
