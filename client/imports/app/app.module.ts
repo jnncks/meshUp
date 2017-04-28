@@ -15,8 +15,8 @@ import {
   ModalModule
 } from './shared/modal.module';
 import {
-  QuillModule
-} from 'ngx-quill';
+  TrumbowygModule
+} from 'ng2-lazy-trumbowyg';
 
 /* Components */
 import {
@@ -119,7 +119,7 @@ import {
     FormsModule,
     ReactiveFormsModule,
     ModalModule,
-    QuillModule,
+    TrumbowygModule,
     RouterModule.forRoot([{
         path: '',
         pathMatch: 'full',

@@ -10,26 +10,7 @@
       <input formControlName="title" name="title" type="text" placeholder="Titel des Inhalts">
 
       <label for="content">Inhalt</label>
-      <quill-editor formControlName="content" name="content" placeholder="Hier Inhalt einfügen...">
-        <div quill-editor-toolbar>
-          <span class="ql-formats">
-            <button class="ql-bold" [title]="'fett'"></button>
-            <button class="ql-italic" [title]="'kursiv'"></button>
-            <button class="ql-blockquote" [title]="'Zitat'"></button>
-            <select class="ql-header" [title]="'Format'">
-              <option value="2">Überschrift 1</option>
-              <option value="3">Überschrift 2</option>
-              <option value="4">Überschrift 3</option>
-              <option value="false" selected>Paragraph</option>
-            </select>
-            <button class="ql-list" value="bullet" [title]="'ungeordnete Liste'"></button>
-            <button class="ql-list" value="ordered" [title]="'geordnete Liste'"></button>
-            <button class="ql-link" [title]="'Link'"></button>
-            <button class="ql-image" [title]="'Grafik'"></button>
-            <button class="ql-video" [title]="'Video'"></button>
-          </span>
-        </div>
-      </quill-editor>
+      <trumbowyg [initialContent]="node.content" [update]="update$" (savedContent)="node.content=$event" name="content"></trumbowyg>
 
       <label for="tags">Tags (durch Kommata getrennt)</label>
       <textarea formControlName="tags" name="tags" placeholder="Tags für den Inhalt" rows="3">
