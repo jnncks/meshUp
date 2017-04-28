@@ -1,0 +1,1 @@
+var Quill = require('quill/dist/quill');

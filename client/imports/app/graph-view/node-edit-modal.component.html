@@ -10,8 +10,8 @@
       <input formControlName="title" name="title" type="text" placeholder="Titel des Inhalts">
 
       <label for="content">Inhalt</label>
-      <quill-editor formControlName="content" name="content" placeholder="Hier Inhalt einfügen...">
-        <div quill-editor-toolbar>
+      <p-editor formControlName="content" name="content" placeholder="Hier Inhalt einfügen...">
+         <p-header>
           <span class="ql-formats">
             <button class="ql-bold" [title]="'fett'"></button>
             <button class="ql-italic" [title]="'kursiv'"></button>
@@ -26,10 +26,9 @@
             <button class="ql-list" value="ordered" [title]="'geordnete Liste'"></button>
             <button class="ql-link" [title]="'Link'"></button>
             <button class="ql-image" [title]="'Grafik'"></button>
-            <button class="ql-video" [title]="'Video'"></button>
           </span>
-        </div>
-      </quill-editor>
+         </p-header>
+      </p-editor>
 
       <label for="tags">Tags (durch Kommata getrennt)</label>
       <textarea formControlName="tags" name="tags" placeholder="Tags für den Inhalt" rows="3">

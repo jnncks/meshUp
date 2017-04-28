@@ -15,8 +15,10 @@ import {
   ModalModule
 } from './shared/modal.module';
 import {
-  QuillModule
-} from 'ngx-quill';
+  EditorModule,
+  SharedModule as PrimeNgSharedModule
+} from 'primeng/primeng';
+
 
 /* Components */
 import {
@@ -119,7 +121,8 @@ import {
     FormsModule,
     ReactiveFormsModule,
     ModalModule,
-    QuillModule,
+    EditorModule,
+    PrimeNgSharedModule,
     RouterModule.forRoot([{
         path: '',
         pathMatch: 'full',
