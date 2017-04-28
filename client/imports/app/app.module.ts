@@ -1,3 +1,4 @@
+/* Modules */
 import {
   NgModule
 } from '@angular/core';
@@ -10,6 +11,9 @@ import {
 import {
   RouterModule
 } from '@angular/router';
+import {
+  ModalModule
+} from './shared/modal.module';
 import {
   QuillModule
 } from 'ngx-quill';
@@ -73,11 +77,6 @@ import {
 import {
   ArrayToListPipe
 } from './shared/array-to-list.pipe';
-
-/* Modules */
-import {
-  ModalModule
-} from './shared/modal.module';
 
 @NgModule({
   /* Components, Pipes, Directives */

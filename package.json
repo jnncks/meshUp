@@ -36,7 +36,7 @@
     "d3": "^4.7.3",
     "mathsass": "^0.9.5",
     "meteor-rxjs": "0.4.7",
-    "ngx-quill": "^1.2.3",
+    "ngx-quill": "1.2.3",
     "normalize-opentype.css": "^0.2.4",
     "normalize.css": "^6.0.0",
     "reflect-metadata": "0.1.9",

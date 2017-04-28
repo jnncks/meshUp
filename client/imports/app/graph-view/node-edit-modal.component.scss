@@ -53,7 +53,7 @@
       flex-direction: column;
       margin-bottom: 2rem;
       min-height: 4rem;
-      overflow-y: scroll; 
+      overflow-y: scroll;
 
       label,
       input,
@@ -91,7 +91,7 @@
         resize: vertical;
       }
     }
-
+    
     &__buttons {
       display: flex;
       flex-shrink: 0;
@@ -110,5 +110,3 @@
     }
   }
 }
-
-
