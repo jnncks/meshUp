@@ -259,6 +259,12 @@ angular2-meteor@0.7.1:
   dependencies:
     underscore "^1.8.3"
 
+angular2-tinymce@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/angular2-tinymce/-/angular2-tinymce-2.1.1.tgz#1f9f7287e30a5dffad0dfe7c83c5da17f5a3d01f"
+  dependencies:
+    tinymce "^4.5.6"
+
 ansi-regex@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-2.1.1.tgz#c3b33ab5ee360d86e0e628f0468ae7ef27d654df"
@@ -1534,6 +1540,10 @@ timers-browserify@^1.4.2:
   resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-1.4.2.tgz#c9c58b575be8407375cb5e2462dacee74359f41d"
   dependencies:
     process "~0.11.0"
+
+tinymce@^4.5.6:
+  version "4.5.7"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.5.7.tgz#e1f5cd286ec3c9977bd672a4c14e496f63bc4fef"
 
 tough-cookie@~2.3.0:
   version "2.3.2"

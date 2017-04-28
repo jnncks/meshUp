@@ -1,0 +1,113 @@
+.meshup-tinymce {
+  border: 2px solid rgba(255,255,255,.12);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	color: rgba(0,0,0,.87);
+	line-height: 1.6;
+	font-feature-settings: "onum" 0, "lnum" 1;
+}
+
+@media (max-width: 399px) {
+  .meshup-tinymce {
+    font-size: 100%;
+  }
+}
+
+@media (min-width: 400px) {
+  .meshup-tinymce{
+    font-size: 105%;
+  }
+}
+
+@media (min-width: 600px) {
+  .meshup-tinymce {
+    font-size: 117.5%;
+  }
+}
+
+@media (min-width: 800px) {
+  .meshup-tinymce {
+    font-size: 127.5%;
+  }
+}
+
+.meshup-tinymce h1,
+.meshup-tinymce h2,
+.meshup-tinymce h3,
+.meshup-tinymce h4,
+.meshup-tinymce h5,
+.meshup-tinymce h6 {
+	line-height: 1.1;
+	font-feature-settings: "onum" 0, "lnum" 1;	
+}
+
+.meshup-tinymce h1 {
+	font-size: 2.75em;
+	font-weight: 300;
+	margin-top: 0.53em;
+	margin-bottom: 0.53em;
+}
+
+.meshup-tinymce h2 {
+	font-size: 2.25em;
+	font-weight: 400;
+	margin-top: 0.4em;
+	margin-bottom: 0.4em;
+}
+
+.meshup-tinymce h3 {
+	font-size: 1.75em;
+	font-weight: 400;
+	margin-top: 0.4em;
+	margin-bottom: 0.4em;
+}
+
+.meshup-tinymce h4 {
+	font-size: 1.25em;
+	font-weight: 600;
+	margin-top: 0.67em;
+	margin-bottom: 0.67em;
+}
+
+.meshup-tinymce h5 {
+	font-size: 1em;
+	font-weight: 700;
+	margin-top: 0.94em;
+	margin-bottom: 0.94em;
+}
+
+.meshup-tinymce h6 {
+	font-size: 0.75em;
+	font-weight: 800;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	text-transform: uppercase;
+}
+
+.meshup-tinymce p {
+	margin-top: 1em;
+	margin-bottom: 1.5em;
+}
+
+.meshup-tinymce strong {
+	font-weight: 700;
+}
+
+.meshup-tinymce em {
+	font-style: italic;
+}
+
+.meshup-tinymce a {
+	color: #009688;
+}
+
+ul,ol {
+	margin-top: 1em;
+	margin-bottom: 1.5em;
+	padding-left: 1.1em;
+}
+
+li {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+

@@ -11,8 +11,8 @@ import {
   RouterModule
 } from '@angular/router';
 import {
-  QuillModule
-} from 'ngx-quill';
+  TinymceModule
+} from 'angular2-tinymce';
 
 /* Components */
 import {
@@ -120,7 +120,23 @@ import {
     FormsModule,
     ReactiveFormsModule,
     ModalModule,
-    QuillModule,
+    TinymceModule.withConfig({
+      language: 'de',
+      menubar: false,
+      elementpath: false,
+      insert_toolbar: 'image',
+      style_formats: [
+        {title: 'Paragraph', block: 'p'},
+        {title: 'Überschrift 1', block: 'h2'},
+        {title: 'Überschrift 2', block: 'h3'},
+        {title: 'Überschrift 3', block: 'h4'},
+        {title: 'Überschrift 4', block: 'h5'}
+      ],
+      toolbar: 'undo redo copy paste | styleselect | bold italic | lists | hr link image',
+      body_class: 'meshup-tinymce',
+      content_css: '/assets/tinymce/skins/custom/tinymce-overwrites.css',
+      skin: 'custom'
+    }),
     RouterModule.forRoot([{
         path: '',
         pathMatch: 'full',
