@@ -2,10 +2,9 @@
 	<div class="modal__dialog">
 
 		<div class="modal__dialog__title" *ngIf="node.title">
-      <h2>{{ node.title }}</h2>
+      <h1>{{ node.title }}</h1>
     </div>
-		<div class="modal__dialog__content" *ngIf="node.content">
-			{{ node.content }}
+		<div class="modal__dialog__content" *ngIf="node.content" [innerHTML]="node.content">
 		</div>
   	<div class="modal__dialog__buttons">
    		<button class="modal__dialog__buttons__button" (click)="close()">schließen</button>
