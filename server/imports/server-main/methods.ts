@@ -80,13 +80,50 @@ Meteor.methods({
 
       if (!infoGraphMetaExists) {
         throw new Meteor.Error('infoGraph-non-existent',
-          'The ID of the supplied infoGraphMeta does not exist');
+          'The ID of the supplied infoGraphMeta is not linked to any existing infoGraphMeta');
       }
 
       InfoGraphMetaCollection.collection.update({ _id: infoGraphMeta._id }, infoGraphMeta, (err) => {
         if (err)
           throw new Meteor.Error(err);
       });
+    }
+  },
+
+  updateInfoGraph(infoGraph: InfoGraph): void {
+    if (!this.userId) {
+      throw new Meteor.Error('unauthorized',
+        'User must be logged in to update infoGraphs');
+    }
+
+    if (infoGraph) {
+      check(infoGraph._id, nonEmptyString);
+
+      let infoGraphMeta = InfoGraphMetaCollection.findOne({_id: infoGraph.metaId})
+      if (infoGraphMeta.owner !== this.userId) {
+        throw new Meteor.Error('no-permission',
+          'The user has no permission to update the infoGraph\'s contents');
+      }
+
+      const infoGraphExists = !!InfoGraphCollection.collection.find({
+        _id: infoGraph._id
+      }).count();
+
+      if (!infoGraphExists) {
+        throw new Meteor.Error('infoGraph-non-existent',
+          'The ID of the supplied infoGraph is not linked to any existing infoGraph');
+      }
+
+      InfoGraphCollection.collection.update({ _id: infoGraph._id }, infoGraph, (err) => {
+        if (err)
+          throw new Meteor.Error(err);
+      });
+
+      InfoGraphMetaCollection.collection.update({ _id: infoGraph.metaId },
+        { $set: { lastUpdated: new Date() } }, (err) => {
+          if (err)
+            throw new Meteor.Error(err);
+        });
     }
   },
 
@@ -103,17 +140,17 @@ Meteor.methods({
     InfoGraphCategoryCollection.collection.remove(categoryId);
   },
 
-  // currently, this handles only InfoGraphMeta entries!
-  deleteInfoGraph(infoGraphId: string): void {
-    check(infoGraphId, nonEmptyString);
+  deleteInfoGraph(infoGraphMetaId: string): void {
+    check(infoGraphMetaId, nonEmptyString);
 
-    const InfoGraphExists = !!InfoGraphMetaCollection.collection.find(infoGraphId).count();
+    const InfoGraphExists = !!InfoGraphMetaCollection.collection.find(infoGraphMetaId).count();
 
     if (!InfoGraphExists) {
       throw new Meteor.Error('infoGraph-non-existent',
         'infoGraph does not exist');
     }
 
-    InfoGraphMetaCollection.collection.remove(infoGraphId);
+    InfoGraphCollection.remove({metaId: infoGraphMetaId})
+    InfoGraphMetaCollection.collection.remove(infoGraphMetaId);
   }
 });

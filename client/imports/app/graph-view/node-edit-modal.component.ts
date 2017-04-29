@@ -2,16 +2,18 @@ import { Component, OnInit, Input, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { trigger, state, style, animate, transition, keyframes} from '@angular/core';
 
+import { GraphViewService } from './index';
+
 import { Modal } from '../shared/modal.module';
-import { Node } from '../../../../both/models';
+import { InfoGraph, Node } from '../../../../both/models';
 
 import template from './node-edit-modal.component.html';
 import styleUrl from './node-edit-modal.component.scss';
 
 /**
- * A modal which displays the content of a node in detail.
+ * A modal which allows editing of a node's content.
  * 
- * @class NodeModalComponent
+ * @class NodeEditModalComponent
  * @implements {OnInit}
  */
 @Component({
@@ -48,12 +50,12 @@ export class NodeEditModalComponent implements OnInit{
   nodeForm: FormGroup;
   
   /**
-   * Creates an instance of the NodeModalComponent.
+   * Creates an instance of the NodeEditModalComponent.
    * 
    * @constructor
    * @param {FormBuilder} fb The FormBuilder.
    */
-  constructor(@Inject(FormBuilder) fb: FormBuilder) {
+  constructor(@Inject(FormBuilder) fb: FormBuilder, private _graphViewService: GraphViewService) {
     this.modalTitle = 'Inhalt bearbeiten';
 
     // set up the form group
@@ -87,9 +89,30 @@ export class NodeEditModalComponent implements OnInit{
    * Saves the content and closes the modal.
    * 
    * @method close
-   * @param  {Event} event
    */
-  save(event: Event): void {
+  save(): void {
+    if (this.nodeForm.dirty) {
+      let nodeUpdate: Node = {
+        ...this.node,
+        title: this.nodeForm.get('title').value.trim(),
+        content: this.nodeForm.get('content').value.trim(),
+        tags: this.nodeForm.get('tags').value.split(',')
+                .map((tag) => tag.trim()),
+        lastUpdated: new Date()
+      }
+
+      this._graphViewService.updateInfoGraphNode(nodeUpdate)
+    }
+
+    this.closeModal();
+  }
+
+  /**
+   * Removes the node and all related edges.
+   * 
+   * @method remove
+   */
+  remove(): void {
     // TODO
   }
 

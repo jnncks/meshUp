@@ -4,7 +4,9 @@ import { Meteor } from 'meteor/meteor';
 import { MeteorObservable } from 'meteor-rxjs';
 import { Observable } from 'rxjs';
 
-import { InfoGraph, InfoGraphMeta } from '../../../../both/models';
+import { InfoGraphService } from '../shared/info-graph.service';
+
+import { InfoGraph, InfoGraphMeta, Node } from '../../../../both/models';
 import { InfoGraphCollection, InfoGraphMetaCollection } from '../../../../both/collections';
 
 
@@ -26,7 +28,7 @@ export class GraphViewService {
    * @param {Router} _router 
    * @constructor
    */
-  constructor(private _router: Router) {
+  constructor(private _router: Router, private _infoGraphService: InfoGraphService) {
 
     // update the current mode on navigation end
     this._router.events
@@ -137,5 +139,27 @@ export class GraphViewService {
   getCurrentGraphMeta(): Observable<InfoGraphMeta> {
     if (this._graphMeta)
       return this._graphMeta;
+  }
+
+  /**
+   * Updates a node of the currently active infoGraph (_graph) by passing the
+   * graph's data to the updateInfoGraph method of the InfoGraphService.
+   * 
+   * @method updateInfoGraphNode
+   * @param  {Node} node 
+   */
+  updateInfoGraphNode(node: Node): void {
+    if (this._graph) {
+      this._graph.subscribe((graph: InfoGraph) => {
+        let index = graph.nodes.findIndex((n: Node) => n._id === node._id);
+
+        if (index) {
+          graph.nodes[index] = node;
+          this._infoGraphService.updateInfoGraph(graph);
+        } else {
+          console.error('the node\'s ID does not exist! (updateInfoGraphNode)');
+        }
+      })
+    }
   }
 }

@@ -109,6 +109,27 @@ export class InfoGraphService {
   }
 
   /**
+   * Updates a InfoGraph document by calling the server's update method.
+   * 
+   * Note: This might become a bottleneck for large documents.
+   *       Should be invstigated some time in the future!
+   * 
+   * @method updateInfoGraph
+   * @param  {InfoGraph} graph The updated InfoGraph document.
+   */
+  updateInfoGraph(graph: InfoGraph): void {
+    MeteorObservable.call('updateInfoGraph', graph)
+      .zone()
+      .subscribe({
+        error: (e: Error) => {
+          if (e) {
+            this._handleError(e);
+          }
+        }
+      });
+  }
+
+  /**
    * Handles errors.
    * Currently, the errors are print in the console.
    * 

@@ -96,8 +96,13 @@
       flex-shrink: 0;
       flex-direction: row;
       justify-content: space-between;
+      margin-top: 1.5rem;
       margin-left: -.5rem;
       margin-right: -.5rem;
+
+      &--first-line {
+        margin-bottom: .5rem;
+      }
 
       @include buttons(
         $bg-color: $card-background-color,
