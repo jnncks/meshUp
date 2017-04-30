@@ -1,11 +1,15 @@
 <div class="card">
   <div class="card__content">
-    <h3 class="card__content__title">
-      {{ infoGraph.name }}
-      <svg class="card__content__title__settings-icon" *ngIf="user && infoGraph.owner === user._id" (click)="openSettingsModal(infoGraph)">
-        <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_settings_24px" />
-      </svg>
-    </h3>
+    <div class="card__content__title">
+      <h3>
+        {{ infoGraph.name }}
+      </h3>
+      <div class="card__content__title__settings-icon" *ngIf="user && infoGraph.owner === user._id" (click)="openSettingsModal(infoGraph)">
+        <svg>
+          <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_settings_24px" />
+        </svg>
+      </div>
+    </div>
     <p class="card__content__subtitle">
       von {{ getUserName(infoGraph.owner) | async }}
       <br>

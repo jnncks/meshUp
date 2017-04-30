@@ -1,122 +1,89 @@
-@import 'breakpoints';
-
-$font-stack: (-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol');
-
-body {
-	font-family: $font-stack;
-	color: $primary-text-color;
-	line-height: 1.6;
-	font-feature-settings: "onum" 0, "lnum" 1;
+@import 'colors';
+// import Sassline base SCSS files in order so variables are read correctly
+@import 'sassline-variables';
+@import '../../../node_modules/sassline/assets/sass/sassline-base/modular-scale';
+@import '../../../node_modules/sassline/assets/sass/sassline-base/mixins';
+@import 'sassline-typography';
+@import '../../../node_modules/sassline/assets/sass/sassline-base/layouts';
+// input element styling
+input,
+select,
+textarea {
+	width: 100%;
+	outline: 0;
+	border: 2px solid $divider-color;
+  border-radius: 0.15rem;
+	font-family: unquote(map-get($headingtype, font-family));
+	font-feature-settings: 'dlig', 'liga', 'lnum', 'kern';
+	font-style: normal;
+	font-weight: map-get($headingtype, regular);
+	@include sassline($fontsize: zeta, $font: $headingtype, $lineheight: 2, $below: 2, $breakpoint: all);
+	padding-bottom: 0.4rem;
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
 }
 
-h1,h2,h3,h4,h5,h6 {
-	line-height: 1.1;
-	font-feature-settings: "onum" 0, "lnum" 1;	
+textarea {
+	resize: vertical;
 }
 
-h1 {
-	font-size: 2.75em;
-	font-weight: 300;
-	margin-top: 0.53em;
-	margin-bottom: 0.53em;
+input:not([type=submit]):not([type=file]),
+select,
+textarea {
+	background-color: $white;
 }
 
-h2 {
-	font-size: 2.25em;
-	font-weight: 400;
-	margin-top: 0.4em;
-	margin-bottom: 0.4em;
+input:not([type=submit]):not([type=file]):focus,
+select:focus,
+textarea:focus {
+	outline: 0;
+	border-color: $primary-color-light;
 }
 
-h3 {
-	font-size: 1.75em;
-	font-weight: 400;
-	margin-top: 0.4em;
-	margin-bottom: 0.4em;
-}
-
-h4 {
-	font-size: 1.25em;
-	font-weight: 600;
-	margin-top: 0.67em;
-	margin-bottom: 0.67em;
-}
-
-h5 {
-	font-size: 1em;
-	font-weight: 700;
-	margin-top: 0.94em;
-	margin-bottom: 0.94em;
-}
-
-h6 {
-	font-size: 0.75em;
-	font-weight: 800;
-	margin-top: 1em;
-	margin-bottom: 1em;
-	text-transform: uppercase;
-}
-
-p {
-	margin-top: 1em;
-	margin-bottom: 1.5em;
-}
-
-strong {
-	font-weight: 700;
-}
-
-em {
+input::placeholder {
+	color: $secondary-text-color;
 	font-style: italic;
 }
 
-a {
-	color: $accent-color;
+input[type=button],
+input[type=reset],
+input[type=submit] {
+	outline: 0;
+	background-color: $white;
+	@include baseline(zeta, $headingtype, 2, 2, all);
 }
 
-ul,ol {
-	margin-top: 1em;
-	margin-bottom: 1.5em;
-	padding-left: 1.1em;
+input[type=button]:not([disabled]):focus,
+input[type=button]:not([disabled]):hover,
+input[type=reset]:not([disabled]):focus,
+input[type=reset]:not([disabled]):hover,
+input[type=submit]:not([disabled]):focus,
+input[type=submit]:not([disabled]):hover {
+	border-color: $primary-color;
+	background-color: $primary-color;
+	color: white;
 }
 
-li {
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
+input[type=button]:not([disabled]):active,
+input[type=reset]:not([disabled]):active,
+input[type=submit]:not([disabled]):active {
+	border-color: $primary-color;
+	background-color: $primary-color;
+	color: white;
 }
 
-input, textarea, select, button  {
-	font-size: 1em;
-	font-family: $font-stack;
+input[type=button]:disabled,
+input[type=reset]:disabled,
+input[type=submit]:disabled {
+	color: $captionColour;
 }
 
-// breakpoints
-@include for-size(phone-only) {
-  body {
-    font-size: 100%;
-  }
-}
-
-@include for-size(tablet-portrait-up) {
-  body {
-    font-size: 105%;
-  }
-}
-
-@include for-size(tablet-landscape-up) {
-  body {
-    font-size: 110%;
-  }
-}
-
-@include for-size(desktop-up) {
-  body {
-    font-size: 117.5%;
-  }
-}
-
-@include for-size(big-desktop-up) {
-  body {
-    font-size: 127.5%;
-  }
+label,
+legend {
+	display: block;
+	font-family: unquote(map-get($headingtype, font-family));
+	font-feature-settings: 'dlig', 'liga', 'lnum', 'kern';
+	font-style: normal;
+	font-weight: map-get($headingtype, regular);
+	@include sassline($fontsize: zeta, $font: $headingtype, $lineheight: 2, $below: 1, $breakpoint: all);
 }

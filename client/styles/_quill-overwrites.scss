@@ -1,5 +1,12 @@
 @import 'colors';
 
+// import Sassline base SCSS files in order so variables are read correctly
+@import 'sassline-variables';
+@import '../../../node_modules/sassline/assets/sass/sassline-base/modular-scale';
+@import '../../../node_modules/sassline/assets/sass/sassline-base/mixins';
+
+$font-stack: (-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol');
+
 .ql-snow.ql-toolbar {
   border: 2px solid $divider-color;
   border-radius: 0.15rem 0.15rem 0 0;
@@ -13,10 +20,17 @@
 
   .ql-formats {
     .ql-picker {
+      font-family: $font-stack;
       width: auto;
 
       .ql-picker-label {
-        padding-right: 1.2rem;
+        font-family: $font-stack;
+        padding-right: .2rem;
+
+        &::before {
+          position: relative;
+          top: -0.7em;
+        }
       }
     }
   }
@@ -30,97 +44,257 @@
   .ql-editor {
     border: 2px solid $divider-color;
     border-radius: 0 0 0.15rem 0.15rem;
-    line-height: 1.6;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: .5rem;
-    padding-bottom: .5rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
     max-height: 30vh;
 
     &:focus {
       border-radius: 0.15rem;
       border-color: $primary-color-light;
     }
+    // Links.
+    a {
+      color: $linkColour;
+      text-decoration: none;
+      transition: color .1s, background-color .1s;
 
+      &:hover,
+      &:active,
+      &:focus {
+        color: $hoverColour;
+        text-decoration: none;
+      }
+    } // Nice underlines for text links.
+
+    p a,
+    li a {
+      background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, lighten($linkColour, 5%) 50%);
+      background-position: 0 95%;
+      background-repeat: repeat-x;
+      background-size: 100% 0.15rem;
+      text-shadow: 0.1rem 0 $backgroundColour, 0.15rem 0 $backgroundColour, -0.1rem 0 $backgroundColour, -0.15rem 0 $backgroundColour;
+      &:hover,
+      &:active,
+      &:focus {
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, lighten($hoverColour, 5%) 50%);
+      }
+    } // Paragraphs. OpenType ligatures and oldstyle figures enabled if available.
+    
+    p {
+      @include baseline($fontsize: zeta, $font: $bodytype, $lineheight: 2, $below: 2, $breakpoint: all);
+      font-feature-settings: 'kern', 'onum', 'liga';
+    } // Headings. OpenType ligatures, discretionary ligatures and lining figures enabled if available.
     h1,
     h2,
     h3,
     h4,
     h5,
     h6 {
-      line-height: 1.1;
-      font-feature-settings: "onum" 0, "lnum" 1;	
+      color: $headingColour;
+      font-family: unquote(map-get($headingtype, font-family));
+      font-feature-settings: 'dlig', 'liga', 'lnum', 'kern';
+      font-style: normal;
+      font-weight: map-get($headingtype, bold);
+    } // Heading level 1.
+    h1,
+    .alpha {
+      @include sassline($fontsize: alpha, $font: $headingtype, $lineheight: 3, $below: 1, $breakpoint: all);
+    } // Heading level 2.
+    h2,
+    .beta {
+      @include sassline(beta, $headingtype, 3, 1, all);
+    } // Heading level 3.
+    h3,
+    .gamma {
+      @include sassline(gamma, $headingtype, 3, 1, all);
+    } // Heading level 4.
+    h4,
+    .delta {
+      @include sassline(delta, $headingtype, 2, 0, all);
+    } // Heading level 5.
+    h5,
+    .epsilon {
+      @include sassline(epsilon, $headingtype, 2, 0, all);
+    } // Heading level 6.
+    h6,
+    .zeta {
+      @include sassline(zeta, $headingtype, 2, 0, all);
+    } // Lists.
+    ul,
+    ol {
+      @include baseline(zeta, $bodytype, 2, 2, all);
+      li {
+        font-feature-settings: 'kern', 'onum', 'liga';
+        margin-left: 2rem;
+        @include breakpoint(break-1) {
+          margin-left: 0;
+        }
+        ol,
+        ul {
+          padding-top: 1rem;
+          margin-bottom: 1rem;
+          margin-left: 2rem;
+        }
+      }
+    } // Ordered lists.
+    ol {
+      list-style-type: none;
+      li {
+        counter-increment: top-level;
+        &:before {
+          content: counter(top-level) '.';
+          font-feature-settings: 'lnum', 'tnum';
+          margin-left: -3rem;
+          position: absolute;
+          text-align: right;
+          width: 2em;
+        }
+        ul {
+          li {
+            &:before {
+              content: '';
+            }
+            ol {
+              li {
+                counter-increment: alt-level;
+                &:before {
+                  content: counter(alt-level) '.';
+                }
+              }
+            }
+          }
+        }
+        ol {
+          li {
+            counter-increment: sub-level;
+            &:before {
+              content: counter(top-level) '.' counter(sub-level);
+            }
+            ul {
+              li {
+                &:before {
+                  content: '';
+                }
+              }
+            }
+            ol {
+              li {
+                counter-increment: sub-sub-level;
+                &:before {
+                  content: counter(top-level) '.' counter(sub-level) '.' counter(sub-sub-level);
+                }
+              }
+            }
+          }
+        }
+      }
+    } // Definition lists.
+    dl {
+      @include baseline(zeta, $bodytype, 2, 2, all);
+      dt,
+      dd {
+        font-feature-settings: 'kern', 'onum', 'liga';
+        margin-left: 2rem;
+        @include breakpoint(break-1) {
+          margin-left: 0;
+        }
+      }
+      dt {
+        font-weight: map-get($bodytype, bold);
+      }
+      dd+dt {
+        padding-top: 1rem;
+      }
+    } // Tables.
+    table {
+      @include sassline(eta, $headingtype, 2, 0, all);
+      font-family: unquote(map-get($headingtype, font-family));
+      font-feature-settings: 'liga', 'lnum', 'tnum', 'kern';
+      font-style: normal;
+      font-weight: map-get($headingtype, regular);
+      width: 100%;
+      thead {
+        th {
+          @include sassline(zeta, $headingtype, 2, 0, all);
+          padding-bottom: 1px;
+        }
+      }
+    } // Bold.
+    b,
+    strong,
+    .bold {
+      font-weight: map-get($bodytype, bold);
+    } // Italic.
+    em,
+    i,
+    .italic {
+      font-style: map-get($bodytype, italic);
+    } // Caption and inline small text.
+    small,
+    .caption {
+      @include fontsize(theta, all);
+      font-family: unquote(map-get($headingtype, font-family));
+      font-style: normal;
+      font-weight: map-get($headingtype, regular);
     }
-
-    h1 {
-      font-size: 2.75em;
-      font-weight: 300;
-      margin-top: 0.53em;
-      margin-bottom: 0.53em;
+    small {
+      line-height: 1rem;
+    } // Quotes.
+    blockquote {
+      p {
+        border-left: 0.15rem solid $linkColour;
+        font-style: map-get($bodytype, italic);
+        padding-left: 1rem; // Add spacing below blockquote paragraphs to align to baseline grid.
+        $get-scale: map-get($modular-scale, scale-0);
+        $get-size: map-get($get-scale, zeta);
+        $rootsize: nth($sizes, 1);
+        $baseline-shift: #{($get-size / 2 * ((2 * $rootsize / $get-size) - map-get($bodytype, cap-height))) / $rootsize + 0.00001};
+        $baseline-push: #{3 - (($get-size * ((2 * $rootsize / $get-size) - map-get($bodytype, cap-height))) / $rootsize + 0.00001)};
+        margin-bottom: #{$baseline-push}rem;
+        padding-bottom: #{$baseline-shift}rem;
+        @for $i from 2 through $breakpoints-limit {
+          $get-scale: map-get($modular-scale, scale-#{$i - 1});
+          $get-size: map-get($get-scale, zeta);
+          $rootsize: nth($sizes, $i);
+          $baseline-shift: #{($get-size / 2 * ((2 * $rootsize / $get-size) - map-get($bodytype, cap-height))) / $rootsize + 0.00001};
+          $baseline-push: #{3 - (($get-size * ((2 * $rootsize / $get-size) - map-get($bodytype, cap-height))) / $rootsize + 0.00001)};
+          @media screen and (min-width: nth($points, $i) / 16 * 1em) {
+            margin-bottom: #{$baseline-push}rem;
+            padding-bottom: #{$baseline-shift}rem;
+          }
+        }
+      }
+      @include breakpoint(break-1) {
+        margin-left: -1rem;
+      }
+    } // Horizontal rule.
+    hr {
+      background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, $captionColour 50%);
+      background-position: 0 50%;
+      background-repeat: repeat-x;
+      background-size: 100% 0.15rem;
+      border: 0;
+      margin: 0;
+      padding-bottom: 3rem;
+      padding-top: 3rem;
+    } // Code block.
+    code,
+    pre {
+      background-color: $codeBackgroundColour;
+      font-family: unquote(map-get($monospacetype, font-family));
     }
-
-    h2 {
-      font-size: 2.25em;
-      font-weight: 400;
-      margin-top: 0.4em;
-      margin-bottom: 0.4em;
+    pre {
+      display: block;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      white-space: pre;
+      white-space: pre-wrap;
+      word-break: break-all;
+      word-wrap: break-word;
     }
-
-    h3 {
-      font-size: 1.75em;
-      font-weight: 400;
-      margin-top: 0.4em;
-      margin-bottom: 0.4em;
-    }
-
-    h4 {
-      font-size: 1.25em;
-      font-weight: 600;
-      margin-top: 0.67em;
-      margin-bottom: 0.67em;
-    }
-
-    h5 {
-      font-size: 1em;
-      font-weight: 700;
-      margin-top: 0.94em;
-      margin-bottom: 0.94em;
-    }
-
-    h6 {
-      font-size: 0.75em;
-      font-weight: 800;
-      margin-top: 1em;
-      margin-bottom: 1em;
-      text-transform: uppercase;
-    }
-
-    p {
-      margin-top: 1em;
-      margin-bottom: 1.5em;
-    }
-
-    strong {
-      font-weight: 700;
-    }
-
-    em {
-      font-style: italic;
-    }
-
-    a {
-      color: $accent-color;
-    }
-
-    ul,ol {
-      margin-top: 1em;
-      margin-bottom: 1.5em;
-      padding-left: 1.1em;
-    }
-
-    li {
-      margin-top: 0.5em;
-      margin-bottom: 0.5em;
+    code {
+      @include fontsize(theta, all);
+      line-height: 1rem;
     }
   }
 }

@@ -1,7 +1,10 @@
 @import 'colors';
 @import 'mixins';
+@import 'sassline-variables';
+@import '../../../node_modules/sassline/assets/sass/sassline-base/modular-scale';
+@import '../../../node_modules/sassline/assets/sass/sassline-base/mixins';
 
-@mixin buttons ($bg-color: $background, $color: $primary-color, $hover-bg-color: $primary-color, $hover-color: $primary-color-text, $margin-h: 0, $padding-h: .5rem) {
+@mixin buttons ($bg-color: $background, $color: $primary-color, $hover-bg-color: $primary-color, $hover-color: $primary-color-text, $margin-h: 0, $padding-h: 1rem) {
   &__button {
     color: $color;
     background-color: $bg-color;
@@ -9,11 +12,13 @@
     border-radius: 0.15rem;
     margin-left: $margin-h;
     margin-right: $margin-h;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: $padding-h;
-    padding-bottom: $padding-h;
-    font-size: normal;
+    padding-left: $padding-h;
+    padding-right: $padding-h;
+    @include fontsize(zeta, all);
+    font-family: unquote(map-get($bodytype, font-family));
+    font-style: normal;
+    font-weight: map-get($bodytype, regular);
+    line-height: 2rem;
     @include transition($properties: (color, background-color, border-color));
 
     &:not([disabled]):hover {

@@ -1,0 +1,69 @@
+@import './colors';
+@import './layout-variables';
+@import './breakpoints';
+@import './cards';
+@import './buttons';
+
+.modal {
+  z-index: 999;
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: calc(2 * #{$navbar-height});
+  padding-bottom: $navbar-height;
+  padding-left: 5%;
+  padding-right: 5%;
+  background-color: rgba(0, 0, 0, .4);
+
+  @include for-size(phone-only) {
+    padding-top: calc(1.5 * #{$navbar-height});
+    padding-bottom: 0;
+  }
+
+  &__dialog {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 3 * #{$navbar-height});
+    min-height: 10vh;
+    width: 100%;
+    z-index: 999;
+    @include card-padding;
+    background-color: $card-background-color;
+    color: $primary-text-color;
+    @include card-border;
+    @include card-shadow;
+
+    @include for-size(phone-only) {
+      max-height: calc(100vh - 2 * #{$navbar-height})
+    }
+
+    &__title {
+       h1, h2 {
+         margin-top: 0;
+       }
+    }
+
+    &__buttons {
+      display: flex;
+      flex-shrink: 0;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-left: -.5rem;
+      margin-right: -.5rem;
+
+      @include buttons(
+        $bg-color: $card-background-color,
+        $color: $primary-text-color,
+        $hover-bg-color: $primary-color,
+        $hover-color: $primary-color-text,
+        $margin-h: .5rem
+      );
+    }
+  }
+}
+
+

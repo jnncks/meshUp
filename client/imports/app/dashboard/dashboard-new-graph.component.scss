@@ -21,11 +21,19 @@
   @include transition($properties: (color, border-color));
   text-align: center;
 
+  h3 {
+    color: $secondary-text-color;
+  }
+
   &:hover {
     cursor: pointer;
     @include card-border($width: 2px, $color: $primary-color-light);
     @include card-padding($offset: 1px);
     color: $primary-color;
+
+    h3 {
+      color: $primary-color;
+    }
 
     .card__content__icon {
       fill: $primary-color-light;

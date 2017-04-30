@@ -1,6 +1,9 @@
 @import '../../../../styles/colors';
 @import '../../../../styles/layout-variables';
 @import '../../../../styles/mixins';
+@import '../../../../styles/sassline-variables';
+@import '../../../../../../node_modules/sassline/assets/sass/sassline-base/modular-scale';
+@import '../../../../../../node_modules/sassline/assets/sass/sassline-base/mixins';
 
 .menu-panel {
   width: 100%;
@@ -22,6 +25,10 @@
     border: none;
     color: $primary-color-text;
     text-align: left;
+    @include fontsize(zeta, all);
+    font-family: unquote(map-get($bodytype, font-family));
+    font-style: normal;
+    font-weight: map-get($bodytype, regular);
     @include transition($properties: background-color);
 
     &:hover {

@@ -2,6 +2,9 @@
 @import '../../../styles/cards';
 @import '../../../styles/buttons';
 @import '../../../styles/mixins';
+@import '../../../styles/sassline-variables';
+@import '../../../../../node_modules/sassline/assets/sass/sassline-base/modular-scale';
+@import '../../../../../node_modules/sassline/assets/sass/sassline-base/mixins';
 
 .card {
   flex-shrink: 1;
@@ -28,46 +31,43 @@
       flex-direction: row;
       flex-wrap: nowrap;
       justify-content: space-between;
-      font-size: 1.25em;
-      font-weight: 600;
-      margin-top: .67em;
-      margin-bottom: .67em;
+
+      h3 {
+        @include sassline(epsilon, $headingtype, 2, 0, all);
+        margin-top: 0;
+      }
 
       &__settings-icon {
-        flex-basis: 1.25em;
-        flex-grow: 0;
-        flex-shrink: 0;
-        height: 1.25em;
-        width: 1.254em;
-        transform: translate(0, -.125em);
-        fill: $primary-text-color;
-        @include transition($properties: fill);
+        @include sassline(epsilon, $headingtype, 2, 0, all);
 
-        &:hover {
-          fill: $primary-color;
-          cursor: pointer;
+        svg {
+          width: 1em;
+          height: 1em;
+          position: relative;
+          top: .14em;
+          fill: $primary-text-color;
+          @include transition($properties: fill);
+
+          &:hover {
+            fill: $primary-color;
+            cursor: pointer;
+          }
         }
       }
     }
 
     &__subtitle {
+      @include sassline(theta, $bodytype, 1, 0, all);
       color: $secondary-text-color;
-      font-size: .75em;
-      font-weight: 500;
       font-style: italic;
-      margin-top: 1em;
-      margin-bottom: 1em;
     }
 
     &__tags {
       display: flex;
       flex-direction: row;
       align-items: flex-start;
+      @include sassline(theta, $bodytype, 1, 1, all);
       color: $secondary-text-color;
-      font-size: .75em;
-      font-weight: 500;
-      margin-top: 1em;
-      margin-bottom: 1em;
 
       &__toggle {
         text-decoration: underline;

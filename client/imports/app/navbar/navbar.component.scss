@@ -31,21 +31,26 @@
 
     &__page {
       display: flex;
-      align-items: stretch;
+      align-items: center;
       
       a {
         display: inline-flex;
         flex-direction: column;
         justify-content: center;
-        height: 100%;
-        padding-left: 1rem;
-        padding-right: 1rem;
+        margin-left: .5rem;
+        margin-right: .5rem;
         color: $primary-color-text;
         text-decoration: underline;
-        @include transition($properties: color);
+        @include remove-link-underlines;
 
         &:hover {
           color: $primary-color-secondary-text;
+        }
+      }
+
+      &:first-of-type {
+        a {
+          margin-left: 1rem;
         }
       }
 
@@ -84,6 +89,6 @@
   }
 
   &__edit {
-    @include buttons( $bg-color: $primary-color, $color: $primary-color-text, $hover-bg-color: $primary-color-text, $hover-color: $primary-color-dark, $padding-h: .25rem);
+    @include buttons( $bg-color: $primary-color, $color: $primary-color-text, $hover-bg-color: $primary-color-text, $hover-color: $primary-color-dark, $padding-h: 1rem);
   }
 }

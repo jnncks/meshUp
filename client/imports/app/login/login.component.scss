@@ -4,27 +4,6 @@
 @import '../../../styles/mixins';
 
 .login {
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 3%;
-  padding-right: 3%;
-  max-width: 100%;
-
-  // breakpoints
-  @include for-size(tablet-landscape-up) {
-    max-width: 1000px;
-  }
-
-  @include for-size(desktop-up) {
-    max-width: 1200px;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  @include for-size(big-desktop-up) {
-    max-width: 1300px;
-  }
-
   &__logo {
     display: block;
     margin-left: auto;
@@ -43,41 +22,13 @@
   &__form {
     display: flex;
     flex-direction: column;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 30rem;
-
-    label,
-    input,
-    button {
-      justify-content: flex-start;
-      width: 100%;
-    }
-
-    label {
-      margin-top: 1.5rem;
-      margin-bottom: .5rem;
-    }
-
-    input {
-      border: 2px solid $divider-color;
-      border-radius: 0.15rem;
-      padding-left: 1rem;
-      padding-right: 1rem;
-      padding-top: .5rem;
-      padding-bottom: .5rem;
-      @include transition($properties: border-color);
-
-      &:focus {
-        border-color: $primary-color-light;
-        outline: none;
-      }
-    }
+    margin-top: 4rem;
 
     &__buttons {
       display: flex;
       flex-direction: row;
-      margin-top: 3rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
 
       @include buttons($bg-color: $white);
     }

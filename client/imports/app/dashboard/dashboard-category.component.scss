@@ -2,9 +2,6 @@
 @import '../../../styles/breakpoints';
 
 .category {
-  margin-top: 4rem;
-  margin-bottom: 4rem;
-
   &__title {
     display: flex;
     flex-direction: row;
@@ -33,7 +30,6 @@
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: flex-start;
-    margin-top: 2rem;
 
     @include for-size(tablet-portrait-up) {
       flex-direction: row;
