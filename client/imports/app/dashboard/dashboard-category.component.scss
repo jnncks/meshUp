@@ -1,5 +1,6 @@
 @import '../../../styles/colors';
 @import '../../../styles/breakpoints';
+@import '../../../styles/mixins';
 
 .category {
   &__title {
@@ -30,6 +31,10 @@
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: flex-start;
+
+    dashboard-new-graph {
+      @include hidden-on(tablet-portrait-below);
+    }
 
     @include for-size(tablet-portrait-up) {
       flex-direction: row;
