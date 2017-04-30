@@ -30,3 +30,15 @@
   transition: all $duration cubic-bezier(.165, .84, .44, 1);
   transition-property: $properties;
 }
+
+@mixin hidden-on($size) {
+  @if $size == phone-only {
+    @media (max-width: 599px) { display: none; }
+  } @else if $size == tablet-portrait-below {
+    @media (max-width: 899px) { display: none; }
+  } @else if $size == tablet-landscape-below {
+    @media (max-width: 1199px) { display: none; }
+  } @else if $size == desktop-below {
+    @media (max-width: 1799px) { display: none; }
+  }
+}

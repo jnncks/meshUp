@@ -5,6 +5,7 @@
 .profile-button {
   display: flex;
   flex-direction: row;
+  justify-content: flex-end;
   height: $navbar-height;
   margin: 0;
   padding-left: .6rem;
@@ -28,6 +29,8 @@
       height: 100%;
       color: $primary-color-text;
     }
+
+    @include hidden-on(phone-only);
   }
 
   &__image {

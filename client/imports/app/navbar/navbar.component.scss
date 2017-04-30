@@ -13,13 +13,12 @@
   color: $primary-color-text;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,0.24);
 
-  &__title {
-    font-weight: 700;
-  }
-
   &__pagelist {
     display: flex;
     flex-direction: row;
+    flex-basis: auto;
+    flex-shrink: 1;
+    min-width: 0;
     height: 100%;
     margin: 0;
     padding: 0;
@@ -32,13 +31,17 @@
     &__page {
       display: flex;
       align-items: center;
+      flex-basis: auto;
+      flex-shrink: 1;
+      min-width: 0;
       
       a {
-        display: inline-flex;
-        flex-direction: column;
-        justify-content: center;
+        display: inline-block;
         margin-left: .5rem;
         margin-right: .5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         color: $primary-color-text;
         text-decoration: underline;
         @include remove-link-underlines;
@@ -67,8 +70,12 @@
         }
       }
 
+      &--no-shrink {
+        flex-shrink: 0;
+      }
+
        &__divider {
-        display: flex;
+        display: inline-flex;
         flex-direction: column;
         justify-content: center;
         align-content: center;
@@ -90,5 +97,9 @@
 
   &__edit {
     @include buttons( $bg-color: $primary-color, $color: $primary-color-text, $hover-bg-color: $primary-color-text, $hover-color: $primary-color-dark, $padding-h: 1rem);
+    
+    &__button {
+      @include hidden-on(tablet-portrait-below);
+    }
   }
 }
