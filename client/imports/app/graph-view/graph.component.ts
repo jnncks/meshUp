@@ -12,6 +12,7 @@ import {
   Observable
 } from 'rxjs';
 import * as d3 from 'd3';
+import { Html5Entities } from 'html-entities';
 
 import {
   ModalService
@@ -57,6 +58,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _nodeRadius: number = 100;
   private _outerNodeRadius: number = 112;
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
+  _htmlEntities: Html5Entities;
 
   /**
    * Creates an instance of the GraphComponent.
@@ -64,7 +66,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @param {ModalService} _modalService 
    * @constructor
    */
-  constructor(private _modalService: ModalService) { }
+  constructor(private _modalService: ModalService) {
+    this._htmlEntities = new Html5Entities();
+  }
 
   /**
    * Called after the view has been initialized.
@@ -243,9 +247,18 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // define the max amount of lines with their max character amount
     const maxCTitle = [10, 14, 16]; // title lines
     const maxCContent = [36, 35, 33, 32, 27, 18]; // content lines
+    const HTMLTagsRegEx = /<[^>]+>/ig // RegEx for identifying HTML tags
 
-    // add the title
-    let titleArr = d.title.split(' ');
+    /**
+     * add the title
+     * 
+     * 1. Decode HTML entities.
+     * 2. Split the string into an array.
+     * 3. Generate the text according to the different line lenghts.
+     * 4. Add the text lines as single text elements.
+     */ 
+    let titleArr = this._htmlEntities.decode(d.title)
+      .split(' ');
     let lines = this.generateTextLines(titleArr, maxCTitle);
     let element = d3.select(p[i])
 
@@ -257,8 +270,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         .text(lines[k]);
     }
 
-    // add the content
-    let contentArr = d.content.split(' ');
+     /**
+     * add the content: similar to adding the title, but also stripping
+     * all HTML tags since the content will be added as plain text elements.
+     */ 
+    let contentArr = this._htmlEntities.decode(d.content)
+      .replace(HTMLTagsRegEx,' ')
+      .split(' ');
     lines = this.generateTextLines(contentArr, maxCContent);
 
     for (let k = 0; k < lines.length; k++) {
