@@ -149,17 +149,18 @@ export class GraphViewService {
    * @param  {Node} node 
    */
   updateInfoGraphNode(node: Node): void {
-    if (this._graph) {
-      this._graph.subscribe((graph: InfoGraph) => {
-        let index = graph.nodes.findIndex((n: Node) => n._id === node._id);
+    if (!this._graph)
+      return;
 
-        if (index) {
-          graph.nodes[index] = node;
-          this._infoGraphService.updateInfoGraph(graph);
-        } else {
-          console.error('the node\'s ID does not exist! (updateInfoGraphNode)');
-        }
-      })
-    }
+    this._graph.first().subscribe((graph: InfoGraph) => {
+      let index = graph.nodes.findIndex((n: Node) => n._id === node._id);
+
+      if (index >= 0) {
+         graph.nodes[index] = node;
+        this._infoGraphService.updateInfoGraph(graph);
+      } else {
+        console.error('the node\'s ID does not exist! (updateInfoGraphNode)');
+      }
+    });
   }
 }
