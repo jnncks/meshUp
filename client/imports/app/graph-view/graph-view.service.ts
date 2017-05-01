@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
 import { MeteorObservable } from 'meteor-rxjs';
 import { Observable } from 'rxjs';
 
@@ -160,6 +161,68 @@ export class GraphViewService {
         this._infoGraphService.updateInfoGraph(graph);
       } else {
         console.error('the node\'s ID does not exist! (updateInfoGraphNode)');
+      }
+    });
+  }
+  
+  /**
+   * Adds a new node to the currently active infoGraph (_graph) by passing the
+   * graph's data to the updateInfoGraph method of the InfoGraphService.
+   * 
+   * @method addInfoGraphNode
+   * @param {number} [cx] The y-coordinate of the nodes center.
+   * @param {number} [cy] The x-coordinate of the nodes center.
+   * @param {string} [title] The node's title.
+   * @param {string} [content] The node's content.
+   * @param {string[]} [tags] The node's tags.
+   */
+  addInfoGraphNode(cx: number = 0, cy: number = 0, title: string = '',
+    content: string = '', tags: string[] = []): void {
+    if (!this._graph)
+      return;
+
+    this._graph.first().subscribe((graph: InfoGraph) => {
+      if (!graph.nodes) 
+        graph.nodes = [];
+
+      graph.nodes.push({
+        _id: Random.id(),
+        x: cx,
+        y: cy,
+        title: title,
+        content: content,
+        tags: tags,
+        creator: Meteor.userId(),
+        created: new Date(),
+        lastUpdated: new Date()
+      });
+
+      this._infoGraphService.updateInfoGraph(graph);
+    });
+  }
+
+  /**
+   * Removes a node of the currently active infoGraph (_graph) by passing the
+   * graph's data to the updateInfoGraph method of the InfoGraphService.
+   * 
+   * @method removeInfoGraphNode
+   * @param  {Node} node The node to remove from the infoGraph.
+   */
+  removeInfoGraphNode(node: Node): void {
+    // TODO: Also remove related edges!
+    
+    if (!this._graph)
+      return;
+
+    this._graph.first().subscribe((graph: InfoGraph) => {
+      let index = graph.nodes.findIndex((n: Node) => n._id === node._id);
+
+      console.log(index)
+      if (index >= 0) {
+         graph.nodes.splice(index, 1);
+        this._infoGraphService.updateInfoGraph(graph);
+      } else {
+        console.error('the node\'s ID does not exist! (removeInfoGraphNode)');
       }
     });
   }
