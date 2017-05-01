@@ -101,7 +101,7 @@ export class NodeEditModalComponent implements OnInit{
         lastUpdated: new Date()
       }
 
-      this._graphViewService.updateInfoGraphNode(nodeUpdate)
+      this._graphViewService.updateInfoGraphNode(nodeUpdate);
     }
 
     this.closeModal();
@@ -113,7 +113,8 @@ export class NodeEditModalComponent implements OnInit{
    * @method remove
    */
   remove(): void {
-    // TODO
+    this._graphViewService.removeInfoGraphNode(this.node);
+    this.closeModal();
   }
 
   /**
