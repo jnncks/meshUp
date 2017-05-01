@@ -71,7 +71,31 @@
         fill: transparent;
       }
     }
+
+    &--new {
+      circle.inner {
+        stroke: $primary-color-secondary-text;
+        stroke-width: 4px;
+        stroke-dasharray: 13px;
+        fill: transparent;
+      }
+
+      use {
+        fill: $primary-color-secondary-text;
+      }
+
+      &:hover {
+        circle.inner {
+          stroke: $primary-color-text;
+        }
+
+        use {
+          fill: $primary-color-text;
+        }
+      }
+    }
   }
+  
   .edge {
     stroke-width: 6px;
     stroke: rgba(255, 255, 255, 0.2);

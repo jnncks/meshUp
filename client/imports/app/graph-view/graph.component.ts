@@ -19,7 +19,8 @@ import {
 } from '../shared/modal.module';
 import {
   NodeModalComponent,
-  NodeEditModalComponent
+  NodeEditModalComponent,
+  GraphViewService
 } from './index';
 
 import {
@@ -66,7 +67,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @param {ModalService} _modalService 
    * @constructor
    */
-  constructor(private _modalService: ModalService) {
+  constructor(private _graphViewService: GraphViewService, private _modalService: ModalService) {
     this._htmlEntities = new Html5Entities();
   }
 
@@ -83,9 +84,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit(): void {
     this.initGraph();
 
-    if (this.graphData) {
+    if (this.graphData)
       this.updateGraph(true);
-    }
 
     // handle window resize events
     Observable.fromEvent(window, 'resize')
@@ -143,6 +143,48 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   /**
+   * Prepares a new graph by adding a single empty node as a starting point if
+   * the user is in the editing mode.
+   * 
+   * @method prepareNewGraph 
+   */
+  prepareNewGraph(): void {
+    if (!this.isEditing)
+      return;
+
+    let element = this._graphContainer.nativeElement;
+    let svg = d3.select(element).select<SVGElement>('svg');
+    let g = svg.select<SVGGElement>('g.graph');
+
+    let newNode = g.append<SVGGElement>('svg:g')
+      .attr('class', 'node node--new')
+
+    newNode.append('svg:circle')
+      .attr('class', 'inner')
+      .attr('cx', 0)
+      .attr('cy', 0)
+      .attr('r', this._nodeRadius);
+    
+    let iconUrl = 'icons/svg-sprite-content-symbol.svg#ic_add_24px';
+    newNode.append('svg:use')
+      .attr('xlink:href', iconUrl)
+      .attr('x', -50)
+      .attr('y', -50)
+      .attr('width', 100)
+      .attr('height', 100);
+
+    newNode.on('mousedown', () => {
+      if (d3.event && d3.event.button === 2) { // ignore right clicks
+        d3.event.stopImmediatePropagation();
+        return;
+      }
+      this._graphViewService.addInfoGraphNode();
+    });
+
+    this.fitContainer(2);
+  }
+
+  /**
    * Updates the graph:
    * Appends new nodes and edges or updates properties of existing nodes.
    * 
@@ -151,8 +193,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    */
   updateGraph(centerGraph: boolean = false): void {
 
-    if (!this.graphData || !this.graphData.nodes || !this.graphData.nodes.length)
+    if (!this.graphData)
       return;
+    
+    if (!this.graphData.nodes || !this.graphData.nodes.length) {
+      this.prepareNewGraph();
+      return;
+    }
 
     let element = this._graphContainer.nativeElement;
     let svg = d3.select(element).select<SVGElement>('svg');
@@ -161,44 +208,48 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // TODO: properly remove/update nodes
 
     // draw the edges
-    g.selectAll('.line')
-      .data(this.graphData.edges)
-      .enter()
-      .append('line')
-      .attr('class', 'edge')
-      .attr('x1', (d: Edge) => {
-        let source: Node = this.graphData.nodes.filter((node: Node) => {
-          return node._id === d.source;
-        })[0];
-        return source.x;
-      })
-      .attr('y1', (d: Edge) => {
-        let source: Node = this.graphData.nodes.filter((node: Node) => {
-          return node._id === d.source;
-        })[0];
-        return source.y;
-      })
-      .attr('x2', (d: Edge) => {
-        let target: Node = this.graphData.nodes.filter((node: Node) => {
-          return node._id === d.target;
-        })[0];
-        return target.x;
-      })
-      .attr('y2', (d: Edge) => {
-        let target: Node = this.graphData.nodes.filter((node: Node) => {
-          return node._id === d.target;
-        })[0];
-        return target.y;
-      });
+    if (this.graphData.edges && this.graphData.edges.length) {
+      g.selectAll('.line')
+        .data(this.graphData.edges)
+        .enter()
+        .append('line')
+        .attr('class', 'edge')
+        .attr('x1', (d: Edge) => {
+          let source: Node = this.graphData.nodes.filter((node: Node) => {
+            return node._id === d.source;
+          })[0];
+          return source.x;
+        })
+        .attr('y1', (d: Edge) => {
+          let source: Node = this.graphData.nodes.filter((node: Node) => {
+            return node._id === d.source;
+          })[0];
+          return source.y;
+        })
+        .attr('x2', (d: Edge) => {
+          let target: Node = this.graphData.nodes.filter((node: Node) => {
+            return node._id === d.target;
+          })[0];
+          return target.x;
+        })
+        .attr('y2', (d: Edge) => {
+          let target: Node = this.graphData.nodes.filter((node: Node) => {
+            return node._id === d.target;
+          })[0];
+          return target.y;
+        });
+    }
 
     // draw the nodes
-    g.selectAll('g .node')
-      .data(this.graphData.nodes)
-      .enter()
-      .append('svg:g')
-      .attr('class', 'node')
-      .attr('id', (d: Node) => d._id)
-      .each(this.addNode)
+    if (this.graphData.nodes && this.graphData.nodes.length) {
+      g.selectAll('g .node')
+        .data(this.graphData.nodes)
+        .enter()
+        .append('svg:g')
+        .attr('class', 'node')
+        .attr('id', (d: Node) => d._id)
+        .each(this.addNode)
+    }
 
     if (centerGraph) {
       this.fitContainer();
@@ -496,7 +547,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * 
    * @method fitContainer
    */
-  fitContainer(): void {
+  fitContainer(maxScale?: number): void {
     let element = this._graphContainer.nativeElement;
     let svg = d3.select(element).select<SVGElement>('svg');
     let g = svg.select<SVGGElement>('g.graph');
@@ -515,6 +566,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       containerWidth / bbox.width,
       containerHeight / bbox.height
     );
+
+    if (maxScale)
+      scale = Math.min(scale, maxScale);
 
     // calculate the x and y offsets to center the graph
     let widthOffset =
