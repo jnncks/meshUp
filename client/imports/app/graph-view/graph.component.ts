@@ -59,6 +59,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _nodeRadius: number = 100;
   private _outerNodeRadius: number = 112;
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
+  private _drag: d3.DragBehavior<SVGGElement, any, any>;
   _htmlEntities: Html5Entities;
 
   /**
@@ -116,11 +117,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method initGraph
    */
   initGraph(): void {
-    let element = this._graphContainer.nativeElement;
+    const element = this._graphContainer.nativeElement;
     this._width = element.offsetWidth;
     this._height = element.offsetHeight;
 
-    let svg = d3.select(element).append('svg')
+    const svg = d3.select(element).append('svg')
       .attr('width', element.offsetWidth)
       .attr('height', element.offsetHeight);
 
@@ -134,12 +135,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     svg.call(this._scale);
 
-    // somehow d3.zoom() does also dragging
-    // svg.call(
-    //   d3.drag()
-    //     .on('drag', () => this.handleDrag())
-    // );
-
+    // set up the drag behavior for nodes
+    this._drag = d3.drag()
+      .on('drag', (d: Node, i: number, g: Element[]) => this.dragNode(d, i, g))
+      .on('end', (d: Node, i: number, g: Element[]) => this.saveNodePosition(d, i, g));
   }
 
   /**
@@ -152,11 +151,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     if (!this.isEditing)
       return;
 
-    let element = this._graphContainer.nativeElement;
-    let svg = d3.select(element).select<SVGElement>('svg');
-    let g = svg.select<SVGGElement>('g.graph');
+    const element = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const g = svg.select<SVGGElement>('g.graph');
 
-    let newNode = g.append<SVGGElement>('svg:g')
+    const newNode = g.append<SVGGElement>('svg:g')
       .attr('class', 'node node--new')
 
     newNode.append('svg:circle')
@@ -165,7 +164,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('cy', 0)
       .attr('r', this._nodeRadius);
     
-    let iconUrl = 'icons/svg-sprite-content-symbol.svg#ic_add_24px';
+    const iconUrl = 'icons/svg-sprite-content-symbol.svg#ic_add_24px';
     newNode.append('svg:use')
       .attr('xlink:href', iconUrl)
       .attr('x', -50)
@@ -173,7 +172,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('width', 100)
       .attr('height', 100);
 
-    newNode.on('mousedown', () => {
+    newNode.on('click', () => {
       if (d3.event && d3.event.button === 2) { // ignore right clicks
         d3.event.stopImmediatePropagation();
         return;
@@ -201,9 +200,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       return;
     }
 
-    let element = this._graphContainer.nativeElement;
-    let svg = d3.select(element).select<SVGElement>('svg');
-    let g = svg.select<SVGGElement>('g.graph');
+    const element = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const g = svg.select<SVGGElement>('g.graph');
 
     // TODO: properly remove/update nodes
 
@@ -215,25 +214,25 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         .append('line')
         .attr('class', 'edge')
         .attr('x1', (d: Edge) => {
-          let source: Node = this.graphData.nodes.filter((node: Node) => {
+          const source: Node = this.graphData.nodes.filter((node: Node) => {
             return node._id === d.source;
           })[0];
           return source.x;
         })
         .attr('y1', (d: Edge) => {
-          let source: Node = this.graphData.nodes.filter((node: Node) => {
+          const source: Node = this.graphData.nodes.filter((node: Node) => {
             return node._id === d.source;
           })[0];
           return source.y;
         })
         .attr('x2', (d: Edge) => {
-          let target: Node = this.graphData.nodes.filter((node: Node) => {
+          const target: Node = this.graphData.nodes.filter((node: Node) => {
             return node._id === d.target;
           })[0];
           return target.x;
         })
         .attr('y2', (d: Edge) => {
-          let target: Node = this.graphData.nodes.filter((node: Node) => {
+          const target: Node = this.graphData.nodes.filter((node: Node) => {
             return node._id === d.target;
           })[0];
           return target.y;
@@ -257,7 +256,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   addNode = (d: Node, i: number, g: d3.EnterElement[]) => {
-    let group = d3.select(g[i]);
+    const group = d3.select(g[i]);
 
     group.append('svg:circle')
       .attr('class', 'outer')
@@ -277,7 +276,76 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('class', 'node__content')
       .each(this.renderNodeContent)
 
-    group.on('mousedown', this.toggleNodeFocus);
+    group.on('click', this.toggleNodeFocus);
+  }
+
+  dragNode = (d: Node, i: number, g: d3.EnterElement[]) => {
+    const svg = d3.select(this._graphContainer.nativeElement)
+      .select('svg')
+      .select('g.graph');
+
+    const node = svg.select<SVGGElement>(`g [id='${d._id}'`);
+
+    const dx = d3.event.dx;
+    const dy = d3.event.dy;
+
+    // update the node data
+    d.x = d.x + dx;
+    d.y = d.y + dy;
+
+    // update the position of the drawn circles
+    node.selectAll('circle')
+      .each((d: Node, i: number, g: SVGCircleElement[]) => {
+        const circle = d3.select(g[i]);
+        const x = Number(circle.attr('cx'));
+        const y = Number(circle.attr('cy'));
+
+        circle
+          .attr('cx', x + dx)
+          .attr('cy', y + dy);
+      })
+    
+    // update the position of the drawn text elements
+    node.selectAll('text')
+      .each((d: Node, i: number, g: SVGTextElement[]) => {
+        const text = d3.select(g[i]);
+        const x = Number(text.attr('x'));
+        const y = Number(text.attr('y'));
+
+        text
+          .attr('x', x + dx)
+          .attr('y', y + dy);
+      })
+    
+    // update the position of the drawn rects
+    node.selectAll('rect')
+      .each((d: Node, i: number, g: SVGRectElement[]) => {
+        const rect = d3.select(g[i]);
+        const x = Number(rect.attr('x'));
+        const y = Number(rect.attr('y'));
+        
+        rect
+          .attr('x', x + dx)
+          .attr('y', y + dy);
+      })
+    
+    // update the position of the drawn icons
+    node.selectAll('use')
+      .each((d: Node, i: number, g: SVGRectElement[]) => {
+        const use = d3.select(g[i]);
+        const x = Number(use.attr('x'));
+        const y = Number(use.attr('y'));
+        
+        use
+          .attr('x', x + dx)
+          .attr('y', y + dy);
+      })
+    
+    // handle edges
+  }
+
+  saveNodePosition = (d: Node, i: number, g: d3.EnterElement[]) => {
+    console.log('save: ', d, i, g)
   }
 
   /**
@@ -308,10 +376,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
      * 3. Generate the text according to the different line lenghts.
      * 4. Add the text lines as single text elements.
      */ 
-    let titleArr = this._htmlEntities.decode(d.title)
+    const titleArr = this._htmlEntities.decode(d.title)
       .split(' ');
     let lines = this.generateTextLines(titleArr, maxCTitle);
-    let element = d3.select(p[i])
+    const element = d3.select(p[i])
 
     for (let k = 0; k < lines.length; k++) {
       element.append('svg:text')
@@ -325,7 +393,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
      * add the content: similar to adding the title, but also stripping
      * all HTML tags since the content will be added as plain text elements.
      */ 
-    let contentArr = this._htmlEntities.decode(d.content)
+    const contentArr = this._htmlEntities.decode(d.content)
       .replace(HTMLTagsRegEx,' ')
       .split(' ');
     lines = this.generateTextLines(contentArr, maxCContent);
@@ -352,12 +420,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     }
 
     // references to important elements
-    let element = this._graphContainer.nativeElement;
-    let svg = d3.select(element).select<SVGElement>('svg');
-    let g = svg.select<SVGGElement>('g.graph');
+    const element = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const g = svg.select<SVGGElement>('g.graph');
 
     // get the Node element of the click source
-    let node: d3.Selection<SVGGElement, any, any, any> =
+    const node: d3.Selection<SVGGElement, any, any, any> =
       g.select<SVGGElement>(`g [id='${d._id}'`);
 
     if (!node)
@@ -376,16 +444,16 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       // add the detailButton if not in editing mode
       if (!this.isEditing) {
         // position of the detailButton
-        let detailButtonX = d.x + 60;
-        let detailButtonY = d.y + 35;
-        let detailButtonIcon = 'icons/svg-sprite-navigation-symbol.svg#ic_arrow_forward_24px';
+        const detailButtonX = d.x + 60;
+        const detailButtonY = d.y + 35;
+        const detailButtonIcon = 'icons/svg-sprite-navigation-symbol.svg#ic_arrow_forward_24px';
 
         // create the detailButton
-        let detailButton = this.appendFocusButton(node, d, 'DetailButton',
+        const detailButton = this.appendFocusButton(node, d, 'DetailButton',
           detailButtonX, detailButtonY, detailButtonIcon, 'öffnen');
 
-        // add the mousedown handler
-        detailButton.on('mousedown', (node: Node) => {
+        // add the click handler
+        detailButton.on('click', (node: Node) => {
           if (d3.event.button === 2) {
             d3.event.stopImmediatePropagation();
             return;
@@ -400,21 +468,21 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       // add the editing buttons if in editing mode
       if (this.isEditing) {
         // positions of the buttons        
-        let editButtonX = d.x + 72;
-        let editButtonY = d.y;
-        let editButtonIcon = 'icons/svg-sprite-content-symbol.svg#ic_create_24px';
-        let moveButtonX = d.x + 60;
-        let moveButtonY = d.y + 35;
-        let moveButtonIcon = 'icons/svg-sprite-action-symbol.svg#ic_open_with_24px';
+        const editButtonX = d.x + 72;
+        const editButtonY = d.y;
+        const editButtonIcon = 'icons/svg-sprite-content-symbol.svg#ic_create_24px';
+        const dragButtonX = d.x + 60;
+        const dragButtonY = d.y + 35;
+        const dragButtonIcon = 'icons/svg-sprite-action-symbol.svg#ic_open_with_24px';
 
         // append the buttons
-        let editButton = this.appendFocusButton(node, d, 'EditButton', editButtonX,
+        const editButton = this.appendFocusButton(node, d, 'EditButton', editButtonX,
           editButtonY, editButtonIcon, 'bearbeiten');
-        let moveButton = this.appendFocusButton(node, d, 'MoveButton', moveButtonX,
-          moveButtonY, moveButtonIcon, 'verschieben');
+        const dragButton = this.appendFocusButton(node, d, 'dragButton', dragButtonX,
+          dragButtonY, dragButtonIcon, 'verschieben');
 
-        // set up the mousedown handlers
-        editButton.on('mousedown', (node: Node) => {
+        // set up the click handlers
+        editButton.on('click', (node: Node) => {
           if (d3.event.button === 2) {
             d3.event.stopImmediatePropagation();
             return;
@@ -425,7 +493,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           });
         });
 
-        // TODO: dragHandler
+        // set up the mousedown handlers
+        dragButton.call(this._drag);
       }
     }
   }
@@ -447,18 +516,18 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     type: string, x: number, y: number, iconUrl: string, label: string
   ): d3.Selection<SVGGElement, any, any, any> {
     // create a group for the editButton
-    let button = node.append<SVGGElement>('svg:g')
+    const button = node.append<SVGGElement>('svg:g')
       .attr('id', type + '-' + d._id)
       .attr('class', 'focus-button');
 
     // add a rect for the button background
-    let buttonBg = button.append('svg:rect')
+    const buttonBg = button.append('svg:rect')
       .attr('x', x)
       .attr('y', y)
       .attr('height', '28')
       .attr('rx', '14');
     // add the icon
-    let buttonIcon = button.append('svg:use')
+    const buttonIcon = button.append('svg:use')
       .attr('xlink:href', iconUrl)
       .attr('x', x + 8)
       .attr('y', y + 2)
@@ -466,21 +535,21 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('height', 24);
 
     // add the button label
-    let buttonLabel = button.append<SVGTextElement>('svg:text')
+    const buttonLabel = button.append<SVGTextElement>('svg:text')
       .attr('class', 'focus-button__label')
       .attr('x', x + 36)
       .attr('y', y + 21)
       .text(label);
 
     // finally set the rect width according to the text width
-    let labelBoundings: SVGRect = buttonLabel.node().getBBox();
+    const labelBoundings: SVGRect = buttonLabel.node().getBBox();
     buttonBg.attr('width', 48 + labelBoundings.width);
 
     return button;
   }
 
   removeNodeFocus() {
-    let element = this._graphContainer.nativeElement;
+    const element = this._graphContainer.nativeElement;
     d3.select(element)
       .select<SVGElement>('svg')
       .select<SVGGElement>('g.graph')
@@ -488,6 +557,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         .classed('node--selected', false)
         .selectAll('g .focus-button')
           .on('mousedown', null) // reset the click handler
+          .on('click', null) // reset the click handler
           .remove(); // remove the button group
   }
 
@@ -502,8 +572,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @returns {string[]}
    */
   generateTextLines(textArr: string[], maxC: number[]): string[] {
-    let newArr = textArr;
-    let lines: string[] = [];
+    const newArr = textArr;
+    const lines: string[] = [];
 
     for (let i = 0; i < maxC.length; i++) {
       // check whether there's still some text left
@@ -529,12 +599,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   toggleEditing(): void {
-    let element = this._graphContainer.nativeElement;
-    let svg = d3.select(element).select<SVGElement>('svg');
-    let g = svg.select<SVGGElement>('g.graph');
+    const element = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const g = svg.select<SVGGElement>('g.graph');
 
     // select the currently focused node if there is any
-    let currentFocus: d3.Selection<SVGGElement, any, any, any> = g.select<SVGGElement>('g .node--selected')
+    const currentFocus: d3.Selection<SVGGElement, any, any, any> = g.select<SVGGElement>('g .node--selected')
 
     if (currentFocus.node()) {
       this.removeNodeFocus(); // remove the current focus
@@ -548,17 +618,17 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method fitContainer
    */
   fitContainer(maxScale?: number): void {
-    let element = this._graphContainer.nativeElement;
-    let svg = d3.select(element).select<SVGElement>('svg');
-    let g = svg.select<SVGGElement>('g.graph');
+    const element = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const g = svg.select<SVGGElement>('g.graph');
 
     // reset the transformation
     svg.call(this._scale.transform, d3.zoomIdentity)
 
     // get boundaries of the container and the graph group
-    let containerWidth = element.offsetWidth;
-    let containerHeight = element.offsetHeight;
-    let bbox = g.node().getBBox();
+    const containerWidth = element.offsetWidth;
+    const containerHeight = element.offsetHeight;
+    const bbox = g.node().getBBox();
 
     // calculate the scale
     const padding = 0.05; // 5 percent
@@ -571,13 +641,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       scale = Math.min(scale, maxScale);
 
     // calculate the x and y offsets to center the graph
-    let widthOffset =
+    const widthOffset =
       (containerWidth - bbox.width * scale) / 2 - bbox.x * scale;
-    let heightOffset =
+    const heightOffset =
       (containerHeight - bbox.height * scale) / 2 - bbox.y * scale;
 
     // put everything together and emit the event
-    let t: d3.ZoomTransform = d3.zoomIdentity
+    const t: d3.ZoomTransform = d3.zoomIdentity
       .translate(widthOffset, heightOffset).scale(scale);
 
     svg.call(this._scale.transform, t);
@@ -589,7 +659,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method handleWindowResize
    */
   handleWindowResize(): void {
-    let element = this._graphContainer.nativeElement;
+    const element = this._graphContainer.nativeElement;
     this._width = element.offsetWidth;
     this._height = element.offsetHeight;
 
@@ -608,20 +678,20 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     if (!d3.event || !d3.event.transform)
       return;
 
-    let element: HTMLDivElement = this._graphContainer.nativeElement;
-    let containerWidth = element.offsetWidth;
-    let containerHeight = element.offsetHeight;
+    const element: HTMLDivElement = this._graphContainer.nativeElement;
+    const containerWidth = element.offsetWidth;
+    const containerHeight = element.offsetHeight;
 
     // our properly typed SVG elements
-    let svg = d3.select(element).select<SVGElement>('svg');
-    let g = svg.select<SVGGElement>('g.graph');
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const g = svg.select<SVGGElement>('g.graph');
 
     // the bounding box of the graph group
-    let bbox = g.node().getBBox();
+    const bbox = g.node().getBBox();
 
     // the requested transformation (t) and scale (s)
-    let t = d3.event.transform;
-    let s = t.k;
+    const t = d3.event.transform;
+    const s = t.k;
 
     // calculate the transformation so that the graph stays in the view
     t.x = Math.max(
@@ -633,20 +703,5 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // update the transform attribute of the SVG graph group
     g.attr('transform', t);
-  }
-
-  // TODO: unused!
-  /**
-   * Handles drag callbacks... .
-   * 
-   * @method handleDrag
-   */
-  handleDrag = () => {
-    let svg = d3.select(this._graphContainer.nativeElement)
-      .select('svg')
-      .select('g.graph');
-    // TODO: this is wrong and should target single nodes!
-    svg.attr('cx', d3.event.x)
-      .attr('cy', d3.event.y);
   }
 }
