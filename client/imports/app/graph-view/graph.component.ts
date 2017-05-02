@@ -52,15 +52,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   @ViewChild('graphContainer') private _graphContainer: ElementRef;
   @Input() graphData: InfoGraph;
   @Input() isEditing: boolean = false;
-  private _graph: any;
   private _width: number;
   private _height: number;
-  // make sure that the radius is the same as in the scss file!
   private _nodeRadius: number = 100;
   private _outerNodeRadius: number = 112;
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
   private _drag: d3.DragBehavior<SVGGElement, any, any>;
-  _htmlEntities: Html5Entities;
+  private _htmlEntities: Html5Entities;
 
   /**
    * Creates an instance of the GraphComponent.
@@ -125,7 +123,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('width', element.offsetWidth)
       .attr('height', element.offsetHeight);
 
-    this._graph = svg.append('svg:g')
+    svg.append('svg:g')
       .attr('class', 'graph');
 
     // set up the zoom behavior on the svg element
@@ -207,12 +205,41 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // TODO: properly remove/update nodes
 
     // draw the edges
-    if (this.graphData.edges && this.graphData.edges.length) {
-      g.selectAll('.line')
-        .data(this.graphData.edges)
+    this.updateEdges();
+
+    // draw the nodes
+    if (this.graphData.nodes && this.graphData.nodes.length) {
+      g.selectAll('g .node')
+        .data(this.graphData.nodes)
         .enter()
-        .append('line')
+        .append('svg:g')
+        .attr('class', 'node')
+        .attr('id', (d: Node) => d._id)
+        .each(this.addNode)
+    }
+
+    if (centerGraph) {
+      this.fitContainer();
+    }
+  }
+
+  updateEdges() {
+    if (!this.graphData.edges || !this.graphData.edges.length)
+      return;
+    
+    const element = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const g = svg.select<SVGGElement>('g.graph');
+
+    const line = g.selectAll('.edge')
+      .data(this.graphData.edges);
+
+    line.enter()
+      .append('line')
         .attr('class', 'edge')
+      .merge(line)
+        .attr('data-source-id', (d: Edge) => d.source)
+        .attr('data-target-id', (d: Edge) => d.target)
         .attr('x1', (d: Edge) => {
           const source: Node = this.graphData.nodes.filter((node: Node) => {
             return node._id === d.source;
@@ -237,22 +264,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           })[0];
           return target.y;
         });
-    }
 
-    // draw the nodes
-    if (this.graphData.nodes && this.graphData.nodes.length) {
-      g.selectAll('g .node')
-        .data(this.graphData.nodes)
-        .enter()
-        .append('svg:g')
-        .attr('class', 'node')
-        .attr('id', (d: Node) => d._id)
-        .each(this.addNode)
-    }
-
-    if (centerGraph) {
-      this.fitContainer();
-    }
+    line.exit().remove();
   }
 
   addNode = (d: Node, i: number, g: d3.EnterElement[]) => {
@@ -276,7 +289,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('class', 'node__content')
       .each(this.renderNodeContent)
 
-    group.on('click', this.toggleNodeFocus);
+    group.on('mousedown', this.toggleNodeFocus);
   }
 
   dragNode = (d: Node, i: number, g: d3.EnterElement[]) => {
@@ -292,6 +305,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // update the node data
     d.x = d.x + dx;
     d.y = d.y + dy;
+
+    // move the node to the foreground
+    node.raise();
 
     // update the position of the drawn circles
     node.selectAll('circle')
@@ -341,11 +357,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           .attr('y', y + dy);
       })
     
-    // handle edges
+    // update the edges
+    this.updateEdges();
   }
 
+
   saveNodePosition = (d: Node, i: number, g: d3.EnterElement[]) => {
-    console.log('save: ', d, i, g)
+    //this._graphViewService.updateInfoGraphNode(d);
   }
 
   /**
@@ -481,8 +499,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         const dragButton = this.appendFocusButton(node, d, 'dragButton', dragButtonX,
           dragButtonY, dragButtonIcon, 'verschieben');
 
-        // set up the click handlers
-        editButton.on('click', (node: Node) => {
+        // set up the mousedown handlers
+        editButton.on('mousedown', (node: Node) => {
           if (d3.event.button === 2) {
             d3.event.stopImmediatePropagation();
             return;
