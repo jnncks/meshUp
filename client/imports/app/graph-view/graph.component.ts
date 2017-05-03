@@ -272,7 +272,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   
     // update the offset of the graph
     this.updateGraphOffset()
-
+    
     g.selectAll('g .node--new')
       .remove();
 
@@ -725,7 +725,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     if (currentFocus.node()) {
       this.removeNodeFocus(); // remove the current focus
       this.toggleNodeFocus(currentFocus.data()[0])     
-    }
+    }      
   }
 
   /**
@@ -738,12 +738,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const svg = d3.select(element).select<SVGElement>('svg');
     const g = svg.select<SVGGElement>('g.graph');
 
-    // reset the transformation
-    svg.call(this._scale.transform, d3.zoomIdentity)
+    // return if the graph is empty
+    if (!g.node())
+      return;
 
     // get boundaries of the container and the graph group
-    const containerWidth = element.offsetWidth;
-    const containerHeight = element.offsetHeight;
+    const containerWidth = this._width;
+    const containerHeight = this._height;
     const bbox = g.node().getBBox();
 
     // calculate the scale
@@ -755,7 +756,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     if (maxScale)
       scale = Math.min(scale, maxScale);
-
+    
     // calculate the x and y offsets to center the graph
     const widthOffset =
       (containerWidth - bbox.width * scale) / 2 - bbox.x * scale;
@@ -764,7 +765,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // put everything together and emit the event
     const t: d3.ZoomTransform = d3.zoomIdentity
-      .translate(widthOffset, heightOffset).scale(scale);
+      .translate(widthOffset, heightOffset)
+      .scale(scale);
 
     svg.call(this._scale.transform, t);
   }
