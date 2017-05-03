@@ -54,6 +54,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   @Input() isEditing: boolean = false;
   private _width: number;
   private _height: number;
+  private _graphOffset: {
+    x: number,
+    y: number
+  } = { x: 0, y: 0 };
   private _nodeRadius: number = 100;
   private _outerNodeRadius: number = 112;
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
@@ -265,6 +269,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
     const g = svg.select<SVGGElement>('g.graph');
+  
+    // update the offset of the graph
+    this.updateGraphOffset()
 
     g.selectAll('g .node--new')
       .remove();
@@ -804,13 +811,45 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // calculate the transformation so that the graph stays in the view
     t.x = Math.max(
-      (-bbox.x * s - bbox.width * s + bbox.width / 3 * Math.sqrt(s)),
-      Math.min(t.x, containerWidth - bbox.width / 3 * Math.sqrt(s)));
+      (-bbox.x * s - bbox.width * s + this._nodeRadius * s),
+      Math.min(t.x, containerWidth - this._graphOffset.x * s));
     t.y = Math.max(
-      (-bbox.y * s - bbox.height * s + bbox.height / 3 * Math.sqrt(s)),
-      Math.min(t.y, containerHeight - bbox.height / 3 * Math.sqrt(s)));
-
+      (-bbox.y * s - bbox.height * s + this._nodeRadius * s),
+      Math.min(t.y, containerHeight - this._graphOffset.y * s));
+    
     // update the transform attribute of the SVG graph group
     g.attr('transform', t);
+  }
+
+  /**
+   * Updates the _graphOffset.
+   * 
+   * The offset contains the x- and y-coordinate of the graph's nodes with
+   * the minimum x- respectively y-coordinate. The offset is required to
+   * calculate the correct limits of the zoom transformation.
+   * 
+   * @method updateGraphOffset
+   */
+  updateGraphOffset(): void {
+    let min: { x: number, y: number } = {
+      x: null,
+      y: null
+    };
+    
+    this.graphData.nodes.forEach(node => {
+      if (min.x && min.y) {
+        min = {
+          x: Math.min(min.x, node.x),
+          y: Math.min(min.y, node.y)
+        };
+      } else {
+        min = {
+          x: node.x,
+          y: node.y
+        };
+      }
+    });
+
+    this._graphOffset = min;
   }
 }
