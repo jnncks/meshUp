@@ -58,6 +58,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _outerNodeRadius: number = 112;
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
   private _drag: d3.DragBehavior<SVGGElement, any, any>;
+  private _localNodeData = d3.local();
   private _htmlEntities: Html5Entities;
 
   /**
@@ -234,29 +235,19 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         .attr('data-source-id', (d: Edge) => d.source)
         .attr('data-target-id', (d: Edge) => d.target)
       .merge(line) // merge with existing edges and update the positions
-        .attr('x1', (d: Edge) => {
+        .each((d: Edge, i: number, g: Element[]) => {
           const source: Node = this.graphData.nodes.filter((node: Node) => {
             return node._id === d.source;
           })[0];
-          return source.x;
-        })
-        .attr('y1', (d: Edge) => {
-          const source: Node = this.graphData.nodes.filter((node: Node) => {
-            return node._id === d.source;
-          })[0];
-          return source.y;
-        })
-        .attr('x2', (d: Edge) => {
           const target: Node = this.graphData.nodes.filter((node: Node) => {
             return node._id === d.target;
           })[0];
-          return target.x;
-        })
-        .attr('y2', (d: Edge) => {
-          const target: Node = this.graphData.nodes.filter((node: Node) => {
-            return node._id === d.target;
-          })[0];
-          return target.y;
+
+          d3.select(g[i])
+            .attr('x1', source.x)
+            .attr('y1', source.y)
+            .attr('x2', target.x)
+            .attr('y2', target.y)
         });
     
     // remove edges that don't exist anymore
@@ -271,7 +262,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   updateNodes(): void {
     if (!this.graphData.nodes || !this.graphData.nodes.length)
       return;
-    
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
     const g = svg.select<SVGGElement>('g.graph');
@@ -280,25 +270,31 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .remove();
 
     const node = g.selectAll('g .node')
-        .data(this.graphData.nodes)
+      .data(this.graphData.nodes);
       
     node.enter()
       .append('svg:g')
         .attr('class', 'node')
         .attr('id', (d: Node) => d._id)
-      .merge(node)
         .each(this.addNode)
+      .merge(node)
+        .each(this.updateNode);
 
     node.exit().remove();
   }
 
+  /**
+   * Removes all nodes from the graph.
+   * 
+   * @method removeAllNodes
+   */
   removeAllNodes(): void {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
     const g = svg.select<SVGGElement>('g.graph');
 
     g.selectAll('g .node')
-        .remove();
+      .remove();
   }
 
   /**
@@ -307,34 +303,65 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method addNode
    * @param  {Node} d
    * @param  {number} i
-   * @param  {d3.EnterElement[]} g
+   * @param  {Element[]} g
    */
-  addNode = (d: Node, i: number, g: d3.EnterElement[]) => {
+  addNode = (d: Node, i: number, g: Element[]) => {
     const group = d3.select(g[i]);
 
     group.append('svg:circle')
       .attr('class', 'outer')
-      .attr('cx', (d: Node) => d.x)
-      .attr('cy', (d: Node) => d.y)
       .attr('r', this._outerNodeRadius);
 
     group.append('svg:circle')
       .attr('class', 'inner')
-      .attr('cx', (d: Node) => d.x)
-      .attr('cy', (d: Node) => d.y)
       .attr('r', this._nodeRadius);
 
+    group.on('mousedown', this.toggleNodeFocus);
+  }
+
+  /**
+   * Updates a single node.
+   * 
+   * @method updateNode
+   * @param  {Node} d
+   * @param  {number} i
+   * @param  {Element[]} g
+   */
+  updateNode = (d: Node, i: number, g: Element[]) => {
+    const group = d3.select(g[i]);
+    const previousData = this._localNodeData.get(g[i]);
+
+    // compare the local node data to the updated data
+    if (previousData === d)
+      return; // the data is the same, no update required!
+
+    group.select('circle.outer')
+      .attr('cx', (d: Node) => d.x)
+      .attr('cy', (d: Node) => d.y);
+
+    group.select('circle.inner')
+      .attr('cx', (d: Node) => d.x)
+      .attr('cy', (d: Node) => d.y);
+    
     // draw the content in front of the nodes
+    group.select('g.node__content').remove();
     group.append('svg:g')
       .attr('class', 'node__content')
-      .each(this.renderNodeContent)
-
-    group.on('mousedown', this.toggleNodeFocus);
-
-    if (group.classed('node--selected')) {
-      this.removeNodeFocus();
+      .each(this.renderNodeContent);
+    
+    /**
+     * this is somehow required to update the lines on drag if the previous
+     * drag originated from the same element...
+     * 
+     * TODO: Find another way!
+     */ 
+    if (group.attr('class').includes('node--selected')) {
+      this.removeNodeFocus()
       this.toggleNodeFocus(d);
     }
+
+    // update the local node data
+    group.each((d: Node) => this._localNodeData.set(g[i], d));
   }
 
   /**
@@ -343,9 +370,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method dragNode
    * @param  {Node} d
    * @param  {number} i
-   * @param  {d3.EnterElement[]} g
+   * @param  {Element[]} g
    */
-  dragNode = (d: Node, i: number, g: d3.EnterElement[]) => {
+  dragNode = (d: Node, i: number, g: Element[]) => {
     const svg = d3.select(this._graphContainer.nativeElement)
       .select('svg')
       .select('g.graph');
@@ -358,9 +385,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // update the node data
     d.x = d.x + dx;
     d.y = d.y + dy;
-
-    // move the node to the foreground
-    node.raise();
 
     // update the position of the drawn circles
     node.selectAll('circle')
@@ -414,17 +438,16 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     this.updateEdges();
   }
 
-
   /**
    * Stores the updated node position in the collection.
    * 
    * @method saveNodePosition
    * @param  {Node} d
    * @param  {number} i
-   * @param  {d3.EnterElement[]} g
+   * @param  {Element[]} g
    */
-  saveNodePosition = (d: Node, i: number, g: d3.EnterElement[]) => {
-    //this._graphViewService.updateInfoGraphNode(d);
+  saveNodePosition = (d: Node, i: number, g: Element[]) => {
+    this._graphViewService.updateInfoGraphNode(d);
   }
 
   /**
@@ -439,9 +462,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method renderNodeContent
    * @param  {Node} d The node data.
    * @param  {number} i The index in the selection array.
-   * @param  {EnterElement[]} p An array containing the selection's group elements.
+   * @param  {Element[]} p An array containing the selection's group elements.
    */
-  renderNodeContent = (d: Node, i: number, p: d3.EnterElement[]) => {
+  renderNodeContent = (d: Node, i: number, p: Element[]) => {
     // define the max amount of lines with their max character amount
     const maxCTitle = [10, 14, 16]; // title lines
     const maxCContent = [36, 35, 33, 32, 27, 18]; // content lines
@@ -510,13 +533,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     if (!node)
       return;
 
-    if (node.classed('node--selected')) {
+    if (node.attr('class').includes('node--selected')) {
       // don't change a thing
       return;
-    } else if (node.classed('node')) {
+    } else if (node.attr('class').includes('node')) {
       // remove any existing focus states
       this.removeNodeFocus();
-
+      
       // apply the focus state
       node.classed('node--selected', true)
 
@@ -542,10 +565,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
             node: node
           });
         });
-      }
-
-      // add the editing buttons if in editing mode
-      if (this.isEditing) {
+      } else { // add the editing buttons if in editing mode
         // positions of the buttons        
         const editButtonX = d.x + 72;
         const editButtonY = d.y;
