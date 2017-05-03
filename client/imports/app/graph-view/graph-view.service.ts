@@ -153,16 +153,17 @@ export class GraphViewService {
     if (!this._graph)
       return;
 
-    this._graph.first().subscribe((graph: InfoGraph) => {
-      let index = graph.nodes.findIndex((n: Node) => n._id === node._id);
+    this._graph.first(graph => graph !== undefined)
+      .subscribe((graph: InfoGraph) => {
+        const index = graph.nodes.findIndex((n: Node) => n._id === node._id);
 
-      if (index >= 0) {
-         graph.nodes[index] = node;
-        this._infoGraphService.updateInfoGraph(graph);
-      } else {
-        console.error('the node\'s ID does not exist! (updateInfoGraphNode)');
-      }
-    });
+        if (index >= 0) {
+          graph.nodes[index] = node;
+          this._infoGraphService.updateInfoGraph(graph);
+        } else {
+          console.error('the node\'s ID does not exist! (updateInfoGraphNode)');
+        }
+      });
   }
   
   /**
@@ -180,50 +181,54 @@ export class GraphViewService {
     content: string = '', tags: string[] = []): void {
     if (!this._graph)
       return;
+    this._graph.first(graph => graph !== undefined)
+      .subscribe((graph: InfoGraph) => {
+        if (!graph.nodes) 
+          graph.nodes = [];
 
-    this._graph.first().subscribe((graph: InfoGraph) => {
-      if (!graph.nodes) 
-        graph.nodes = [];
+        graph.nodes.push({
+          _id: Random.id(),
+          x: cx,
+          y: cy,
+          title: title,
+          content: content,
+          tags: tags,
+          creator: Meteor.userId(),
+          created: new Date(),
+          lastUpdated: new Date()
+        });
 
-      graph.nodes.push({
-        _id: Random.id(),
-        x: cx,
-        y: cy,
-        title: title,
-        content: content,
-        tags: tags,
-        creator: Meteor.userId(),
-        created: new Date(),
-        lastUpdated: new Date()
+        this._infoGraphService.updateInfoGraph(graph);
       });
-
-      this._infoGraphService.updateInfoGraph(graph);
-    });
   }
 
   /**
    * Removes a node of the currently active infoGraph (_graph) by passing the
    * graph's data to the updateInfoGraph method of the InfoGraphService.
+   * Additionally removes related edges.
    * 
    * @method removeInfoGraphNode
    * @param  {Node} node The node to remove from the infoGraph.
    */
   removeInfoGraphNode(node: Node): void {
-    // TODO: Also remove related edges!
-    
     if (!this._graph)
       return;
 
-    this._graph.first().subscribe((graph: InfoGraph) => {
-      let index = graph.nodes.findIndex((n: Node) => n._id === node._id);
+    this._graph.first(graph => graph !== undefined)
+      .subscribe((graph: InfoGraph) => {
+        const index = graph.nodes.findIndex((n: Node) => n._id === node._id);
 
-      console.log(index)
-      if (index >= 0) {
-         graph.nodes.splice(index, 1);
-        this._infoGraphService.updateInfoGraph(graph);
-      } else {
-        console.error('the node\'s ID does not exist! (removeInfoGraphNode)');
-      }
-    });
+        if (index >= 0) {
+          graph.nodes.splice(index, 1);
+
+          if (graph.edges && graph.edges.length)
+            graph.edges = graph.edges.filter(edge =>
+              edge.source !== node._id && edge.target !== node._id);
+          
+          this._infoGraphService.updateInfoGraph(graph);
+        } else {
+          console.error('the node\'s ID does not exist! (removeInfoGraphNode)');
+        }
+      });
   }
 }

@@ -149,6 +149,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     if (!this.isEditing)
       return;
 
+    this.removeAllNodes();
+
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
     const g = svg.select<SVGGElement>('g.graph');
@@ -170,7 +172,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('width', 100)
       .attr('height', 100);
 
-    newNode.on('click', () => {
+    newNode.on('mousedown', () => {
       if (d3.event && d3.event.button === 2) { // ignore right clicks
         d3.event.stopImmediatePropagation();
         return;
@@ -189,7 +191,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @param  {boolean} centerGraph Whether the graph should be centered.
    */
   updateGraph(centerGraph: boolean = false): void {
-
     if (!this.graphData)
       return;
     
@@ -198,32 +199,25 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       return;
     }
 
-    const element = this._graphContainer.nativeElement;
-    const svg = d3.select(element).select<SVGElement>('svg');
-    const g = svg.select<SVGGElement>('g.graph');
-
-    // TODO: properly remove/update nodes
-
     // draw the edges
     this.updateEdges();
 
     // draw the nodes
-    if (this.graphData.nodes && this.graphData.nodes.length) {
-      g.selectAll('g .node')
-        .data(this.graphData.nodes)
-        .enter()
-        .append('svg:g')
-        .attr('class', 'node')
-        .attr('id', (d: Node) => d._id)
-        .each(this.addNode)
-    }
+    if (this.graphData.nodes && this.graphData.nodes.length)
+      this.updateNodes();
 
     if (centerGraph) {
       this.fitContainer();
     }
   }
 
-  updateEdges() {
+  /**
+   * Draws the edges according to the current dataset (graphData).
+   * Properly updates existing edges or removes edges that don't exist anymore.
+   * 
+   * @method updateEdges
+   */
+  updateEdges(): void {
     if (!this.graphData.edges || !this.graphData.edges.length)
       return;
     
@@ -235,11 +229,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .data(this.graphData.edges);
 
     line.enter()
-      .append('line')
+      .append('line') // append new edges when required
         .attr('class', 'edge')
-      .merge(line)
         .attr('data-source-id', (d: Edge) => d.source)
         .attr('data-target-id', (d: Edge) => d.target)
+      .merge(line) // merge with existing edges and update the positions
         .attr('x1', (d: Edge) => {
           const source: Node = this.graphData.nodes.filter((node: Node) => {
             return node._id === d.source;
@@ -264,10 +258,57 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           })[0];
           return target.y;
         });
-
+    
+    // remove edges that don't exist anymore
     line.exit().remove();
   }
 
+  /**
+   * Draws the nodes according to the current dataset (graphData).
+   * 
+   * @method updateNodes
+   */
+  updateNodes(): void {
+    if (!this.graphData.nodes || !this.graphData.nodes.length)
+      return;
+    
+    const element = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const g = svg.select<SVGGElement>('g.graph');
+
+    g.selectAll('g .node--new')
+      .remove();
+
+    const node = g.selectAll('g .node')
+        .data(this.graphData.nodes)
+      
+    node.enter()
+      .append('svg:g')
+        .attr('class', 'node')
+        .attr('id', (d: Node) => d._id)
+      .merge(node)
+        .each(this.addNode)
+
+    node.exit().remove();
+  }
+
+  removeAllNodes(): void {
+    const element = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const g = svg.select<SVGGElement>('g.graph');
+
+    g.selectAll('g .node')
+        .remove();
+  }
+
+  /**
+   * Adds a node to the drawn graph.
+   * 
+   * @method addNode
+   * @param  {Node} d
+   * @param  {number} i
+   * @param  {d3.EnterElement[]} g
+   */
   addNode = (d: Node, i: number, g: d3.EnterElement[]) => {
     const group = d3.select(g[i]);
 
@@ -283,15 +324,27 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('cy', (d: Node) => d.y)
       .attr('r', this._nodeRadius);
 
-
     // draw the content in front of the nodes
     group.append('svg:g')
       .attr('class', 'node__content')
       .each(this.renderNodeContent)
 
     group.on('mousedown', this.toggleNodeFocus);
+
+    if (group.classed('node--selected')) {
+      this.removeNodeFocus();
+      this.toggleNodeFocus(d);
+    }
   }
 
+  /**
+   * Handles drag events of nodes.
+   * 
+   * @method dragNode
+   * @param  {Node} d
+   * @param  {number} i
+   * @param  {d3.EnterElement[]} g
+   */
   dragNode = (d: Node, i: number, g: d3.EnterElement[]) => {
     const svg = d3.select(this._graphContainer.nativeElement)
       .select('svg')
@@ -362,6 +415,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
 
+  /**
+   * Stores the updated node position in the collection.
+   * 
+   * @method saveNodePosition
+   * @param  {Node} d
+   * @param  {number} i
+   * @param  {d3.EnterElement[]} g
+   */
   saveNodePosition = (d: Node, i: number, g: d3.EnterElement[]) => {
     //this._graphViewService.updateInfoGraphNode(d);
   }
@@ -566,6 +627,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     return button;
   }
 
+  /**
+   * Removes the focus state from all currently selected nodes.
+   * 
+   * @method removeNodeFocus
+   */
   removeNodeFocus() {
     const element = this._graphContainer.nativeElement;
     d3.select(element)
@@ -616,6 +682,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     return lines;
   }
 
+  /**
+   * Toggles between the editing and viewing mode.
+   * 
+   * @method toggleEditing
+   */
   toggleEditing(): void {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
