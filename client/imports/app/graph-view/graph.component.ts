@@ -725,7 +725,16 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     if (currentFocus.node()) {
       this.removeNodeFocus(); // remove the current focus
       this.toggleNodeFocus(currentFocus.data()[0])     
-    }      
+    }
+
+    if (!this.graphData.nodes || !this.graphData.nodes.length) {
+      if (this.isEditing) {
+        this.prepareNewGraph();
+      } else {
+        this.removeAllNodes();
+      }
+    }
+      
   }
 
   /**
