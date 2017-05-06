@@ -561,8 +561,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         const detailButton = this.appendFocusButton(node, d, 'DetailButton',
           detailButtonX, detailButtonY, detailButtonIcon, 'öffnen');
 
-        // add the click handler
-        detailButton.on('click', (node: Node) => {
+        // add the mousedown handler
+        detailButton.on('mousedown', (node: Node) => {
           if (d3.event.button === 2) {
             d3.event.stopImmediatePropagation();
             return;
@@ -667,8 +667,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .selectAll('g .node--selected')
         .classed('node--selected', false)
         .selectAll('g .focus-button')
-          .on('mousedown', null) // reset the click handler
-          .on('click', null) // reset the click handler
+          .on('mousedown', null) // reset the mousedown handler
           .remove(); // remove the button group
   }
 
