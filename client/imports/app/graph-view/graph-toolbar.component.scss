@@ -1,0 +1,36 @@
+@import '../../../styles/layout-variables';
+@import '../../../styles/colors';
+
+.graph-toolbar {
+  height: $navbar-height;
+  background-color: $background;
+  color: $primary-text-color;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.24);
+
+  &__list {
+    height: 100%;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+
+    &__item {
+      margin-left: 1rem;
+      margin-right: 1rem;
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+
+      svg {
+        padding-top: 0.1em;
+        padding-right: 0.4rem;
+        width: 1.2em;
+        height: 1.2em;
+        fill: currentColor;
+      }
+    }
+  }
+}

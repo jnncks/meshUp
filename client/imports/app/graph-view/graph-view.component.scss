@@ -4,4 +4,21 @@
   width: 100%;
   height: calc(100vh - #{$navbar-height});
   overflow: hidden;
+  background-color: #212121;
+
+  graph-toolbar {
+    height: $navbar-height;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  meshup-graph {
+    height: calc(100vh - #{$navbar-height});
+    z-index: 1;
+  }
+
+  graph-toolbar ~ meshup-graph {
+    height: calc(100vh - #{2*$navbar-height});
+  }
 }

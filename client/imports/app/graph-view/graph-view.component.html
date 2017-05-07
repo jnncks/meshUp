@@ -1,3 +1,4 @@
 <div class="graph-view" *ngIf="_graph | async">
+  <graph-toolbar *ngIf="isEditing"></graph-toolbar>
   <meshup-graph [graphData]="_graph| async" [isEditing]="isEditing"></meshup-graph>
 </div>

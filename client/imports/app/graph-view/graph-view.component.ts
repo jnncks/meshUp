@@ -5,14 +5,11 @@ import { Meteor } from 'meteor/meteor';
 
 import { GraphViewService } from './graph-view.service';
 
-import { InfoGraph, InfoGraphMeta} from '../../../../both/models';
+import { InfoGraph, InfoGraphMeta } from '../../../../both/models';
 
 import template from './graph-view.component.html';
 import styleUrl from './graph-view.component.scss';
 
-/**
- * 
- */
 /**
  * Serves as a container for the GraphComponent.
  * 

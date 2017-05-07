@@ -94,7 +94,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // handle window resize events
     Observable.fromEvent(window, 'resize')
       .debounceTime(50) // debounce for 50ms
-      .subscribe(() => this.handleWindowResize());
+      .subscribe(() => this.handleResize());
   }
 
   /**
@@ -719,7 +719,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const g = svg.select<SVGGElement>('g.graph');
 
     // select the currently focused node if there is any
-    const currentFocus: d3.Selection<SVGGElement, any, any, any> = g.select<SVGGElement>('g .node--selected')
+    const currentFocus: d3.Selection<SVGGElement, any, any, any> =
+      g.select<SVGGElement>('g .node--selected')
 
     if (currentFocus.node()) {
       this.removeNodeFocus(); // remove the current focus
@@ -733,7 +734,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         this.removeAllNodes();
       }
     }
-      
+    
+    // finally, resize the SVG element due to the toolbar being added/removed
+    setTimeout(() => this.handleResize(), 150);
   }
 
   /**
@@ -780,19 +783,19 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   /**
-   * Resizes the SVG element when the window has been resized.
+   * Resizes the SVG element when the window or container has been resized.
    * 
-   * @method handleWindowResize
+   * @method handleResize
    */
-  handleWindowResize(): void {
+  handleResize(): void {
     const element = this._graphContainer.nativeElement;
     this._width = element.offsetWidth;
     this._height = element.offsetHeight;
 
     d3.select(element)
       .select('svg')
-      .attr('width', element.offsetWidth)
-      .attr('height', element.offsetHeight);
+      .attr('width', this._width)
+      .attr('height', this._height);
   }
 
   /**

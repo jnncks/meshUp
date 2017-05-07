@@ -1,10 +1,15 @@
 @import '../../../styles/colors';
 @import '../../../styles/mixins';
+@import '../../../styles/layout-variables';
 
 .graph-container {
   height: 100%;
   width: 100%;
   background-color: #212121;
+
+  &--editing {
+    height: calc(100% - #{$navbar-height})
+  }
 }
 
 .graph {
