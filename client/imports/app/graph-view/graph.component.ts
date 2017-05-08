@@ -806,7 +806,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('r', this._nodeRadius / 15);
             
     container.on('mousemove', () => {
-      console.log('Test')
       const mouse = d3.mouse(g.node());
       const dx = mouse[0] - d.x;
       const dy = mouse[1] - d.y;
