@@ -99,6 +99,7 @@
     @include buttons( $bg-color: $primary-color, $color: $primary-color-text, $hover-bg-color: $primary-color-text, $hover-color: $primary-color-dark, $padding-h: 1rem);
     
     &__button {
+      min-height: 2.5rem;
       @include hidden-on(tablet-portrait-below);
     }
   }
