@@ -1,10 +1,27 @@
-import { Component, OnInit} from '@angular/core';
-import { trigger, state, style, animate, transition, keyframes} from '@angular/core';
+import {
+  Component,
+  OnInit
+} from '@angular/core';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+  keyframes
+} from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { GraphViewService } from './graph-view.service';
+import { ModalService } from '../shared/modal.module';
+import {
+  InfoGraphSettingsModalComponent
+} from '../shared/info-graph-settings-modal.component';
 
-import { InfoGraph, InfoGraphMeta } from '../../../../both/models';
+import {
+  InfoGraph,
+  InfoGraphMeta
+} from '../../../../both/models';
 
 import template from './graph-toolbar.component.html';
 import styleUrl from './graph-toolbar.component.scss';
@@ -47,7 +64,7 @@ export class GraphToolbarComponent implements OnInit {
    * 
    * @param {GraphViewService} _graphViewService The GraphViewService.
    */
-  constructor(private _graphViewService: GraphViewService) {
+  constructor(private _graphViewService: GraphViewService, private _modalService: ModalService) {
   }
   
   /**
@@ -57,5 +74,22 @@ export class GraphToolbarComponent implements OnInit {
    * @method ngOnInit
    */
   ngOnInit(): void {
+  }
+
+  /**
+   * Opens the settings modal of the current infoGraph within the graphView.
+   * 
+   * @method openSettings
+   */
+  openSettings() {
+    // get the current infoGraphMeta
+    this._graphViewService.getCurrentGraphMeta()
+      .first(graphMeta => graphMeta !== undefined)
+      .subscribe((graphMeta: InfoGraphMeta) => {
+        // create the modal with the current infoGraphMeta
+        this._modalService.create(InfoGraphSettingsModalComponent, {
+          infoGraph: graphMeta
+        });
+    });
   }
 }

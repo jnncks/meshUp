@@ -18,17 +18,26 @@
     padding: 0;
 
     &__item {
-      margin-left: 1rem;
-      margin-right: 1rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      height: 100%;
       display: inline-flex;
       flex-direction: row;
       align-items: center;
+      line-height: 1.1;
+
+      &:hover {
+        background-color: $divider-color;
+        cursor: pointer;
+        color: $primary-color-dark;
+      }
 
       svg {
+        flex-shrink: 0;
         padding-top: 0.1em;
         padding-right: 0.4rem;
-        width: 1.2em;
-        height: 1.2em;
+        width: 1.6em;
+        height: 1.6em;
         fill: currentColor;
       }
     }
