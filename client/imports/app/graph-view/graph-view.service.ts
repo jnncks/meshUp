@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 
 import { InfoGraphService } from '../shared/info-graph.service';
 
-import { InfoGraph, InfoGraphMeta, Node } from '../../../../both/models';
+import { InfoGraph, InfoGraphMeta, Node, Edge } from '../../../../both/models';
 import { InfoGraphCollection, InfoGraphMetaCollection } from '../../../../both/collections';
 
 
@@ -194,6 +194,7 @@ export class GraphViewService {
     content: string = '', tags: string[] = []): void {
     if (!this._graph)
       return;
+
     this._graph.first(graph => graph !== undefined)
       .subscribe((graph: InfoGraph) => {
         if (!graph.nodes) 
@@ -242,6 +243,48 @@ export class GraphViewService {
         } else {
           console.error('the node\'s ID does not exist! (removeInfoGraphNode)');
         }
+      });
+  }
+
+  /**
+   * 
+   * 
+   * @method createInfoGraphEdge
+   * @param {string} source The source node's ID.
+   * @param {string} target The target nodes's ID.
+   */
+  createInfoGraphEdge(source: string, target: string): void {
+    if (!this._graph)
+      return;
+    
+    // don't add an edge when the source is the target
+    if (source === target)
+      return;
+
+    this._graph.first(graph => graph !== undefined)
+      .subscribe((graph: InfoGraph) => {
+        if (!graph.edges) 
+          graph.edges = [];
+
+        // check for any edges with the same nodes
+        const existingEdge = graph.edges.find((edge: Edge) => {
+          return (edge.source === source && edge.target === target) ||
+                 (edge.source === target && edge.target === source)
+        });
+
+        if (existingEdge) {
+          return;
+        }
+
+        graph.edges.push({
+          _id: Random.id(),
+          source: source,
+          target: target,
+          creator: Meteor.userId(),
+          created: new Date()
+        });
+
+        this._infoGraphService.updateInfoGraph(graph);
       });
   }
 }

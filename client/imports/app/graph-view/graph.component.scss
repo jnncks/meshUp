@@ -87,6 +87,13 @@
       }
     }
 
+    &--hover {
+      circle.inner {
+        stroke: $accent-color;
+        stroke-width: 8px;
+      }
+    }
+
     &--new {
       circle.inner {
         stroke: $primary-color-secondary-text;

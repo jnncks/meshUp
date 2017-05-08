@@ -61,7 +61,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _nodeRadius: number = 100;
   private _outerNodeRadius: number = 112;
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
-  private _drag: d3.DragBehavior<SVGGElement, any, any>;
+  private _dragNode: d3.DragBehavior<SVGGElement, any, any>;
+  private _dragEdge: d3.DragBehavior<SVGCircleElement, any, any>;
   private _localNodeData = d3.local();
   private _htmlEntities: Html5Entities;
 
@@ -139,7 +140,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     svg.call(this._scale);
 
     // set up the drag behavior for nodes
-    this._drag = d3.drag()
+    this._dragNode = d3.drag()
       .on('drag', (d: Node, i: number, g: Element[]) => this.dragNode(d, i, g))
       .on('end', (d: Node, i: number, g: Element[]) => this.saveNodePosition(d, i, g));
 
@@ -236,10 +237,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const g = svg.select<SVGGElement>('g.graph');
 
     const line = g.selectAll('.edge')
+      .filter((d: Edge) => d !== null)
       .data(this.graphData.edges);
 
     line.enter()
-      .append('line') // append new edges when required
+      .append('svg:line') // append new edges when required
         .attr('class', 'edge')
         .attr('data-source-id', (d: Edge) => d.source)
         .attr('data-target-id', (d: Edge) => d.target)
@@ -674,8 +676,17 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           .attr('d', arc)
           .attr('class', 'new-edge__hover-area')
           .attr('transform', `translate(${arcX},${arcY})`);
+
+        // set up the drag handler
+        this._dragEdge = d3.drag()
+          .on('start', (d: Node, i: number, g: Element[]) =>
+            this.handleNewEdgeDragStart(d, i, g))
+          .on('drag', (d: Node, i: number, g: Element[]) =>
+            this.handleNewEdgeDrag(d, i, g))
+          .on('end', (d: Node, i: number, g: Element[]) =>
+            this.handleNewEdgeDragEnd(d, i, g));
         
-        // setup the mouse event handlers
+        // set up the mouse event handlers
         newEdgeGroup
           .on('mouseenter', () => this.displayEdgeStartPoint(d, newEdgeGroup))
           .on('mouseleave', () => {
@@ -710,7 +721,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         });
 
         // set up the mousedown handlers
-        dragButton.call(this._drag);
+        dragButton.call(this._dragNode);
       }
     }
   }
@@ -801,12 +812,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .select<SVGElement>('svg')
       .select<SVGGElement>('g.graph');
 
-    const newEdgeStart = container.append('circle')
+    // add a circle as a drag point for new edges
+    const newEdgeStart = container.append('svg:circle')
       .attr('class', 'new-edge__start')
-      .attr('r', this._nodeRadius / 15);
-            
+      .attr('r', this._nodeRadius / 10);
+    
+    // update the position on mousemove
     container.on('mousemove', () => {
-      const mouse = d3.mouse(g.node());
+      const mouse: number[] = d3.mouse(g.node());
       const dx = mouse[0] - d.x;
       const dy = mouse[1] - d.y;
       const dist = Math.sqrt(dx*dx + dy*dy);
@@ -817,6 +830,117 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         .attr('cx', newX)
         .attr('cy', newY);
       });
+    
+    // set up the drag handler of the drag circle
+    newEdgeStart.call(this._dragEdge);
+  }
+
+  /**
+   * Creates a temporary edge when a new-edge__start circle drag starts.
+   * Sets up hover handlers for all nodes so that the target node is
+   * highlighted when hovering over it.
+   * 
+   * @method handleNewEdgeDragStart
+   * @param {Node} d 
+   * @param {number} i 
+   * @param {Element[]} g 
+   */
+  handleNewEdgeDragStart(d: Node, i: number, g: Element[]): void {
+    const element = this._graphContainer.nativeElement;
+    const graph = d3.select(element)
+      .select<SVGElement>('svg')
+      .select<SVGGElement>('g.graph');
+    
+    // get the current mouse position
+    const mouse: number[] = d3.mouse(graph.node());
+
+    // add a new line
+    graph.append('svg:line')
+      .attr('class', 'edge edge--new')
+      .attr('x1', d.x)
+      .attr('y1', d.y)
+      .attr('x2', mouse[0])
+      .attr('y2',mouse[1])
+      .lower(); // TODO: this might cause some trouble, not sure right now.
+
+    // set up hover handlers for all nodes except the source node
+    graph.selectAll('g.node')
+      .filter((node: Node) => node._id !== d._id)
+      .on('mouseenter', (d: Node, i: number, g: Element[]) => {
+        d3.select(g[i])
+          .classed('node--hover', true);
+      })
+      .on('mouseleave', (d: Node, i: number, g: Element[]) => {
+        d3.select(g[i])
+          .classed('node--hover', false);
+      });
+  }
+
+  /**
+   * Updates the coordinates of the temporary edge when the
+   * new-edge__start circle is being dragged.
+   * 
+   * @method handleNewEdgeDrag
+   * @param {Node} d 
+   * @param {number} i 
+   * @param {Element[]} g 
+   */
+  handleNewEdgeDrag(d: Node, i: number, g: Element[]): void {
+    const element = this._graphContainer.nativeElement;
+    const graph = d3.select(element)
+      .select<SVGElement>('svg')
+      .select<SVGGElement>('g.graph');
+
+    const edge = graph.select('line.edge--new')
+
+    // get the delta x/y values
+    const dx = d3.event.dx;
+    const dy = d3.event.dy;
+
+    // update the new x2 and y2 values
+    const x = Number(edge.attr('x2')) + dx;
+    const y = Number(edge.attr('y2')) + dy;
+
+    edge
+      .attr('x2', x)
+      .attr('y2', y);
+  }
+
+  /**
+   * Creates a new edge when the drag ended on a node.
+   * Also removes the temporary elements and hovers.
+   * Called when the drag of the new-edge__start circle has ended.
+   * 
+   * @method handleNewEdgeDragEnd
+   * @param {Node} d 
+   * @param {number} i 
+   * @param {Element[]} g 
+   */
+  handleNewEdgeDragEnd(d: Node, i: number, g: Element[]): void {
+    const element = this._graphContainer.nativeElement;
+    const graph = d3.select(element)
+      .select<SVGElement>('svg')
+      .select<SVGGElement>('g.graph');
+
+    const edge = graph.select('line.edge--new')
+
+    const target = graph.select<SVGGElement>('g.node.node--hover')
+    if (!target.empty() && target.data()[0]) {
+      const targetId = target.data()[0]['_id'];
+
+      // if we have the target's ID, create the actual edge
+      if (targetId)
+        this._graphViewService.createInfoGraphEdge(d._id, targetId);
+    }
+
+    // remove the temporary edge
+    edge.remove();
+
+    // remove the hover handlers
+    graph.selectAll('g.node')
+      .classed('node--hover', false)
+      .on('mouseenter', null)
+      .on('mouseleave', null);
   }
 
   /**
