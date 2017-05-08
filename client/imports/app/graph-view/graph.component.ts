@@ -142,6 +142,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     this._drag = d3.drag()
       .on('drag', (d: Node, i: number, g: Element[]) => this.dragNode(d, i, g))
       .on('end', (d: Node, i: number, g: Element[]) => this.saveNodePosition(d, i, g));
+
+    // set up the mousemove handler for new nodes
+    this._graphViewService.nodeAddingChanged.subscribe(state => {
+      this.handleNodeAddingModeChange(state);
+    });
   }
 
   /**
@@ -302,6 +307,82 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     g.selectAll('g .node')
       .remove();
+  }
+
+  handleNodeAddingModeChange(state: boolean): void {
+    const element = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const g = svg.select<SVGGElement>('g.graph')
+
+    if (!state) {
+      svg.on('mousemove', null); // remove the mousemove handler
+      g.select('g#newNodePlaceholder').remove();
+      return;
+    }
+    
+    const newNode = g.append<SVGGElement>('svg:g')
+      .attr('class', 'node node--new')
+      .attr('id', 'newNodePlaceholder');
+
+    // use the min coordinates (which hopefully are far off from other nodes)
+    const coord = {
+      x: Number.MIN_SAFE_INTEGER,
+      y: Number.MIN_SAFE_INTEGER
+    }
+    // add the circle
+    newNode.append('svg:circle')
+      .attr('class', 'inner')
+      .attr('r', this._nodeRadius)
+      .attr('cx', coord.x)
+      .attr('cy', coord.y);
+
+    // add the icon
+    const iconUrl = 'icons/svg-sprite-content-symbol.svg#ic_add_24px';
+    newNode.append('svg:use')
+      .attr('xlink:href', iconUrl)
+      .attr('x', coord.x - 50)
+      .attr('y', coord.y - 50)
+      .attr('width', 100)
+      .attr('height', 100);
+      
+    // move the node with the mouse
+    svg.on('mousemove', () => this.handleNewNodeMousemove(newNode));
+
+    // create the new node on mousedown
+    newNode.on('mousedown', () => {
+      if (d3.event && d3.event.button === 2) { // ignore right clicks
+        d3.event.stopImmediatePropagation();
+        return;
+      }
+
+      const circle = g.select('g#newNodePlaceholder').select('circle');
+      this._graphViewService.addInfoGraphNode(
+        Number(circle.attr('cx')),
+        Number(circle.attr('cy')));
+
+      this._graphViewService.toggleNodeAdding();
+    });
+  }
+
+  handleNewNodeMousemove(newNode: d3.Selection<SVGGElement, any, any, any>): void {
+    if (!d3.event || d3.event.type !== 'mousemove')
+      return;
+
+    const element = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const g = svg.select<SVGGElement>('g.graph');
+
+    // get the relative mouse coordinates [x, y]
+    const mouse: [number, number] = d3.mouse(g.node());
+
+    // update the position
+    newNode.select('circle')
+      .attr('cx', mouse[0])
+      .attr('cy', mouse[1]);
+
+    newNode.select('use')
+      .attr('x', mouse[0] - 50)
+      .attr('y', mouse[1] - 50);
   }
 
   /**

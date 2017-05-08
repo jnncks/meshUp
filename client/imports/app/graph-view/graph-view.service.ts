@@ -21,7 +21,9 @@ export class GraphViewService {
   private _graph: Observable<InfoGraph>;
   private _graphMeta: Observable<InfoGraphMeta>;
   private _isEditing: boolean;
+  private _isAddingNode: boolean;
   public modeChanged = new EventEmitter<boolean>();
+  public nodeAddingChanged = new EventEmitter<boolean>();
 
   /**
    * Creates an instance of the GraphViewService.
@@ -118,6 +120,17 @@ export class GraphViewService {
     } else {
       this._router.navigate([currentRoute, 'view']);
     }
+  }
+
+  /**
+   * Toggles the current editing mode: If nodeAdding is active, the user is
+   * currently adding a new node to the graph.
+   * 
+   * @method toggleNodeAdding
+   */
+  toggleNodeAdding(): void {
+    this._isAddingNode = !this._isAddingNode;
+    this.nodeAddingChanged.emit(this._isAddingNode)
   }
 
   /**

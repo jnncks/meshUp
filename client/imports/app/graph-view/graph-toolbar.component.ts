@@ -1,7 +1,4 @@
-import {
-  Component,
-  OnInit
-} from '@angular/core';
+import { Component } from '@angular/core';
 import {
   trigger,
   state,
@@ -57,7 +54,8 @@ import styleUrl from './graph-toolbar.component.scss';
     'style': 'display: block; overflow: hidden;'
   }
 })
-export class GraphToolbarComponent implements OnInit {
+export class GraphToolbarComponent {
+  private _isAddingNode = false;
 
   /**
    * Creates an instance of the GraphToolbarComponent.
@@ -65,15 +63,9 @@ export class GraphToolbarComponent implements OnInit {
    * @param {GraphViewService} _graphViewService The GraphViewService.
    */
   constructor(private _graphViewService: GraphViewService, private _modalService: ModalService) {
-  }
-  
-  /**
-   * Called when the component is initialized.
-   * ...
-   * 
-   * @method ngOnInit
-   */
-  ngOnInit(): void {
+    _graphViewService.nodeAddingChanged.subscribe(state => {
+      this._isAddingNode = state;
+    });
   }
 
   /**
@@ -91,5 +83,9 @@ export class GraphToolbarComponent implements OnInit {
           infoGraph: graphMeta
         });
     });
+  }
+
+  toggleNodeAdding() {
+    this._graphViewService.toggleNodeAdding();
   }
 }

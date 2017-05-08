@@ -6,7 +6,7 @@
       </svg>
       <span>verwalten</span>
     </li>
-    <li class="graph-toolbar__list__item">
+    <li class="graph-toolbar__list__item" [ngClass]="{'graph-toolbar__list__item--active' : _isAddingNode}" (click)="toggleNodeAdding()">
       <svg>
         <use xlink:href="icons/svg-sprite-content-symbol.svg#ic_add_circle_outline_24px" />
       </svg>
