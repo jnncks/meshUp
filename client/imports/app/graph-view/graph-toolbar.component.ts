@@ -54,7 +54,7 @@ import styleUrl from './graph-toolbar.component.scss';
   ],
   host: {
     '[@slideInOut]': 'true',
-    'style': 'display: block;'
+    'style': 'display: block; overflow: hidden;'
   }
 })
 export class GraphToolbarComponent implements OnInit {
