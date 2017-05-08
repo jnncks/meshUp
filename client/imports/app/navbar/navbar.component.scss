@@ -43,6 +43,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         color: $primary-color-text;
+        font-feature-settings: 'lnum';
         text-decoration: underline;
         @include remove-link-underlines;
 
