@@ -75,6 +75,16 @@
         stroke-dasharray: 13px;
         fill: transparent;
       }
+
+      circle.new-edge__start {
+        fill: $primary-text-color;
+        stroke: $white;
+        stroke-width: 4px;
+      }
+      
+      path.new-edge__hover-area {
+        fill: transparent;
+      }
     }
 
     &--new {

@@ -653,7 +653,36 @@ export class GraphComponent implements AfterViewInit, OnChanges {
             node: node
           });
         });
-      } else { // add the editing buttons if in editing mode
+      } else {
+        /* prepare the edge creation */
+        // create a new group element
+        const newEdgeGroup = node.append<SVGGElement>('svg:g')
+          .attr('class', 'node__new-edge-group');
+        
+        // create an arc for the area in which a mousehover will be handled
+        const arc = d3.arc()
+          .innerRadius(this._nodeRadius / 1.25)
+          .outerRadius(this._nodeRadius * 1.75)
+          .startAngle(0)
+          .endAngle(2 * Math.PI);
+
+        const arcX = d.x;
+        const arcY = d.y;
+
+        // add the arc
+        newEdgeGroup.append('svg:path')
+          .attr('d', arc)
+          .attr('class', 'new-edge__hover-area')
+          .attr('transform', `translate(${arcX},${arcY})`);
+        
+        // setup the mouse event handlers
+        newEdgeGroup
+          .on('mouseenter', () => this.displayEdgeStartPoint(d, newEdgeGroup))
+          .on('mouseleave', () => {
+            newEdgeGroup.select('circle.new-edge__start').remove();
+          });
+
+        /* add the editing buttons */
         // positions of the buttons        
         const editButtonX = d.x + 72;
         const editButtonY = d.y;
@@ -742,14 +771,53 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    */
   removeNodeFocus() {
     const element = this._graphContainer.nativeElement;
-    d3.select(element)
+    const g = d3.select(element)
       .select<SVGElement>('svg')
-      .select<SVGGElement>('g.graph')
-      .selectAll('g .node--selected')
-        .classed('node--selected', false)
-        .selectAll('g .focus-button')
-          .on('mousedown', null) // reset the mousedown handler
-          .remove(); // remove the button group
+      .select<SVGGElement>('g.graph');
+
+    g.selectAll('g .node--selected')
+      .classed('node--selected', false)
+      .selectAll('g .focus-button')
+        .on('mousedown', null) // reset the mousedown handler
+        .remove(); // remove the button group
+    g.selectAll('g.node__new-edge-group')
+      .on('mousemove', null)
+      .remove();
+    g.selectAll('circle.new-edge__start')
+      .remove();
+  }
+
+  /**
+   * Displays a circle around the given node. The circle position is the
+   * point on the node's outer circle which is closest to the mouse.
+   * 
+   * @method displayEdgeStartPoint
+   * @param {Node} d 
+   * @param {d3.Selection<SVGGElement, any, any, any>} container
+   */
+  displayEdgeStartPoint(d: Node, container: d3.Selection<SVGGElement, any, any, any>): void {
+    const element = this._graphContainer.nativeElement;
+    const g = d3.select(element)
+      .select<SVGElement>('svg')
+      .select<SVGGElement>('g.graph');
+
+    const newEdgeStart = container.append('circle')
+      .attr('class', 'new-edge__start')
+      .attr('r', this._nodeRadius / 15);
+            
+    container.on('mousemove', () => {
+      console.log('Test')
+      const mouse = d3.mouse(g.node());
+      const dx = mouse[0] - d.x;
+      const dy = mouse[1] - d.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const newX = d.x + dx * this._outerNodeRadius / dist;
+      const newY = d.y + dy * this._outerNodeRadius / dist;
+
+      newEdgeStart
+        .attr('cx', newX)
+        .attr('cy', newY);
+      });
   }
 
   /**
