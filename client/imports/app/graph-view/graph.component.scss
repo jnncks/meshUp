@@ -56,6 +56,8 @@
       }
 
       &:hover {
+        cursor: pointer;
+        
         rect {
           stroke: $accent-color;
           fill: $accent-color;
@@ -68,6 +70,8 @@
     }
 
     &--selected {
+      cursor: default;
+
       circle.outer {
         display: block;
         stroke: $accent-color;
@@ -80,6 +84,10 @@
         fill: $primary-text-color;
         stroke: $white;
         stroke-width: 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
       }
       
       path.new-edge__hover-area {
@@ -123,10 +131,35 @@
     stroke: rgba(255, 255, 255, 0.2);
 
     &--highlighted {
-      stroke-width: 8px;
+      stroke-width: 9px;
       stroke: $accent-color;
     }
+
+    &-button {
+      circle, use {
+        @include transition($properties: (fill, stroke));
+      }
+
+      circle {
+        stroke-width: 6px;
+        stroke: $accent-color;
+        fill: $white;
+      }
+
+    &:hover {
+      cursor: pointer;
+
+      circle {
+        fill: $accent-color;
+      }
+
+      use {
+        fill: $white;
+      }
+    }
+    }
   }
+
 }
 
 .is-grabbing {

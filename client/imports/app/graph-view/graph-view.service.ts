@@ -247,7 +247,8 @@ export class GraphViewService {
   }
 
   /**
-   * 
+   * Adds a new edge to the list of edges by passing the updated graph's data
+   * to the updateInfoGraph method of the InfoGraphService.
    * 
    * @method createInfoGraphEdge
    * @param {string} source The source node's ID.
@@ -283,6 +284,29 @@ export class GraphViewService {
           creator: Meteor.userId(),
           created: new Date()
         });
+
+        this._infoGraphService.updateInfoGraph(graph);
+      });
+  }
+
+  /**
+   * Removes an edge of the list of edges by passing the updated graph's data
+   * to the updateInfoGraph method of the InfoGraphService. 
+   * 
+   * @method removeInfoGraphEdge
+   * @param {string} id The edge's ID.
+   */
+  removeInfoGraphEdge(id: string): void {
+    if (!id || !this._graph)
+      return;
+
+    this._graph.first(graph => graph !== undefined)
+      .subscribe((graph: InfoGraph) => {
+        if (!graph.edges) 
+          return;
+
+        graph.edges = graph.edges.filter((edge: Edge) =>
+          edge._id !== id);
 
         this._infoGraphService.updateInfoGraph(graph);
       });

@@ -263,6 +263,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     
     // remove edges that don't exist anymore
     line.exit().remove();
+    
+    // update the positions of the edgeRemovalButtons
+    this.updateEdgeRemovalButtons();
   }
 
   /**
@@ -634,7 +637,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       node.classed('node--selected', true)
 
       // apply the highlight state to the related edges
-      g.selectAll('line.edge')
+      const highlightedEdges = g.selectAll('line.edge')
         .filter((edge: Edge) => edge.source === d._id || edge.target === d._id)
         .classed('edge--highlighted', true);
 
@@ -661,6 +664,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           });
         });
       } else {
+        // set up the edge removal
+        highlightedEdges
+          .each((d: Edge, i: number, g: Element[]) =>
+            this.appendEdgeRemovalButton(d, i, g));
+
         /* prepare the edge creation */
         // create a new group element
         const newEdgeGroup = node.append<SVGGElement>('svg:g')
@@ -790,20 +798,23 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const g = d3.select(element)
       .select<SVGElement>('svg')
       .select<SVGGElement>('g.graph');
-
+    
+    // remove the selection state from alle selected nodes
     g.selectAll('g .node--selected')
       .classed('node--selected', false)
       .selectAll('g .focus-button')
         .on('mousedown', null) // reset the mousedown handler
         .remove(); // remove the button group
 
+    // remove the highlight state from highlighted edges
     g.selectAll('line.edge--highlighted')
       .classed('edge--highlighted', false);
-
+    this.removeEdgeRemovalButtons();
+    
+    // remove all new-edge elements
     g.selectAll('g.node__new-edge-group')
       .on('mousemove', null)
       .remove();
-
     g.selectAll('circle.new-edge__start')
       .remove();
   }
@@ -951,6 +962,123 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .classed('node--hover', false)
       .on('mouseenter', null)
       .on('mouseleave', null);
+  }
+
+  /**
+   * Removes the edgeRemovalButton of an edge and subsequently calls the
+   * removeInfoGraphEdge method of the GraphViewService.
+   * 
+   * @method removeEdge
+   * @param {string} id 
+   */
+  removeEdge(id: string): void {      
+      const element = this._graphContainer.nativeElement;
+      const graph = d3.select(element)
+        .select<SVGElement>('svg')
+        .select<SVGGElement>('g.graph');
+
+      // get a reference to the button and remove it
+      const button = graph.selectAll('g.edge-button--remove')
+        .filter<SVGGElement>((d: undefined, i: number, g: Element[]) =>
+          d3.select(g[i]).attr('data-edge-id') === id);
+
+      button
+        .on('mousedown', null) // remove the mousedown handler
+        .remove() // remove the button group
+
+      // remove the edge from the collection's document
+      this._graphViewService.removeInfoGraphEdge(id);
+  }
+
+  /**
+   * Appends a new edgeRemovalButton to the given edge.
+   * 
+   * @method appendEdgeRemovalButton
+   * @param {Edge} d 
+   * @param {number} i 
+   * @param {Element[]} g 
+   */
+  appendEdgeRemovalButton(d: Edge, i: number, g: Element[]): void {
+    const element = this._graphContainer.nativeElement;
+    const graph = d3.select(element)
+      .select<SVGElement>('svg')
+      .select<SVGGElement>('g.graph');
+    const buttonGroup = graph.append('svg:g')
+      .attr('class', 'edge-button edge-button--remove')
+      .attr('data-edge-id', d._id);
+
+    // append the circle
+    buttonGroup.append('svg:circle')
+      .attr('r', this._nodeRadius / 4);
+
+    // append the icon
+    const iconUrl = 'icons/svg-sprite-action-symbol.svg#ic_delete_24px';
+    buttonGroup.append('svg:use')
+      .attr('class', 'edge-button--icon')
+      .attr('xlink:href', iconUrl)
+      .attr('width', this._nodeRadius / 2.5)
+      .attr('height', this._nodeRadius / 2.5);
+
+    // set the position of the button
+    this.updateEdgeRemovalButtons();
+
+    buttonGroup.on('mousedown', (d: undefined, i: number, g: Element[]) => {
+      const button = d3.select(g[i]);
+      const edgeId = button.attr('data-edge-id');
+      this.removeEdge(edgeId)
+    });
+  }
+
+  /**
+   * Updates the positions of all edgeRemovalButtons.
+   * This is required when the selected node is dragged.
+   * 
+   * @method updateEdgeRemovalButtons
+   */
+  updateEdgeRemovalButtons(): void {
+    const element = this._graphContainer.nativeElement;
+    const graph = d3.select(element)
+      .select<SVGElement>('svg')
+      .select<SVGGElement>('g.graph');
+
+    graph.selectAll('g.edge-button--remove')
+      .each((d: undefined, i: number, g: Element[]) => {
+        // get a reference to the button
+        const button = d3.select(g[i])
+
+        // select the edge by its ID
+        const edge: SVGLineElement = d3.selectAll('line.edge--highlighted')
+          .filter<SVGLineElement>((d: Edge) => d._id === button.attr('data-edge-id'))
+          .node();
+
+        // calculate the new midpoint of the edge
+        const midX = (edge.x1.baseVal.value + edge.x2.baseVal.value) / 2;
+        const midY = (edge.y1.baseVal.value + edge.y2.baseVal.value) / 2;
+
+        // update the button's position
+        button.select('circle')
+          .attr('cx', midX)
+          .attr('cy', midY);
+
+        button.select('use')
+          .attr('x', midX - this._nodeRadius / 5)
+          .attr('y', midY - this._nodeRadius / 5);
+      });
+  }
+
+  /**
+   * Removes all existing edgeRemovalButtons.
+   * 
+   * @method removeEdgeRemovalButtons
+   */
+  removeEdgeRemovalButtons(): void {
+    const element = this._graphContainer.nativeElement;
+    const graph = d3.select(element)
+      .select<SVGElement>('svg')
+      .select<SVGGElement>('g.graph');
+
+    graph.selectAll('g.edge-button--remove')
+      .remove();
   }
 
   /**
