@@ -129,8 +129,15 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('width', element.offsetWidth)
       .attr('height', element.offsetHeight);
 
-    svg.append('svg:g')
+    const graph = svg.append('svg:g')
+      .attr('id', 'graph')
       .attr('class', 'graph');
+    
+    // append one group each for both edges and nodes
+    graph.append('svg:g')
+      .attr('id', 'edges')
+    graph.append('svg:g')
+      .attr('id', 'nodes');
 
     // set up the zoom behavior on the svg element
     this._scale = d3.zoom()
@@ -164,9 +171,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
-    const g = svg.select<SVGGElement>('g.graph');
+    const graph = svg.select<SVGGElement>('g#graph');
+    const nodes = graph.select('g#nodes');
 
-    const newNode = g.append<SVGGElement>('svg:g')
+    const newNode = nodes.append<SVGGElement>('svg:g')
       .attr('class', 'node node--new')
 
     newNode.append('svg:circle')
@@ -234,9 +242,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
-    const g = svg.select<SVGGElement>('g.graph');
+    const graph = svg.select<SVGGElement>('g#graph');
+    const edges = graph.select('g#edges');
 
-    const line = g.selectAll('.edge')
+    const line = edges.selectAll('.edge')
       .filter((d: Edge) => d !== null)
       .data(this.graphData.edges);
 
@@ -278,15 +287,16 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       return;
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
-    const g = svg.select<SVGGElement>('g.graph');
+    const graph = svg.select<SVGGElement>('g#graph');
+    const nodes = graph.select('g#nodes');
   
     // update the offset of the graph
     this.updateGraphOffset()
     
-    g.selectAll('g .node--new')
+    nodes.selectAll('g .node--new')
       .remove();
 
-    const node = g.selectAll('g .node')
+    const node = nodes.selectAll('g .node')
       .data(this.graphData.nodes);
       
     node.enter()
@@ -308,7 +318,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   removeAllNodes(): void {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
-    const g = svg.select<SVGGElement>('g.graph');
+    const g = svg.select<SVGGElement>('g#graph');
 
     g.selectAll('g .node')
       .remove();
@@ -317,15 +327,16 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   handleNodeAddingModeChange(state: boolean): void {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
-    const g = svg.select<SVGGElement>('g.graph')
+    const graph = svg.select<SVGGElement>('g#graph');
+    const nodes = graph.select('g#nodes');
 
     if (!state) {
       svg.on('mousemove', null); // remove the mousemove handler
-      g.select('g#newNodePlaceholder').remove();
+      nodes.select('g#newNodePlaceholder').remove();
       return;
     }
     
-    const newNode = g.append<SVGGElement>('svg:g')
+    const newNode = nodes.append<SVGGElement>('svg:g')
       .attr('class', 'node node--new')
       .attr('id', 'newNodePlaceholder');
 
@@ -360,7 +371,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         return;
       }
 
-      const circle = g.select('g#newNodePlaceholder').select('circle');
+      const circle = nodes.select('g#newNodePlaceholder').select('circle');
       this._graphViewService.addInfoGraphNode(
         Number(circle.attr('cx')),
         Number(circle.attr('cy')));
@@ -375,10 +386,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
-    const g = svg.select<SVGGElement>('g.graph');
+    const graph = svg.select<SVGGElement>('g#graph');
+    const nodes = graph.select<SVGGElement>('g#nodes');
 
     // get the relative mouse coordinates [x, y]
-    const mouse: [number, number] = d3.mouse(g.node());
+    const mouse: [number, number] = d3.mouse(nodes.node());
 
     // update the position
     newNode.select('circle')
@@ -468,9 +480,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   dragNode = (d: Node, i: number, g: Element[]) => {
     const svg = d3.select(this._graphContainer.nativeElement)
       .select('svg')
-      .select('g.graph');
+    const graph = svg.select('g#graph');
+    const nodes = graph.select('g#nodes')
 
-    const node = svg.select<SVGGElement>(`g [id='${d._id}'`);
+    const node = nodes.select<SVGGElement>(`g [id="${d._id}"]`);
 
     const dx = d3.event.dx;
     const dy = d3.event.dy;
@@ -555,9 +568,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method renderNodeContent
    * @param  {Node} d The node data.
    * @param  {number} i The index in the selection array.
-   * @param  {Element[]} p An array containing the selection's group elements.
+   * @param  {Element[]} g An array containing the selection's group elements.
    */
-  renderNodeContent = (d: Node, i: number, p: Element[]) => {
+  renderNodeContent = (d: Node, i: number, g: Element[]) => {
     // define the max amount of lines with their max character amount
     const maxCTitle = [10, 14, 16]; // title lines
     const maxCContent = [36, 35, 33, 32, 27, 18]; // content lines
@@ -574,7 +587,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const titleArr = this._htmlEntities.decode(d.title)
       .split(' ');
     let lines = this.generateTextLines(titleArr, maxCTitle);
-    const element = d3.select(p[i])
+    const element = d3.select(g[i])
 
     for (let k = 0; k < lines.length; k++) {
       element.append('svg:text')
@@ -617,11 +630,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // references to important elements
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
-    const g = svg.select<SVGGElement>('g.graph');
+    const graph = svg.select<SVGGElement>('g#graph');
+    const nodes = graph.select('g#nodes');
+    const edges = graph.select('g#edges');
 
     // get the Node element of the click source
     const node: d3.Selection<SVGGElement, any, any, any> =
-      g.select<SVGGElement>(`g [id='${d._id}'`);
+      nodes.select<SVGGElement>(`g [id="${d._id}"]`);
 
     if (!node)
       return;
@@ -637,7 +652,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       node.classed('node--selected', true)
 
       // apply the highlight state to the related edges
-      const highlightedEdges = g.selectAll('line.edge')
+      const highlightedEdges = edges.selectAll('line.edge')
         .filter((edge: Edge) => edge.source === d._id || edge.target === d._id)
         .classed('edge--highlighted', true);
 
@@ -795,27 +810,29 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    */
   removeNodeFocus() {
     const element = this._graphContainer.nativeElement;
-    const g = d3.select(element)
+    const graph = d3.select(element)
       .select<SVGElement>('svg')
-      .select<SVGGElement>('g.graph');
+      .select<SVGGElement>('g#graph');
+    const nodes = graph.select('g#nodes');
+    const edges = graph.select('g#edges');
     
     // remove the selection state from alle selected nodes
-    g.selectAll('g .node--selected')
+    nodes.selectAll('g .node--selected')
       .classed('node--selected', false)
       .selectAll('g .focus-button')
         .on('mousedown', null) // reset the mousedown handler
         .remove(); // remove the button group
 
     // remove the highlight state from highlighted edges
-    g.selectAll('line.edge--highlighted')
+    edges.selectAll('line.edge--highlighted')
       .classed('edge--highlighted', false);
     this.removeEdgeRemovalButtons();
     
     // remove all new-edge elements
-    g.selectAll('g.node__new-edge-group')
+    nodes.selectAll('g.node__new-edge-group')
       .on('mousemove', null)
       .remove();
-    g.selectAll('circle.new-edge__start')
+    nodes.selectAll('circle.new-edge__start')
       .remove();
   }
 
@@ -829,9 +846,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    */
   displayEdgeStartPoint(d: Node, container: d3.Selection<SVGGElement, any, any, any>): void {
     const element = this._graphContainer.nativeElement;
-    const g = d3.select(element)
+    const graph = d3.select(element)
       .select<SVGElement>('svg')
-      .select<SVGGElement>('g.graph');
+      .select<SVGGElement>('g#graph');
 
     // add a circle as a drag point for new edges
     const newEdgeStart = container.append('svg:circle')
@@ -840,7 +857,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     
     // update the position on mousemove
     container.on('mousemove', () => {
-      const mouse: number[] = d3.mouse(g.node());
+      const mouse: number[] = d3.mouse(graph.node());
       const dx = mouse[0] - d.x;
       const dy = mouse[1] - d.y;
       const dist = Math.sqrt(dx*dx + dy*dy);
@@ -870,22 +887,23 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const element = this._graphContainer.nativeElement;
     const graph = d3.select(element)
       .select<SVGElement>('svg')
-      .select<SVGGElement>('g.graph');
+      .select<SVGGElement>('g#graph');
+    const edges = graph.select('g#edges');
+    const nodes = graph.select('g#nodes');
     
     // get the current mouse position
     const mouse: number[] = d3.mouse(graph.node());
 
     // add a new line
-    graph.append('svg:line')
+    edges.append('svg:line')
       .attr('class', 'edge edge--new')
       .attr('x1', d.x)
       .attr('y1', d.y)
       .attr('x2', mouse[0])
-      .attr('y2',mouse[1])
-      .lower(); // TODO: this might cause some trouble, not sure right now.
+      .attr('y2',mouse[1]);
 
     // set up hover handlers for all nodes except the source node
-    graph.selectAll('g.node')
+    nodes.selectAll('g.node')
       .filter((node: Node) => node._id !== d._id)
       .on('mouseenter', (d: Node, i: number, g: Element[]) => {
         d3.select(g[i])
@@ -910,9 +928,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const element = this._graphContainer.nativeElement;
     const graph = d3.select(element)
       .select<SVGElement>('svg')
-      .select<SVGGElement>('g.graph');
+      .select<SVGGElement>('g#graph');
+    const edges = graph.select('g#edges');
 
-    const edge = graph.select('line.edge--new')
+    const edge = edges.select('line.edge--new')
 
     // get the delta x/y values
     const dx = d3.event.dx;
@@ -941,11 +960,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const element = this._graphContainer.nativeElement;
     const graph = d3.select(element)
       .select<SVGElement>('svg')
-      .select<SVGGElement>('g.graph');
+      .select<SVGGElement>('g#graph');
+    const nodes = graph.select('g#nodes');
+    const edges = graph.select('g#edges');
 
-    const edge = graph.select('line.edge--new')
+    const edge = edges.select('line.edge--new')
 
-    const target = graph.select<SVGGElement>('g.node.node--hover')
+    const target = nodes.select<SVGGElement>('g.node.node--hover')
     if (!target.empty() && target.data()[0]) {
       const targetId = target.data()[0]['_id'];
 
@@ -958,7 +979,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     edge.remove();
 
     // remove the hover handlers
-    graph.selectAll('g.node')
+    nodes.selectAll('g.node')
       .classed('node--hover', false)
       .on('mouseenter', null)
       .on('mouseleave', null);
@@ -975,10 +996,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       const element = this._graphContainer.nativeElement;
       const graph = d3.select(element)
         .select<SVGElement>('svg')
-        .select<SVGGElement>('g.graph');
+        .select<SVGGElement>('g#graph');
+      const edges = graph.select('g#edges');
 
       // get a reference to the button and remove it
-      const button = graph.selectAll('g.edge-button--remove')
+      const button = edges.selectAll('g.edge-button--remove')
         .filter<SVGGElement>((d: undefined, i: number, g: Element[]) =>
           d3.select(g[i]).attr('data-edge-id') === id);
 
@@ -1002,8 +1024,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const element = this._graphContainer.nativeElement;
     const graph = d3.select(element)
       .select<SVGElement>('svg')
-      .select<SVGGElement>('g.graph');
-    const buttonGroup = graph.append('svg:g')
+      .select<SVGGElement>('g#graph');
+    const edges = graph.select('g#edges');
+
+    const buttonGroup = edges.append('svg:g')
       .attr('class', 'edge-button edge-button--remove')
       .attr('data-edge-id', d._id);
 
@@ -1039,9 +1063,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const element = this._graphContainer.nativeElement;
     const graph = d3.select(element)
       .select<SVGElement>('svg')
-      .select<SVGGElement>('g.graph');
+      .select<SVGGElement>('g#graph');
+    const edges = graph.select('g#edges');
 
-    graph.selectAll('g.edge-button--remove')
+    edges.selectAll('g.edge-button--remove')
       .each((d: undefined, i: number, g: Element[]) => {
         // get a reference to the button
         const button = d3.select(g[i])
@@ -1075,9 +1100,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const element = this._graphContainer.nativeElement;
     const graph = d3.select(element)
       .select<SVGElement>('svg')
-      .select<SVGGElement>('g.graph');
+      .select<SVGGElement>('g#graph');
+    const edges = graph.select('g#edges');
 
-    graph.selectAll('g.edge-button--remove')
+    edges.selectAll('g.edge-button--remove')
       .remove();
   }
 
@@ -1126,11 +1152,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   toggleEditing(): void {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
-    const g = svg.select<SVGGElement>('g.graph');
+    const graph = svg.select<SVGGElement>('g#graph');
+    const nodes = graph.select('g#nodes');
 
     // select the currently focused node if there is any
     const currentFocus: d3.Selection<SVGGElement, any, any, any> =
-      g.select<SVGGElement>('g .node--selected')
+      nodes.select<SVGGElement>('g .node--selected')
 
     if (currentFocus.node()) {
       this.removeNodeFocus(); // remove the current focus
@@ -1157,16 +1184,16 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   fitContainer(maxScale?: number): void {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
-    const g = svg.select<SVGGElement>('g.graph');
+    const graph = svg.select<SVGGElement>('g#graph');
 
     // return if the graph is empty
-    if (!g.node())
+    if (!graph.node())
       return;
 
     // get boundaries of the container and the graph group
     const containerWidth = this._width;
     const containerHeight = this._height;
-    const bbox = g.node().getBBox();
+    const bbox = graph.node().getBBox();
 
     // calculate the scale
     const padding = 0.05; // 5 percent
@@ -1209,7 +1236,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   /**
-   * Handles zoom callbacks: transforms the graph group ('g.graph').
+   * Handles zoom callbacks: transforms the graph group ('g#graph').
    * 
    * @method handleZoom
    */
@@ -1223,10 +1250,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // our properly typed SVG elements
     const svg = d3.select(element).select<SVGElement>('svg');
-    const g = svg.select<SVGGElement>('g.graph');
+    const graph = svg.select<SVGGElement>('g#graph');
 
     // the bounding box of the graph group
-    const bbox = g.node().getBBox();
+    const bbox = graph.node().getBBox();
 
     // the requested transformation (t) and scale (s)
     const t = d3.event.transform;
@@ -1241,7 +1268,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       Math.min(t.y, containerHeight - this._graphOffset.y * s));
     
     // update the transform attribute of the SVG graph group
-    g.attr('transform', t);
+    graph.attr('transform', t);
   }
 
   /**
