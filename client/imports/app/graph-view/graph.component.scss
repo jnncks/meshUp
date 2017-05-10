@@ -121,6 +121,11 @@
   .edge {
     stroke-width: 6px;
     stroke: rgba(255, 255, 255, 0.2);
+
+    &--highlighted {
+      stroke-width: 8px;
+      stroke: $accent-color;
+    }
   }
 }
 

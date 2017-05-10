@@ -633,6 +633,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       // apply the focus state
       node.classed('node--selected', true)
 
+      // apply the highlight state to the related edges
+      g.selectAll('line.edge')
+        .filter((edge: Edge) => edge.source === d._id || edge.target === d._id)
+        .classed('edge--highlighted', true);
+
       // add the detailButton if not in editing mode
       if (!this.isEditing) {
         // position of the detailButton
@@ -791,9 +796,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .selectAll('g .focus-button')
         .on('mousedown', null) // reset the mousedown handler
         .remove(); // remove the button group
+
+    g.selectAll('line.edge--highlighted')
+      .classed('edge--highlighted', false);
+
     g.selectAll('g.node__new-edge-group')
       .on('mousemove', null)
       .remove();
+
     g.selectAll('circle.new-edge__start')
       .remove();
   }
