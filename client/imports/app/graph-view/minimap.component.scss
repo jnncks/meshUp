@@ -1,0 +1,11 @@
+@import '../../../styles/colors';
+@import '../../../styles/mixins';
+@import '../../../styles/layout-variables';
+
+.minimap {
+  width: calc(5vw + 5vh);
+  height: calc(5vw + 5vh);
+  border: 2px solid;
+  border-color: rgba(255, 255, 255, 0.5);
+  background-color: #212121;
+}

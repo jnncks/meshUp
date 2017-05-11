@@ -6,7 +6,7 @@ import {
   OnChanges,
   SimpleChanges,
   ViewChild,
-  ViewEncapsulation,
+  ViewEncapsulation
 } from '@angular/core';
 import {
   Observable
@@ -52,8 +52,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   @ViewChild('graphContainer') private _graphContainer: ElementRef;
   @Input() graphData: InfoGraph;
   @Input() isEditing: boolean = false;
-  private _width: number;
-  private _height: number;
+  private _width: number = 0;
+  private _height: number = 0;
   private _graphOffset: {
     x: number,
     y: number
@@ -502,7 +502,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         circle
           .attr('cx', x + dx)
           .attr('cy', y + dy);
-      })
+      });
     
     // update the position of the drawn text elements
     node.selectAll('text')
@@ -514,7 +514,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         text
           .attr('x', x + dx)
           .attr('y', y + dy);
-      })
+      });
     
     // update the position of the drawn rects
     node.selectAll('rect')
@@ -526,7 +526,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         rect
           .attr('x', x + dx)
           .attr('y', y + dy);
-      })
+      });
     
     // update the position of the drawn icons
     node.selectAll('use')
@@ -538,7 +538,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         use
           .attr('x', x + dx)
           .attr('y', y + dy);
-      })
+      });
     
     // update the edges
     this.updateEdges();

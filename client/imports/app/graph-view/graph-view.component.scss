@@ -14,6 +14,8 @@
   }
 
   meshup-graph {
+    display: block;
+    position: relative;
     height: calc(100vh - #{$navbar-height});
     z-index: 1;
   }

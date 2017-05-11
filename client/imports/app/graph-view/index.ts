@@ -4,3 +4,4 @@ export * from './graph.component';
 export * from './node-modal.component';
 export * from './node-edit-modal.component';
 export * from './graph-toolbar.component';
+export * from './minimap.component';

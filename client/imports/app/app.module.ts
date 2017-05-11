@@ -47,7 +47,8 @@ import {
   GraphComponent,
   NodeModalComponent,
   NodeEditModalComponent,
-  GraphToolbarComponent
+  GraphToolbarComponent,
+  MiniMapComponent
 } from './graph-view';
 import {
   InfoGraphSettingsModalComponent
@@ -100,6 +101,7 @@ import {
     GraphViewComponent,
     GraphComponent,
     GraphToolbarComponent,
+    MiniMapComponent,
     NodeModalComponent,
     NodeEditModalComponent,
     RouteWithNamePipe,
