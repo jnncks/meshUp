@@ -61,6 +61,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _nodeRadius: number = 100;
   private _outerNodeRadius: number = 112;
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
+  private _minScale: number = 0.1;
+  private _maxScale: number = 5;
   private _dragNode: d3.DragBehavior<SVGGElement, any, any>;
   private _dragEdge: d3.DragBehavior<SVGCircleElement, any, any>;
   private _localNodeData = d3.local();
@@ -141,7 +143,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // set up the zoom behavior on the svg element
     this._scale = d3.zoom()
-      .scaleExtent([0.1, 5])
+      .scaleExtent([this._minScale, this._maxScale])
       .on('zoom', () => this.handleZoom());
 
     svg.call(this._scale);
@@ -1280,6 +1282,71 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     
     // update the transform attribute of the SVG graph group
     graph.attr('transform', t);
+  }
+
+  /**
+   * Zooms in by 1.5x by calling 'zoomCenterByScale()'.
+   * 
+   * @method zoomIn
+   */
+  zoomIn(): void {
+    this.zoomCenterByScale(1.5)
+  }
+
+  /**
+   * Zooms out by 2/3x by calling 'zoomCenterByScale()'.
+   * 
+   * @method zoomOut
+   */
+  zoomOut(): void {
+    this.zoomCenterByScale(2 / 3)
+  }
+
+  /**
+   * Zooms in or out, depending on the passed scale value.
+   * scale > 1 zooms in, scale < 1 zooms out.
+   * 
+   * @method zoomCenterByScale
+   * @param {number} scale The zoom value.
+   */
+  zoomCenterByScale(scale: number): void {
+    const element: HTMLDivElement = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const graph = svg.select<SVGGElement>('g#graph');
+
+    // get the svg center coordinates
+    const centerX = this._width / 2;
+    const centerY = this._height / 2;
+
+    // get the current transformation
+    const currentTransform: d3.ZoomTransform = d3.zoomTransform(svg.node());
+
+    if ((scale <= 1 && currentTransform.k <= this._minScale) ||
+        (scale > 1 && currentTransform.k >= this._maxScale))
+      return; // a zoom is not required since we've reached the minimum/maximum
+
+    // ensure that the zoom will not exceed the minimum or maximum scale
+    if (scale * currentTransform.k < this._minScale) {
+      scale = this._minScale / currentTransform.k;
+    } else if (scale * currentTransform.k > this._maxScale) {
+      scale = this._maxScale / currentTransform.k;
+    }
+
+    // calculate the new translation
+    const newX = (currentTransform.x - centerX) * scale + centerX;
+    const newY = (currentTransform.y - centerY) * scale + centerY;
+    const newScale = currentTransform.k * scale;
+
+    // create the new transform object
+    const newTransform = d3.zoomIdentity
+      .translate(newX, newY)
+      .scale(newScale);
+
+    // run the zoom animation
+    svg.transition()
+      .call((transition: d3.Transition<SVGGElement, any, any, any>) => {
+        transition.call(this._scale.transform, newTransform);
+      });
   }
 
   /**

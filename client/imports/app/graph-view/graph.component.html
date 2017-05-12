@@ -1,6 +1,16 @@
 <div class="graph-container" #graphContainer></div>
 <minimap [graphData]="graphData"></minimap>
 <div class="buttons">
+  <button class="buttons__button--circular" type="button" name="Hereinzoomen" (click)="zoomIn()">
+    <svg>
+      <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_zoom_in_24px" />
+    </svg>
+  </button>
+  <button class="buttons__button--circular" type="button" name="Herauszoomen" (click)="zoomOut()">
+    <svg>
+      <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_zoom_out_24px" />
+    </svg>
+  </button>
   <button class="buttons__button--circular" type="button" name="Zoom Zurücksetzen" (click)="fitContainer()">
     <svg>
       <use xlink:href="icons/svg-sprite-navigation-symbol.svg#ic_fullscreen_24px" />
