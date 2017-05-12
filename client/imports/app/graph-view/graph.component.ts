@@ -122,12 +122,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    */
   initGraph(): void {
     const element = this._graphContainer.nativeElement;
-    this._width = element.offsetWidth;
-    this._height = element.offsetHeight;
+    this._width = element.clientWidth;
+    this._height = element.clientHeight;
 
     const svg = d3.select(element).append('svg')
-      .attr('width', element.offsetWidth)
-      .attr('height', element.offsetHeight);
+      .attr('width', this._width)
+      .attr('height', this._height);
 
     const graph = svg.append('svg:g')
       .attr('id', 'graph')
@@ -245,7 +245,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const graph = svg.select<SVGGElement>('g#graph');
     const edges = graph.select('g#edges');
 
-    const line = edges.selectAll('.edge')
+    const line = edges.selectAll('line.edge')
       .filter((d: Edge) => d !== null)
       .data(this.graphData.edges);
 
@@ -293,10 +293,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // update the offset of the graph
     this.updateGraphOffset()
     
-    nodes.selectAll('g .node--new')
+    nodes.selectAll('g.node--new')
       .remove();
 
-    const node = nodes.selectAll('g .node')
+    const node = nodes.selectAll('g.node')
       .data(this.graphData.nodes);
       
     node.enter()
@@ -320,7 +320,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const svg = d3.select(element).select<SVGElement>('svg');
     const g = svg.select<SVGGElement>('g#graph');
 
-    g.selectAll('g .node')
+    g.selectAll('g.node')
       .remove();
   }
 
@@ -817,9 +817,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const edges = graph.select('g#edges');
     
     // remove the selection state from alle selected nodes
-    nodes.selectAll('g .node--selected')
+    nodes.selectAll('g.node--selected')
       .classed('node--selected', false)
-      .selectAll('g .focus-button')
+      .selectAll('g.focus-button')
         .on('mousedown', null) // reset the mousedown handler
         .remove(); // remove the button group
 
@@ -1157,7 +1157,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // select the currently focused node if there is any
     const currentFocus: d3.Selection<SVGGElement, any, any, any> =
-      nodes.select<SVGGElement>('g .node--selected')
+      nodes.select<SVGGElement>('g.node--selected')
 
     if (currentFocus.node()) {
       this.removeNodeFocus(); // remove the current focus
@@ -1226,8 +1226,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    */
   handleResize(): void {
     const element = this._graphContainer.nativeElement;
-    this._width = element.offsetWidth;
-    this._height = element.offsetHeight;
+    this._width = element.clientWidth;
+    this._height = element.clientHeight;
 
     d3.select(element)
       .select('svg')
