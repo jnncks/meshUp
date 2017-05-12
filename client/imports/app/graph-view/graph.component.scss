@@ -160,9 +160,52 @@
 
 minimap {
   position: absolute;
-  top: 2vw;
-  right: 2vw;
+  top: calc(1vw + 1vh);
+  right: calc(1vw + 1vh);
   z-index: 999;
+}
+
+.buttons {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+
+  button, svg, use {
+    @include transition($properties: (background-color, fill, stroke));
+  }
+
+  &__button--circular {
+    margin-right: calc(1vw + 1vh);
+    margin-bottom: calc(1vw + 1vh);
+    padding: 0.25rem;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: none;
+    background-color: $background;
+    color: $primary-text-color;
+    box-shadow: 0 4px 10px 0 rgba(0,0,0,0.24);
+
+    svg {
+      width: 2.5rem;
+      height: 2.5rem;
+
+      use {
+        fill: currentColor;
+      }
+    }
+
+    &:hover {
+      background-color: $white;
+      color: $primary-color;
+    }
+
+    &:active, &:focus {
+      outline: none;
+    }
+  }
 }
 
 /* unused */

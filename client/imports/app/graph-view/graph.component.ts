@@ -199,7 +199,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       this._graphViewService.addInfoGraphNode();
     });
 
-    this.fitContainer(2);
+    this.fitContainer(false, 2);
   }
 
   /**
@@ -226,7 +226,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       this.updateNodes();
 
     if (centerGraph) {
-      this.fitContainer();
+      this.fitContainer(false);
     }
   }
 
@@ -1180,8 +1180,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * Transforms the graph so that it fits the container.
    * 
    * @method fitContainer
+   * @param  {boolean} animate Whether the zoom should be animated.
+   * @param  {number} maxScale The maximum zoom scale.
    */
-  fitContainer(maxScale?: number): void {
+  fitContainer(animate: boolean = true, maxScale?: number): void {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
     const graph = svg.select<SVGGElement>('g#graph');
@@ -1216,7 +1218,16 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .translate(widthOffset, heightOffset)
       .scale(scale);
 
-    svg.call(this._scale.transform, t);
+    // apply the transform to the graph
+    if (animate) {
+      svg.transition()
+        .duration(500) // 500ms
+        .call((transition: d3.Transition<SVGGElement, any, any, any>) => {
+          transition.call(this._scale.transform, t);
+        });
+    } else {
+      svg.call(this._scale.transform, t);
+    }
   }
 
   /**
