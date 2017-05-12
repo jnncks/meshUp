@@ -29,4 +29,10 @@
       }
     }
   }
+
+  #visibleArea {
+    stroke-width: 4px;
+    stroke: $accent-color;
+    fill: transparent;
+  }
 }

@@ -22,7 +22,8 @@ import styleUrl from './minimap.component.scss';
 import template from './minimap.component.html';
 
 /**
- * Displays a mini map of the graphData input.
+ * Displays a mini map of the graphData input and highlights the currently
+ * visible area of the graph.
  * 
  * @class MiniMapComponent
  * @implements {AfterViewInit}
@@ -37,14 +38,29 @@ import template from './minimap.component.html';
 export class MiniMapComponent implements AfterViewInit, OnChanges {
   @ViewChild('miniMapContainer') private _miniMapContainer: ElementRef;
   @Input() graphData: InfoGraph;
+  @Input() graphViewWidth: number;
+  @Input() graphViewHeight: number;
+  @Input() graphViewTransform: d3.ZoomTransform;
   private _width: number;
   private _height: number;
+  private _padding: number = 0.05; // 5%
+  private _transform: d3.ZoomTransform;
   private _nodeRadius: number = 100;
 
   constructor() {
   }
 
-  ngAfterViewInit() {
+   /**
+   * Called after the view has been initialized.
+   * Prepares the SVG element.
+   * 
+   * Note: This is important! The ViewChild _miniMapContainer can't be accessed
+   *       prior to this event. Therefore, this is the earliest point in time
+   *       where we can append our SVG element to the _miniMapContainer.
+   * 
+   * @method ngAfterViewInit
+   */
+  ngAfterViewInit(): void {
     this.initMiniMap();
 
     if (this.graphData)
@@ -56,12 +72,30 @@ export class MiniMapComponent implements AfterViewInit, OnChanges {
       .subscribe(() => this.handleResize());
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  /**
+   * Called when at least one input property has been changed.
+   * Updates the graph and/or the visible area.
+   * 
+   * @method ngOnChanges
+   * @param  {SimpleChanges} changes The changed input properties.
+   */
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.graphData) {
       this.updateGraph();
     }
+
+    if (changes.graphViewWidth ||
+      changes.graphViewHeight ||
+      changes.graphViewTransform) {
+        this.updateVisibleArea();
+    }
   }
 
+  /**
+   * Initializes the SVG object and some child elements.
+   * 
+   * @method initMiniMap
+   */
   initMiniMap(): void {
     const element = this._miniMapContainer.nativeElement;
     this._width = element.clientWidth;
@@ -80,11 +114,17 @@ export class MiniMapComponent implements AfterViewInit, OnChanges {
       .attr('id', 'edges')
     graph.append('svg:g')
       .attr('id', 'nodes');
+
+    // append a rect for the currently visible area of the graph
+    svg.append('svg:rect')
+      .attr('id', 'visibleArea')
+      .attr('stroke-alignment', 'outer');
   }
 
   /**
    * Updates the graph:
-   * Appends new nodes and edges or updates properties of existing nodes.
+   * Appends new nodes and edges or updates properties of existing nodes
+   * by calling the designated methods.
    * 
    * @method updateGraph
    */
@@ -202,7 +242,47 @@ export class MiniMapComponent implements AfterViewInit, OnChanges {
   }
 
   /**
-   * Transforms the graph so that it fits the container.
+   * Updates the attributes of the visibleArea rect according to the
+   * current transform in the graphView.
+   * 
+   * @method updateVisibleArea
+   */
+  updateVisibleArea(): void {
+    const element = this._miniMapContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const graph = svg.select<SVGGElement>('g#graph');
+    const visibleArea = svg.select('rect#visibleArea');
+
+    if (graph.empty())
+      return;
+
+    // calculate the width and height of the area
+    const visibleAreaWidth = this.graphViewWidth / this.graphViewTransform.k;
+    const visibleAreaHeight = this.graphViewHeight / this.graphViewTransform.k;
+
+    // calculate the coordinates of the top left corner
+    const visibleAreaX = this._transform.x / this._transform.k -
+      this.graphViewTransform.x / this.graphViewTransform.k;
+    const visibleAreaY = this._transform.y / this._transform.k -
+      this.graphViewTransform.y / this.graphViewTransform.k;
+    
+    /**
+     * Apply the values the the attributes.
+     * 
+     * The strokeWidth is added to compensate for the fact that the stroke is
+     * drawn centered on the shapes path.
+     */
+    const strokeWidth = 4;
+
+    visibleArea
+      .attr('width', visibleAreaWidth  * this._transform.k + strokeWidth)
+      .attr('height', visibleAreaHeight  * this._transform.k + strokeWidth)
+      .attr('x', visibleAreaX  * this._transform.k - strokeWidth / 2)
+      .attr('y', visibleAreaY  * this._transform.k  - strokeWidth / 2);
+  }
+
+  /**
+   * Transforms the graph so that it fits into the container.
    * 
    * @method fitContainer
    */
@@ -221,8 +301,7 @@ export class MiniMapComponent implements AfterViewInit, OnChanges {
     const bbox = graph.node().getBBox();
 
     // calculate the scale
-    const padding = 0.05; // 5 percent
-    let scale = (1 - padding) * Math.min(
+    let scale = (1 - this._padding) * Math.min(
       containerWidth / bbox.width,
       containerHeight / bbox.height
     );
@@ -241,7 +320,11 @@ export class MiniMapComponent implements AfterViewInit, OnChanges {
       .translate(widthOffset, heightOffset)
       .scale(scale);
 
+    // apply the transformation
     graph.attr('transform', t.toString());
+
+    // store the current transform
+    this._transform = t;
   }
 
   /**

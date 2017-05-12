@@ -63,6 +63,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _scale: d3.ZoomBehavior<SVGGElement, any>;
   private _minScale: number = 0.1;
   private _maxScale: number = 5;
+  private _currentTransform: d3.ZoomTransform;
   private _dragNode: d3.DragBehavior<SVGGElement, any, any>;
   private _dragEdge: d3.DragBehavior<SVGCircleElement, any, any>;
   private _localNodeData = d3.local();
@@ -89,15 +90,27 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @method ngAfterViewInit
    */
   ngAfterViewInit(): void {
-    this.initGraph();
+    /**
+     * Wait a tick to avoid one-time devMode
+     * unidirectional-data-flow-violation error
+     * 
+     * source:
+     * http://stackoverflow.com/questions/38930183/angular2-expression-has-changed-after-it-was-checked-binding-to-div-width-wi
+     */
+    setTimeout(() => {
+       this.initGraph();
 
-    if (this.graphData)
-      this.updateGraph(true);
+    // append nodes and edges if the graphData is not empty
+    if (this.graphData) {
+      this.updateGraph();
+      this.fitContainer(false); // fit the graph inside the graph container
+    }
 
     // handle window resize events
     Observable.fromEvent(window, 'resize')
       .debounceTime(50) // debounce for 50ms
       .subscribe(() => this.handleResize());
+    });
   }
 
   /**
@@ -210,9 +223,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * Appends new nodes and edges or updates properties of existing nodes.
    * 
    * @method updateGraph
-   * @param  {boolean} centerGraph Whether the graph should be centered.
    */
-  updateGraph(centerGraph: boolean = false): void {
+  updateGraph(): void {
     if (!this.graphData)
       return;
     
@@ -227,10 +239,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // draw the nodes
     if (this.graphData.nodes && this.graphData.nodes.length)
       this.updateNodes();
-
-    if (centerGraph) {
-      this.fitContainer(false);
-    }
   }
 
   /**
@@ -1270,7 +1278,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const bbox = graph.node().getBBox();
 
     // the requested transformation (t) and scale (s)
-    const t = d3.event.transform;
+    let t = d3.event.transform;
     const s = t.k;
 
     // calculate the transformation so that the graph stays in the view
@@ -1283,6 +1291,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     
     // update the transform attribute of the SVG graph group
     graph.attr('transform', t);
+
+    this._currentTransform = t;
   }
 
   /**

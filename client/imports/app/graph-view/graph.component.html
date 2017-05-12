@@ -1,5 +1,5 @@
 <div class="graph-container" #graphContainer></div>
-<minimap [graphData]="graphData"></minimap>
+<minimap [graphData]="graphData" [graphViewWidth]="_width" [graphViewHeight]="_height" [graphViewTransform]="_currentTransform"></minimap>
 <div class="buttons">
   <button class="buttons__button--circular" type="button" name="Hereinzoomen" (click)="zoomIn()">
     <svg>
