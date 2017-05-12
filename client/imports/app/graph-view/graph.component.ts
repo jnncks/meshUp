@@ -146,7 +146,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .scaleExtent([this._minScale, this._maxScale])
       .on('zoom', () => this.handleZoom());
 
-    svg.call(this._scale);
+    svg.call(this._scale)
+      .on('dblclick.zoom', null); // disable zooming on double-click/-tap
 
     // set up the drag behavior for nodes
     this._dragNode = d3.drag()
