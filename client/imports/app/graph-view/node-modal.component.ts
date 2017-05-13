@@ -144,6 +144,12 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       .sort((a: Node, b: Node) => a.y - b.y);
   }
 
+  /**
+   * Displays all adjacent nodes, distributed into the two nodeGroups.
+   * Also appends the edges and subscribes to the windows resize event.
+   * 
+   * @method displayAdjacentNodes
+   */
   displayAdjacentNodes(): void {
     if ((!this.nodesLeft && !this.nodesRight) ||
       (!this.nodesLeft.length && !this.nodesRight.length))
@@ -167,6 +173,13 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       .subscribe(() => this.handleResize());
   }
 
+  /**
+   * Sets the SVG element and group elements up and appends the adjacent nodes.
+   * 
+   * @method displayNodes
+   * @param {ElementRef} container A reference to the nodeGroup.
+   * @param {Node[]} nodes The nodes which should be displayed.
+   */
   displayNodes(container: ElementRef, nodes: Node[]): void {
     const element = container.nativeElement;
 
@@ -177,6 +190,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     const height = containerAttributes.height;
     const maxNodes = Math.floor(height / (2 * this._nodeRadius));
 
+    // basic svg and element groups setup
     const svg = d3.select(element)
       .append('svg')
       .attr('width', width)
@@ -190,6 +204,8 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     const nodeGroup = containerGroup.append<SVGGElement>('svg:g')
       .attr('class', 'nodes');
 
+    // declare arrays before subsequently distributing the nodes into these two
+    // arrays depending on the maxNodes limit
     let visibleNodes: Node[];
     let hiddenNodes: Node[];
 
@@ -209,6 +225,9 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
         this.appendNode(nodeGroup, node, width / 2,
           heightPerNode / 2 + i * heightPerNode);
       });
+
+      // TODO: handle hiddenNodes!
+
     } else if (visibleNodes.length > 0) {
       this.appendNode(nodeGroup, visibleNodes[0], width / 2, height / 2);
     }
@@ -220,6 +239,16 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     }
   }
 
+  /**
+   * Appends the edges to the edges group of the containerGroup.
+   * direction is optional but should be either 1 or -1 if supplied:
+   *   direction = 1 -> The Edges spread to the right.
+   *   direction = -1 -> The Edges spread to the left.
+   * 
+   * @method displayEdges
+   * @param {ElementRef} container A reference to the containerGroup.
+   * @param {number} [direction=1] The direction of the edges.
+   */
   displayEdges(container: ElementRef, direction: number = 1): void {
     const element = container.nativeElement;
     const containerGroup = d3.select(element).select('g.container-group');
@@ -231,14 +260,23 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
         const node = d3.select(g[i]);
         const id = node.attr('data-id');
 
+        // append the edges without setting the coordinates
         edges.append('line')
           .attr('class', 'edge')
           .attr('data-id', id);
       });
 
+    // set the coordinates
     this.updateEdgeCoordinates(container, direction);
   }
 
+  /**
+   * Resizes the nodeContainer.
+   * 
+   * @method updateNodeContainer
+   * @param {ElementRef} container A reference to the nodeContainer.
+   * @returns {{ width: number, height: number }} 
+   */
   updateNodeContainer(container: ElementRef): { width: number, height: number } {
     const element = container.nativeElement;
     const width: number = element.clientWidth;
@@ -251,6 +289,12 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     return { width: width, height: height };
   }
 
+  /**
+   * Updates the coordinates of the nodeContainer's nodes and their contents.
+   * 
+   * @method updateNodePositions
+   * @param {ElementRef} container A reference to the nodeContainer.
+   */
   updateNodePositions(container: ElementRef): void {
     const element = container.nativeElement;
     const containerGroup = d3.select(element).select('g.container-group');
@@ -262,11 +306,15 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       .each((d: undefined, i: number, g: Element[]) => {
         const node = d3.select(g[i]);
         const circle = node.select('circle');
+
+        // calculate the difference to the previous position
         const dx = width / 2 - Number(circle.attr('cx'));
 
+        // update the circle
         circle
           .attr('cx', width / 2);
-        
+
+        // update the content's position
         node.selectAll('text')
           .each((d: undefined, i: number, g: Element[]) => {
             const text = d3.select(g[i]);
@@ -276,17 +324,26 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       });
   }
 
+  /**
+   * Updates the edges coordinates of the given nodeContainer.
+   * direction is optional but should be either 1 or -1 if supplied:
+   *   direction = 1 -> The Edges spread to the right.
+   *   direction = -1 -> The Edges spread to the left.
+   * 
+   * @method updateEdgeCoordinates
+   * @param {ElementRef} container A reference to the nodeContainer.
+   * @param {number} [direction=1] The direction of the edges.
+   */
   updateEdgeCoordinates(container: ElementRef, direction: number = 1): void {
     const element = container.nativeElement;
     const containerGroup = d3.select(element).select('g.container-group');
     const nodes = containerGroup.select('g.nodes');
     const edges = containerGroup.select('g.edges');
 
-
+    // calculate some values required for x2 and y2
     const width = element.clientWidth;
-    const height = element.clientHeight;
     const dx = (width / 2 + this._modalDialog.nativeElement.clientWidth / 2) * direction;
-    const midY= this._modalDialog.nativeElement.clientHeight / 2;
+    const midY = this._modalDialog.nativeElement.clientHeight / 2;
 
     nodes.selectAll('g.node')
       .each((d: undefined, i: number, g: Element[]) => {
@@ -296,12 +353,14 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
         const x = Number(circle.attr('cx'));
         const y = Number(circle.attr('cy'));
 
+        // get the edge related to the node
         const edge = edges.selectAll('line.edge')
           .filter((d: undefined, i: number, g: Element[]) => {
             return d3.select(g[i]).attr('data-id') === id
           }).node();
 
         if (edge)
+          // update the edge
           d3.select(edge)
             .attr('x1', x)
             .attr('y1', y)
@@ -310,6 +369,13 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       });
   }
 
+  /**
+   * Rescale the given nodeContainer so that it fits even when there's less
+   * horizontal space than twice the node's radius.
+   * 
+   * @method scaleNodeContainer
+   * @param {ElementRef} container A reference to the nodeContainer.
+   */
   scaleNodeContainer(container: ElementRef): void {
     const element = container.nativeElement;
     const containerGroup = d3.select(element).select('g.container-group');
@@ -317,13 +383,16 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     // reset the current transform
     containerGroup.attr('transform', d3.zoomIdentity.toString());
 
+    // get the container's width and height
     const width: number = element.clientWidth;
     const height: number = element.clientHeight;
 
+    // calculate the new scale and translation
     const scale: number = Math.min(width / (2 * this._nodeRadius), 1);
     const left: number = (width - (width * scale)) / 2 / scale;
     const top: number = (height - (height * scale)) / 2 / scale;
 
+    // apply the transformation
     containerGroup
       .attr('transform',
         d3.zoomIdentity
@@ -332,6 +401,17 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
           .toString());
   }
 
+  /**
+   * Appends a new group element with the node's circle and content
+   * to the supplied nodeGroup.
+   * 
+   * @method appendNode
+   * @param {d3.Selection<SVGGElement, any, any, any>} nodeGroup A reference to the '.nodes' group element.
+   * @param {Node} node The node data.
+   * @param {number} cx The node's x-coordinate.
+   * @param {number} cy The node's y-coordinate.
+   * @returns {d3.Selection<SVGGElement, any, any, any>} 
+   */
   appendNode(nodeGroup: d3.Selection<SVGGElement, any, any, any>, node: Node,
     cx: number, cy: number): d3.Selection<SVGGElement, any, any, any> {
     const newNode = nodeGroup
@@ -450,27 +530,45 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     return lines;
   }
 
+  /**
+   * Removes the adjacent nodes from the view and
+   * unsubscribe from the window resize event.
+   * 
+   * @method hideAdjacentNodes
+   */
   hideAdjacentNodes(): void {
+    // remove the svg elements from the DOM
     d3.select(this._nodeContainerLeft.nativeElement)
       .select('svg')
       .remove();
     d3.select(this._nodeContainerRight.nativeElement)
       .select('svg')
       .remove();
-
+    
+    // remove the window resize subscription
     this._resizeHandler.unsubscribe();
   }
 
+  /**
+   * Updates various sizes and coordinates of the adjacent nodes
+   * on window resize.
+   * 
+   * @method handleResize
+   */
   handleResize(): void {
+    // update the node container sizes
     this.updateNodeContainer(this._nodeContainerLeft);
     this.updateNodeContainer(this._nodeContainerRight);
 
+    // update the node's positions
     this.updateNodePositions(this._nodeContainerLeft);
     this.updateNodePositions(this._nodeContainerRight);
 
+    // update the edge's coordinates
     this.updateEdgeCoordinates(this._nodeContainerLeft);
     this.updateEdgeCoordinates(this._nodeContainerRight, -1);
 
+    // finally rescale the elements within the containers
     this.scaleNodeContainer(this._nodeContainerLeft);
     this.scaleNodeContainer(this._nodeContainerRight);
   }
