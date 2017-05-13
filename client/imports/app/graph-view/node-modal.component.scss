@@ -1,12 +1,61 @@
 @import '../../../styles/modal-common';
 
 .modal {
+  &--exploration {
+    padding-left: 0;
+    padding-right: 0;
+    background-color: rgba(0, 0, 0, .8);
+  }
+
   &__dialog {
     &__content {
       overflow-y: scroll;
 
       /deep/ img {
         max-width: 100%;
+      }
+    }
+  }
+
+  &__nodes {
+    min-width: 25%;
+    height: 100%;
+    padding: 0;
+
+    &--hidden {
+      display: none;
+    }
+
+    /deep/ svg {
+      overflow: visible;
+
+      .nodes {
+        .node {
+          .node__circle {
+            fill: #ffffff;
+            stroke: #777777;
+            stroke-width: 4px;
+          }
+
+          &__content {
+            &__title {
+              font-size: 13px;
+              font-weight: 700;
+            }
+
+            &__text {
+              font-size: 11px;
+              overflow: hidden;
+            }
+          }
+        }
+      }
+
+      .edges {
+        .edge {
+          stroke-width: 6px;
+          stroke: rgba(255, 255, 255, 0.5);
+        }
       }
     }
   }

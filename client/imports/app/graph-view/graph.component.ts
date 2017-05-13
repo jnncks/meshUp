@@ -686,7 +686,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           }
 
           this._modalService.create(NodeModalComponent, {
-            node: node
+            graph: this.graphData,
+            currendNodeId: node._id
           });
         });
       } else {

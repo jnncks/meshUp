@@ -1,14 +1,22 @@
-<div class="modal" id="nodeModal" *ngIf="!hidden" [@fadeInOut] (click)="close($event)">
-	<div class="modal__dialog typeset section single-measure">
+<div class="modal" [ngClass]="{'modal--exploration' : explorationMode}" id="nodeModal" *ngIf="!hidden" [@fadeInOut] (click)="close($event)">
 
+	<div class="modal__nodes" [ngClass]="{'modal__nodes--hidden' : !explorationMode}" #nodeContainerLeft></div>
+
+	<div class="modal__dialog typeset section single-measure" #modalDialog>
 		<div class="modal__dialog__title" *ngIf="node.title">
       <h1>{{ node.title }}</h1>
     </div>
 		<div class="modal__dialog__content" *ngIf="node.content" [innerHTML]="node.content">
 		</div>
   	<div class="modal__dialog__buttons">
+			<button class="modal__dialog__buttons__button" (click)="toggleExplorationMode()">
+				<span *ngIf="explorationMode">verknüpfte Inhalte ausblenden</span>
+				<span *ngIf="!explorationMode">verknüpfte Inhalte einblenden</span>
+			</button>
    		<button class="modal__dialog__buttons__button" (click)="close()">schließen</button>
   	</div>
-
   </div>
+
+	<div class="modal__nodes" [ngClass]="{'modal__nodes--hidden' : !explorationMode}" #nodeContainerRight></div>
+
 </div>
