@@ -703,7 +703,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         // create an arc for the area in which a mousehover will be handled
         const arc = d3.arc()
           .innerRadius(this._nodeRadius / 1.25)
-          .outerRadius(this._nodeRadius * 1.75)
+          .outerRadius(this._nodeRadius * 1.5)
           .startAngle(0)
           .endAngle(2 * Math.PI);
 
@@ -864,7 +864,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // add a circle as a drag point for new edges
     const newEdgeStart = container.append('svg:circle')
       .attr('class', 'new-edge__start')
-      .attr('r', this._nodeRadius / 10);
+      .attr('r', this._nodeRadius / 10)
+      .attr('cx', Number.MIN_SAFE_INTEGER)
+      .attr('cy', Number.MIN_SAFE_INTEGER);
     
     // update the position on mousemove
     container.on('mousemove', () => {
