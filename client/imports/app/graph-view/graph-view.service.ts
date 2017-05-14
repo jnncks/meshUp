@@ -24,6 +24,7 @@ export class GraphViewService {
   private _isAddingNode: boolean;
   public modeChanged = new EventEmitter<boolean>();
   public nodeAddingChanged = new EventEmitter<boolean>();
+  public requestNodeFocus = new EventEmitter<Node>();
 
   /**
    * Creates an instance of the GraphViewService.
@@ -80,17 +81,6 @@ export class GraphViewService {
   public getCurrentInfoGraph(): Observable<InfoGraph> {
     return this._graph;
   }
-
-  /**
-   * Handles errors. Currently, the errors are print in the console.
-   * 
-   * @method _handleError
-   * @param  {Error} e The error to handle.
-   */
-  private _handleError(e: Error): void {
-    console.error(e);
-  }
-
 
   /**
    * Toggles between the editing and viewing mode.
@@ -310,5 +300,19 @@ export class GraphViewService {
 
         this._infoGraphService.updateInfoGraph(graph);
       });
+  }
+
+  focusOnNode(node: Node): void {
+    this.requestNodeFocus.emit(node);
+  }
+
+  /**
+   * Handles errors. Currently, the errors are print in the console.
+   * 
+   * @method _handleError
+   * @param  {Error} e The error to handle.
+   */
+  private _handleError(e: Error): void {
+    console.error(e);
   }
 }

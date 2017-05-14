@@ -171,6 +171,25 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     this._graphViewService.nodeAddingChanged.subscribe(state => {
       this.handleNodeAddingModeChange(state);
     });
+
+    // subscribe to requestNodeFocus events
+    this._graphViewService.requestNodeFocus.subscribe((node: Node) => {
+      // remove the current focus
+      this.removeNodeFocus();
+
+      // zoom to the new node
+      const transition = this.zoomToNode(node)
+
+      // change the focus and open the modal once the zoom transition has ended
+      transition.on('end', () => {
+        this.toggleNodeFocus(node);
+        this._modalService.create(NodeModalComponent, {
+          graph: this.graphData,
+          currendNodeId: node._id,
+          openInExplorationMode: true
+        });
+      });
+    });
   }
 
   /**
@@ -1189,6 +1208,48 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     
     // finally, resize the SVG element due to the toolbar being added/removed
     setTimeout(() => this.handleResize(), 150);
+  }
+
+  /**
+   * Moves the graph so that the passed node is in the center.
+   * The translation is animated.
+   * The returned transition object may be used for event callbacks,
+   * e.g. the 'end' event of the transition.
+   * 
+   * @param {Node} node The node which will be focused.
+   * @returns {d3.Transition<SVGElement, any, any, any>} The transition object.
+   * 
+   * @memberof GraphComponent
+   */
+  zoomToNode(node: Node): d3.Transition<SVGElement, any, any, any> {
+    const element: HTMLDivElement = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const graph = svg.select<SVGGElement>('g#graph');
+
+    // get the svg center coordinates
+    const x = node.x;
+    const y = node.y;
+    const scale = 1.5;
+
+    // get the current transformation
+    const currentTransform: d3.ZoomTransform = d3.zoomTransform(svg.node());
+
+    // calculate the new translation
+    const newX = (this._width / 2 - x * scale);
+    const newY = (this._height / 2 - y * scale);
+    const newScale = scale;
+
+    // create the new transform object
+    const newTransform = d3.zoomIdentity
+      .translate(newX, newY)
+      .scale(newScale);
+
+    // run the zoom animation
+    return svg.transition()
+      .duration(1000)
+      .call((transition: d3.Transition<SVGGElement, any, any, any>) => {
+        transition.call(this._scale.transform, newTransform);
+      });
   }
 
   /**

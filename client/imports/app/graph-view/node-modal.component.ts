@@ -5,6 +5,7 @@ import { Observable, Subscription } from 'rxjs';
 import * as d3 from 'd3';
 import { Html5Entities } from 'html-entities';
 
+import { GraphViewService } from './graph-view.service';
 import { Modal } from '../shared/modal.module';
 import { InfoGraph, Node, Edge } from '../../../../both/models';
 
@@ -53,6 +54,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
   @ViewChild('modalDialog') private _modalDialog: ElementRef;
   @Input() graph: InfoGraph;
   @Input() currendNodeId: string;
+  @Input() openInExplorationMode: boolean = false;
   node: Node;
   nodesLeft: Node[];
   nodesRight: Node[];
@@ -65,8 +67,9 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    * Creates an instance of the NodeModalComponent.
    * 
    * @constructor
+   * @param {GraphViewService} _graphViewService  The GraphViewService.
    */
-  constructor() {
+  constructor(private _graphViewService: GraphViewService) {
     this._htmlEntities = new Html5Entities();
   }
 
@@ -91,6 +94,9 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    */
   ngAfterViewInit(): void {
     this.sortNodes()
+
+    if (this.openInExplorationMode)
+      setTimeout(() =>  this.toggleExplorationMode(), 50);
   }
 
   /**
@@ -102,8 +108,8 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     this.explorationMode = !this.explorationMode;
     
     if (this.explorationMode) {
-      // wait a tick (take class changes into account!)
-      setTimeout(() => this.displayAdjacentNodes());
+      // wait 50ms (take class changes into account!)
+      setTimeout(() => this.displayAdjacentNodes(), 50);
     } else {
       this.hideAdjacentNodes();
     }
@@ -694,7 +700,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
 
   /**
    * Removes the adjacent nodes from the view and
-   * unsubscribe from the window resize event.
+   * unsubscribes from the window resize event.
    * 
    * @method hideAdjacentNodes
    */
@@ -712,12 +718,18 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     this._resizeHandler.unsubscribe();
   }
 
+  /**
+   * Changes the currently focused node and, therefore, the modal's content.
+   * 
+   * @method navigateTo
+   * @param {Node} node The node which will be focused.
+   */
   navigateTo(node: Node) {
-    this.toggleExplorationMode();
-    this.node = node;
-    this.currendNodeId = node._id;
-    this.sortNodes();
-    this.toggleExplorationMode();
+    // request a zoom transition to the new node
+    this._graphViewService.focusOnNode(node);
+
+    // close this modal as a new modal will be opend after the transition
+    this.close();
   }
 
   /**
@@ -749,7 +761,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    * 
    * @method close
    */
-  close(event: Event): void {
+  close(event?: Event): void {
     if (event && event.target && event.target['id'] !== 'nodeModal')
       return;
 
