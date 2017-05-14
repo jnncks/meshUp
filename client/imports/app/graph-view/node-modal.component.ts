@@ -157,14 +157,18 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     
     if (this.nodesLeft.length) {
       // display left
-      this.displayNodes(this._nodeContainerLeft, this.nodesLeft);
-      this.displayEdges(this._nodeContainerLeft);
+      setTimeout(() => {
+        this.displayNodes(this._nodeContainerLeft, this.nodesLeft);
+        this.displayEdges(this._nodeContainerLeft);
+      });
     }
 
     if (this.nodesRight.length) {
       // display right
-      this.displayNodes(this._nodeContainerRight, this.nodesRight);
-      this.displayEdges(this._nodeContainerRight, -1);
+      setTimeout(() => {
+        this.displayNodes(this._nodeContainerRight, this.nodesRight);
+        this.displayEdges(this._nodeContainerRight, -1);
+      });
     }
 
     // handle window resize events
@@ -186,14 +190,12 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     const containerAttributes: { width: number, height: number } = 
       this.updateNodeContainer(container);
 
-    const width = containerAttributes.width;
     const height = containerAttributes.height;
     const maxNodes = Math.floor(height / (2 * this._nodeRadius));
 
     // basic svg and element groups setup
     const svg = d3.select(element)
-      .append('svg')
-      .attr('width', width)
+      .append<SVGElement>('svg')
       .attr('height', height);
 
     const containerGroup = svg.append<SVGGElement>('g')
@@ -217,17 +219,25 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       visibleNodes = nodes;
     }
 
+    const width = svg.node().getBoundingClientRect().width;
+
     // append visible nodes
     if (visibleNodes.length > 1) {
-      const heightPerNode = height / visibleNodes.length;
+      const heightPerNode = height / (hiddenNodes ? maxNodes : visibleNodes.length);
       
       visibleNodes.forEach((node: Node, i: number) => {
         this.appendNode(nodeGroup, node, width / 2,
           heightPerNode / 2 + i * heightPerNode);
       });
 
-      // TODO: handle hiddenNodes!
-
+      // handle non-displayed nodes
+      if (hiddenNodes && hiddenNodes.length) {
+        const moreNodesElement = 
+        this.appendMoreNodesElement(container, hiddenNodes);
+      
+        moreNodesElement
+          .attr('style', `height: ${heightPerNode}px;`);
+      }
     } else if (visibleNodes.length > 0) {
       this.appendNode(nodeGroup, visibleNodes[0], width / 2, height / 2);
     }
@@ -266,6 +276,13 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
           .attr('data-id', id);
       });
 
+    const moreNodesContainer = d3.select(element).select('div.more-nodes');
+
+    if (!moreNodesContainer.empty())
+      edges.append('line')
+        .attr('class', 'edge')
+        .attr('data-id', 'more-nodes');
+
     // set the coordinates
     this.updateEdgeCoordinates(container, direction);
   }
@@ -286,7 +303,6 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     const height: number = element.clientHeight;
 
     d3.select(element).select('svg')
-      .attr('width', width)
       .attr('height', height);
 
     return { width: width, height: height };
@@ -303,10 +319,11 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       return;
 
     const element = container.nativeElement;
-    const containerGroup = d3.select(element).select('g.container-group');
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const containerGroup = svg.select('g.container-group');
     const nodeGroup = containerGroup.select('g.nodes');
 
-    const width = element.clientWidth;
+    const width = svg.node().getBoundingClientRect().width;
 
     nodeGroup.selectAll('g.node')
       .each((d: undefined, i: number, g: Element[]) => {
@@ -359,12 +376,14 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       return;
 
     const element = container.nativeElement;
-    const containerGroup = d3.select(element).select('g.container-group');
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const containerGroup = svg.select('g.container-group');
     const nodes = containerGroup.select('g.nodes');
     const edges = containerGroup.select('g.edges');
 
     // calculate some values required for x2 and y2
-    const width = element.clientWidth;
+    const width = svg.node().getBoundingClientRect().width;
+    const height = svg.node().getBoundingClientRect().height;
     const dx = (width / 2 + this._modalDialog.nativeElement.clientWidth / 2) * direction;
     const midY = this._modalDialog.nativeElement.clientHeight / 2;
 
@@ -390,6 +409,29 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
             .attr('x2', x + dx)
             .attr('y2', midY);
       });
+
+    // handle the edge of a moreNodesContainer
+    const moreNodesContainer =
+      d3.select(element).select<HTMLDivElement>('div.more-nodes');
+
+    if (!moreNodesContainer.empty()) {
+      const boundingRect = moreNodesContainer.node().getBoundingClientRect()
+      const x = width / 2;
+      const y = height + boundingRect.height / 2;
+
+      const edge = edges.selectAll('line.edge')
+        .filter((d: undefined, i: number, g: Element[]) => {
+            return d3.select(g[i]).attr('data-id') === 'more-nodes';
+          }).node();
+      
+      if (edge)
+        // update the edge
+        d3.select(edge)
+          .attr('x1', x)
+          .attr('y1', y)
+          .attr('x2', x + dx)
+          .attr('y2', midY);
+    }
   }
 
   /**
@@ -404,13 +446,14 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       return;
 
     const element = container.nativeElement;
-    const containerGroup = d3.select(element).select('g.container-group');
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const containerGroup = svg.select('g.container-group');
 
     // reset the current transform
     containerGroup.attr('transform', d3.zoomIdentity.toString());
 
     // get the container's width and height
-    const width: number = element.clientWidth;
+    const width: number = svg.node().getBoundingClientRect().width;
     const height: number = element.clientHeight;
 
     // calculate the new scale and translation
@@ -460,6 +503,45 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     return newNode;
   }
 
+  appendMoreNodesElement(container: ElementRef, nodes: Node[]):
+    d3.Selection<HTMLDivElement, any, any, any> {
+    if (! nodes || !nodes.length)
+      return;
+
+    const HTMLTagsRegEx = /<[^>]+>/ig // RegEx for identifying HTML tags
+    const iconUrl = 'icons/svg-sprite-navigation-symbol.svg#ic_arrow_forward_24px';
+    const moreNodesContainer = d3.select(container.nativeElement)
+      .append<HTMLDivElement>('div')
+        .attr('class', 'more-nodes');
+
+    moreNodesContainer
+      .append('div')
+      .attr('class', 'title')
+      .html('weitere verknüpfte Inhalte');
+
+    const list = moreNodesContainer
+      .append<HTMLUListElement>('ul');
+
+    nodes.forEach((node: Node) => {
+      const linkContainer = list
+        .append('li')
+          .append('div')
+          .attr('class', 'link');
+
+      linkContainer.append('svg')
+        .append('svg:use')
+        .attr('xlink:href', iconUrl);
+
+      linkContainer.append('span')
+        .html(this._htmlEntities.decode(node.title)
+        .replace(HTMLTagsRegEx,' '));
+
+      linkContainer.on('click', () => this.navigateTo(node));
+    });
+
+    return moreNodesContainer;
+  }
+
   /**
    * Appends a button to the passed group 'node' and returns a reference to it.
    * 
@@ -469,7 +551,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    * @param  {string} cy The y-coordinate of the node.
    * @return {d3.Selection<SVGGElement, any, any, any>} The button group.
    */
-    appendNodeButton(nodeGroup: d3.Selection<SVGGElement, any, any, any>,
+  appendNodeButton(nodeGroup: d3.Selection<SVGGElement, any, any, any>,
     cx: number, cy: number): d3.Selection<SVGGElement, any, any, any> {
     const button = nodeGroup.append<SVGGElement>('svg:g')
       .attr('class', 'button-group');
@@ -617,14 +699,15 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    * @method hideAdjacentNodes
    */
   hideAdjacentNodes(): void {
-    // remove the svg elements from the DOM
+    // remove all child elements of the containerGroups from the DOM
     d3.select(this._nodeContainerLeft.nativeElement)
-      .select('svg')
+      .selectAll('*')
       .remove();
+      
     d3.select(this._nodeContainerRight.nativeElement)
-      .select('svg')
+      .selectAll('*')
       .remove();
-    
+
     // remove the window resize subscription
     this._resizeHandler.unsubscribe();
   }

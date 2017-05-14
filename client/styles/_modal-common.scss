@@ -44,6 +44,9 @@
     &__title {
        h1, h2 {
          margin-top: 0;
+         max-width: 100%;
+         overflow: hidden;
+         text-overflow: ellipsis;
        }
     }
 
