@@ -33,7 +33,6 @@ export class GraphViewService {
    * @constructor
    */
   constructor(private _router: Router, private _infoGraphService: InfoGraphService) {
-
     // update the current mode on navigation end
     this._router.events
       .filter(event => event instanceof NavigationEnd)

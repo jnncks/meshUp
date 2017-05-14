@@ -354,6 +354,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .remove();
   }
 
+  /**
+   * Either removes the newNode element or adds it and sets up the required
+   * callbacks to move it with the mouse moevement and save the new node
+   * on click.
+   * 
+   * @method handleNodeAddingModeChange
+   * @param {boolean} state The current node adding state.
+   */
   handleNodeAddingModeChange(state: boolean): void {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
@@ -410,6 +418,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     });
   }
 
+  /**
+   * Moves the newNode to the current mouse coordinates.
+   * As a result, the newNode will be moved with the mouse movement.
+   * 
+   * @method handleNewNodeMousemove
+   * @param {d3.Selection<SVGGElement, any, any, any>} newNode The newNode which will be moved.
+   */
   handleNewNodeMousemove(newNode: d3.Selection<SVGGElement, any, any, any>): void {
     if (!d3.event || d3.event.type !== 'mousemove')
       return;

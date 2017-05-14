@@ -509,6 +509,14 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     return newNode;
   }
 
+  /**
+   * Appends the moreNodesElement with the nodes as children to the given container.
+   * 
+   * @method appendMoreNodesElement
+   * @param {ElementRef} container A reference to the nodeGroup.
+   * @param {Node[]} nodes The nodes to display in the moreNodes element.
+   * @returns {d3.Selection<HTMLDivElement, any, any, any>} A reference to the moreNodesElement.
+   */
   appendMoreNodesElement(container: ElementRef, nodes: Node[]):
     d3.Selection<HTMLDivElement, any, any, any> {
     if (! nodes || !nodes.length)
@@ -516,19 +524,19 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
 
     const HTMLTagsRegEx = /<[^>]+>/ig // RegEx for identifying HTML tags
     const iconUrl = 'icons/svg-sprite-navigation-symbol.svg#ic_arrow_forward_24px';
-    const moreNodesContainer = d3.select(container.nativeElement)
+    const moreNodesElement = d3.select(container.nativeElement)
       .append<HTMLDivElement>('div')
         .attr('class', 'more-nodes');
 
-    moreNodesContainer
+    moreNodesElement
       .append('div')
       .attr('class', 'title')
       .html('weitere verknüpfte Inhalte');
 
-    const list = moreNodesContainer
+    const list = moreNodesElement
       .append<HTMLUListElement>('ul');
 
-    nodes.forEach((node: Node) => {
+    nodes.forEach((node: Node) => { // append a list element for each node
       const linkContainer = list
         .append('li')
           .append('div')
@@ -545,7 +553,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       linkContainer.on('click', () => this.navigateTo(node));
     });
 
-    return moreNodesContainer;
+    return moreNodesElement;
   }
 
   /**
