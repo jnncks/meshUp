@@ -48,6 +48,35 @@
               overflow: hidden;
             }
           }
+
+          .button-group {
+            rect, text, use {
+              @include transition($properties: (fill, stroke));
+            }
+
+            rect {
+              fill: $white;
+              stroke: #000;
+              stroke-width: 2px;
+            }
+
+            .button__label {
+              font-size: 28px;
+            }
+
+            &:hover {
+              cursor: pointer;
+              
+              rect {
+                stroke: $accent-color;
+                fill: $accent-color;
+              }
+
+              text, use {
+                fill: $white;
+              }
+            }
+          }
         }
       }
 

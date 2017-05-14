@@ -278,6 +278,9 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    * @returns {{ width: number, height: number }} 
    */
   updateNodeContainer(container: ElementRef): { width: number, height: number } {
+    if (!container || !container.nativeElement)
+      return;
+
     const element = container.nativeElement;
     const width: number = element.clientWidth;
     const height: number = element.clientHeight;
@@ -296,6 +299,9 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    * @param {ElementRef} container A reference to the nodeContainer.
    */
   updateNodePositions(container: ElementRef): void {
+    if (!container || !container.nativeElement)
+      return;
+
     const element = container.nativeElement;
     const containerGroup = d3.select(element).select('g.container-group');
     const nodeGroup = containerGroup.select('g.nodes');
@@ -314,12 +320,26 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
         circle
           .attr('cx', width / 2);
 
-        // update the content's position
+        // update the positions of all text elements
         node.selectAll('text')
           .each((d: undefined, i: number, g: Element[]) => {
             const text = d3.select(g[i]);
             const oldX = Number(text.attr('x'));
             text.attr('x', oldX + dx);
+          })
+
+        // update the position of other button elements (non-text elements)
+        node.selectAll('rect')
+          .each((d: undefined, i: number, g: Element[]) => {
+            const rect = d3.select(g[i]);
+            const oldX = Number(rect.attr('x'));
+            rect.attr('x', oldX + dx);
+          })
+        node.selectAll('use')
+          .each((d: undefined, i: number, g: Element[]) => {
+            const use = d3.select(g[i]);
+            const oldX = Number(use.attr('x'));
+            use.attr('x', oldX + dx);
           })
       });
   }
@@ -335,6 +355,9 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    * @param {number} [direction=1] The direction of the edges.
    */
   updateEdgeCoordinates(container: ElementRef, direction: number = 1): void {
+    if (!container || !container.nativeElement)
+      return;
+
     const element = container.nativeElement;
     const containerGroup = d3.select(element).select('g.container-group');
     const nodes = containerGroup.select('g.nodes');
@@ -377,6 +400,9 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    * @param {ElementRef} container A reference to the nodeContainer.
    */
   scaleNodeContainer(container: ElementRef): void {
+    if (!container || !container.nativeElement)
+      return;
+
     const element = container.nativeElement;
     const containerGroup = d3.select(element).select('g.container-group');
 
@@ -427,7 +453,61 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
 
     this.renderNodeContent(newNode, node, cx, cy);
 
+    // set up the navigation button
+    const button = this.appendNodeButton(newNode, cx, cy);
+    button.on('click', () => this.navigateTo(node));
+
     return newNode;
+  }
+
+  /**
+   * Appends a button to the passed group 'node' and returns a reference to it.
+   * 
+   * @method appendNodeButton
+   * @param  {d3.Selection<SVGGElement, any, any, any>} nodeGroup The group to which the button will be appended.
+   * @param  {string} cx The x-coordinate of the node.
+   * @param  {string} cy The y-coordinate of the node.
+   * @return {d3.Selection<SVGGElement, any, any, any>} The button group.
+   */
+    appendNodeButton(nodeGroup: d3.Selection<SVGGElement, any, any, any>,
+    cx: number, cy: number): d3.Selection<SVGGElement, any, any, any> {
+    const button = nodeGroup.append<SVGGElement>('svg:g')
+      .attr('class', 'button-group');
+
+    const iconUrl = 'icons/svg-sprite-navigation-symbol.svg#ic_arrow_forward_24px';
+    const label = 'öffnen';
+    const y = cy + this._nodeRadius - 40;
+
+    // add a rect for the button background
+    const buttonBg = button.append('svg:rect')
+      .attr('y', y)
+      .attr('height', '44')
+      .attr('rx', '22');
+    // add the icon
+    const buttonIcon = button.append('svg:use')
+      .attr('xlink:href', iconUrl)
+      .attr('y', y + 3)
+      .attr('width', 36)
+      .attr('height', 36);
+
+    // add the button label
+    const buttonLabel = button.append<SVGTextElement>('svg:text')
+      .attr('class', 'button__label')
+      .attr('y', y + 32)
+      .text(label);
+
+    // finally set the attributes according to the text width
+    const labelBoundings: SVGRect = buttonLabel.node().getBBox();
+    const buttonWidth = 64 + labelBoundings.width;
+    buttonBg
+      .attr('x', cx - buttonWidth / 2)
+      .attr('width', buttonWidth);
+    buttonIcon
+      .attr('x', cx - buttonWidth / 2 + 6);
+    buttonLabel
+      .attr('x', cx - buttonWidth / 2 + 48);
+      
+    return button;
   }
 
   /**
@@ -547,6 +627,14 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     
     // remove the window resize subscription
     this._resizeHandler.unsubscribe();
+  }
+
+  navigateTo(node: Node) {
+    this.toggleExplorationMode();
+    this.node = node;
+    this.currendNodeId = node._id;
+    this.sortNodes();
+    this.toggleExplorationMode();
   }
 
   /**

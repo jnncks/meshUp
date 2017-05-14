@@ -793,6 +793,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('y', y)
       .attr('height', '28')
       .attr('rx', '14');
+      
     // add the icon
     const buttonIcon = button.append('svg:use')
       .attr('xlink:href', iconUrl)
