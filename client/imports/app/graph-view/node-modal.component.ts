@@ -234,7 +234,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     // basic svg and element groups setup
     const svg = d3.select(element)
       .append<SVGElement>('svg')
-      .attr('style', `height: ${height};`);
+      .attr('style', `height: ${height}px;`);
 
     const containerGroup = svg.append<SVGGElement>('g')
       .attr('class', 'container-group')
@@ -350,7 +350,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     const height: number = element.clientHeight;
 
     d3.select(element).select('svg')
-      .attr('style', `height: ${height};`);
+      .attr('style', `height: ${height}px;`);
 
     return { width: width, height: height };
   }
