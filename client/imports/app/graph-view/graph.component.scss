@@ -13,6 +13,8 @@
     cursor: pointer;
 
     circle {
+      @include transition($properties: (fill, stroke), $duration: 0.4s);
+
       &.outer {
         display: none;
       }
@@ -123,6 +125,7 @@
   }
   
   .edge {
+    @include transition($properties: (fill, stroke), $duration: 0.4s);
     stroke-width: 6px;
     stroke: rgba(255, 255, 255, 0.2);
 
