@@ -166,18 +166,45 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       (!this.nodesLeft.length && !this.nodesRight.length))
       return;
     
+    const containerLeft = this._nodeContainerLeft.nativeElement;
+
+    const height = containerLeft.clientHeight;
+    const maxNodes = Math.floor(height / (2 * this._nodeRadius));
+
     if (this.nodesLeft.length) {
       // display left
       setTimeout(() => {
-        this.displayNodes(this._nodeContainerLeft, this.nodesLeft);
+        this.displayNodes(this._nodeContainerLeft,
+          this.nodesLeft.slice(0, maxNodes));
         this.displayEdges(this._nodeContainerLeft);
       });
     }
 
-    if (this.nodesRight.length) {
+    if (this.nodesRight.length ||
+      (this.nodesLeft && this.nodesLeft.length > maxNodes)) {
+      // use a temporary array for the right nodes
+      let nodesRight: Node[] = [];
+
+      if (this.nodesLeft && this.nodesLeft.length > maxNodes &&
+        this.nodesRight && this.nodesRight.length) {
+        // add leftover nodes from the left side to the right side's nodes
+        nodesRight = this.nodesRight
+          .concat(this.nodesLeft
+            .slice(maxNodes)
+            .reverse());
+      } else if (this.nodesLeft && this.nodesLeft.length > maxNodes) {
+        // use only the leftover nodes from the left
+        nodesRight = this.nodesLeft
+          .slice(maxNodes)
+          .reverse();
+      } else {
+        // there are no leftover nodes from the left
+        nodesRight = this.nodesRight;
+      }
+
       // display right
       setTimeout(() => {
-        this.displayNodes(this._nodeContainerRight, this.nodesRight);
+        this.displayNodes(this._nodeContainerRight, nodesRight);
         this.displayEdges(this._nodeContainerRight, -1);
       });
     }
