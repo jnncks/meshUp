@@ -12,6 +12,7 @@ import {
   Observable
 } from 'rxjs';
 import * as d3 from 'd3';
+import * as _ from 'underscore';
 import { Html5Entities } from 'html-entities';
 
 import {
@@ -66,7 +67,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _currentTransform: d3.ZoomTransform;
   private _dragNode: d3.DragBehavior<SVGGElement, any, any>;
   private _dragEdge: d3.DragBehavior<SVGCircleElement, any, any>;
-  private _localNodeData = d3.local();
+  private _localNodeData = d3.local<Node>();
   private _htmlEntities: Html5Entities;
 
   /**
@@ -252,12 +253,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       return;
     }
 
-    // draw the edges
-    this.updateEdges();
-
     // draw the nodes
     if (this.graphData.nodes && this.graphData.nodes.length)
       this.updateNodes();
+
+    // draw the edges
+     if (this.graphData.edges && this.graphData.edges.length)
+    this.updateEdges();
   }
 
   /**
@@ -275,36 +277,55 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const graph = svg.select<SVGGElement>('g#graph');
     const edges = graph.select('g#edges');
 
-    const line = edges.selectAll('line.edge')
-      .filter((d: Edge) => d !== null)
-      .data(this.graphData.edges);
+    // apply the data with the id as the key to keep the data and DOM in sync
+    const lines = edges.selectAll('line.edge')
+      .data(this.graphData.edges, (d: Edge) => d._id);
 
-    line.enter()
+    // remove edges that don't exist anymore
+    lines.exit().remove();
+
+    // update the positions of edges in the DOM
+    lines.each((d: Edge, i: number, g: Element[]) =>
+      this.updateEdgeCoordinates(d, i, g));
+    
+    lines.enter() // append new edges to the DOM
       .append('svg:line') // append new edges when required
         .attr('class', 'edge')
         .attr('data-source-id', (d: Edge) => d.source)
         .attr('data-target-id', (d: Edge) => d.target)
-      .merge(line) // merge with existing edges and update the positions
-        .each((d: Edge, i: number, g: Element[]) => {
-          const source: Node = this.graphData.nodes.filter((node: Node) => {
-            return node._id === d.source;
-          })[0];
-          const target: Node = this.graphData.nodes.filter((node: Node) => {
-            return node._id === d.target;
-          })[0];
-
-            d3.select(g[i])
-              .attr('x1', source.x)
-              .attr('y1', source.y)
-              .attr('x2', target.x)
-              .attr('y2', target.y)
-        });
-    
-    // remove edges that don't exist anymore
-    line.exit().remove();
+      .each((d: Edge, i: number, g: Element[]) =>
+        this.updateEdgeCoordinates(d, i, g));
     
     // update the positions of the edgeRemovalButtons
     this.updateEdgeRemovalButtons();
+  }
+
+  /**
+   * Updates the coordinates (x1, y1, x2, y2) of the passed edge.
+   * 
+   * @method updateEdgeCoordinates
+   * @param  {Edge} d The edge data.
+   * @param  {i} number The elements index of the selection.
+   * @param  [Element[]] The element selection.
+   */
+  updateEdgeCoordinates(d: Edge, i: number, g: Element[]) {
+    const element = this._graphContainer.nativeElement;
+    const svg = d3.select(element).select<SVGElement>('svg');
+    const graph = svg.select<SVGGElement>('g#graph');
+    const nodes = graph.select('g#nodes');
+
+    const source: Node = this._localNodeData
+      .get(nodes.select<SVGGElement>(`g [id="${d.source}"]`).node());
+
+    const target: Node = this._localNodeData
+      .get(nodes.select<SVGGElement>(`g [id="${d.target}"]`).node());
+    
+    if (source && target)
+      d3.select(g[i])
+        .attr('x1', source.x)
+        .attr('y1', source.y)
+        .attr('x2', target.x)
+        .attr('y2', target.y);
   }
 
   /**
@@ -318,26 +339,28 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
     const graph = svg.select<SVGGElement>('g#graph');
-    const nodes = graph.select('g#nodes');
+    const nodeGroup = graph.select('g#nodes');
   
     // update the offset of the graph
     this.updateGraphOffset()
     
-    nodes.selectAll('g.node--new')
+    nodeGroup.selectAll('g.node--new')
       .remove();
 
-    const node = nodes.selectAll('g.node')
-      .data(this.graphData.nodes);
-      
-    node.enter()
+    // apply the data with the id as the key to keep the data and DOM in sync
+    const nodes = nodeGroup.selectAll('g.node')
+      .data(this.graphData.nodes, (d: Node) => d._id);
+
+    nodes.exit().remove(); // remove nodes that aren't in the data anymore
+
+    nodes.each(this.updateNode); // update all nodes in the DOM
+
+    nodes.enter() // append the new nodes to the DOM
       .append('svg:g')
         .attr('class', 'node')
         .attr('id', (d: Node) => d._id)
         .each(this.addNode)
-      .merge(node)
         .each(this.updateNode);
-
-    node.exit().remove();
   }
 
   /**
@@ -478,40 +501,29 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @param  {Element[]} g
    */
   updateNode = (d: Node, i: number, g: Element[]) => {
-    const group = d3.select(g[i]);
+    const node = d3.select(g[i]);
     const previousData = this._localNodeData.get(g[i]);
 
     // compare the local node data to the updated data
-    if (previousData === d)
+    if (_.isEqual(previousData, d))
       return; // the data is the same, no update required!
 
-    group.select('circle.outer')
+    node.select('circle.outer')
       .attr('cx', (d: Node) => d.x)
       .attr('cy', (d: Node) => d.y);
 
-    group.select('circle.inner')
+    node.select('circle.inner')
       .attr('cx', (d: Node) => d.x)
       .attr('cy', (d: Node) => d.y);
     
     // draw the content in front of the nodes
-    group.select('g.node__content').remove();
-    group.append('svg:g')
+    node.select('g.node__content').remove();
+    node.append('svg:g')
       .attr('class', 'node__content')
       .each(this.renderNodeContent);
-    
-    /**
-     * this is somehow required to update the lines on drag if the previous
-     * drag originated from the same element...
-     * 
-     * TODO: Find another way!
-     */ 
-    if (group.attr('class').includes('node--selected')) {
-      this.removeNodeFocus()
-      this.toggleNodeFocus(d);
-    }
 
     // update the local node data
-    group.each((d: Node) => this._localNodeData.set(g[i], d));
+    this._localNodeData.set(g[i], d);
   }
 
   /**
@@ -526,7 +538,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const svg = d3.select(this._graphContainer.nativeElement)
       .select('svg')
     const graph = svg.select('g#graph');
-    const nodes = graph.select('g#nodes')
+    const nodes = graph.select('g#nodes');
 
     const node = nodes.select<SVGGElement>(`g [id="${d._id}"]`);
 
@@ -584,7 +596,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           .attr('x', x + dx)
           .attr('y', y + dy);
       });
-    
+
     // update the edges
     this.updateEdges();
   }
@@ -684,6 +696,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       return;
     }
 
+    if (!d)
+      return;
+
     // references to important elements
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
@@ -695,7 +710,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const node: d3.Selection<SVGGElement, any, any, any> =
       nodes.select<SVGGElement>(`g [id="${d._id}"]`);
 
-    if (!node)
+    if (node.empty())
       return;
 
     if (node.attr('class').includes('node--selected')) {
@@ -1136,6 +1151,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         const edge: SVGLineElement = d3.selectAll('line.edge--highlighted')
           .filter<SVGLineElement>((d: Edge) => d._id === button.attr('data-edge-id'))
           .node();
+        
+        if (!edge) {
+          button.remove();
+          return;
+        }
 
         // calculate the new midpoint of the edge
         const midX = (edge.x1.baseVal.value + edge.x2.baseVal.value) / 2;
