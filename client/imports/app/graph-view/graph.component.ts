@@ -539,6 +539,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .select('svg')
     const graph = svg.select('g#graph');
     const nodes = graph.select('g#nodes');
+    const edges = graph.select('g#edges');
 
     const node = nodes.select<SVGGElement>(`g [id="${d._id}"]`);
 
@@ -546,8 +547,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const dy = d3.event.dy;
 
     // update the node data
-    d.x = d.x + dx;
-    d.y = d.y + dy;
+    let newData = d;
+    newData.x = d.x + dx;
+    newData.y = d.y + dy;
+
+    this._localNodeData.set(node.node(), newData);
 
     // update the position of the drawn circles
     node.selectAll('circle')
@@ -598,7 +602,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       });
 
     // update the edges
-    this.updateEdges();
+    edges.selectAll('line.edge')
+      .filter((edge: Edge) =>
+        edge.target === d._id || edge.source === d._id)
+      .each((d: Edge, i: number, g: Element[]) => {
+        this.updateEdgeCoordinates(d, i, g);
+      });
+
+    this.updateEdgeRemovalButtons();
   }
 
   /**
@@ -722,6 +733,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       
       // apply the focus state
       node.classed('node--selected', true)
+
+      // move the node to the front
+      node.raise();
 
       // apply the highlight state to the related edges
       const highlightedEdges = edges.selectAll('line.edge')
