@@ -227,31 +227,37 @@ export class Main {
 
   randomEdges(nodes: Node[], user: User): Edge[] {
     return [{
+      _id: Random.id(),
       source: nodes[0]._id,
       target: nodes[4]._id,
       creator: user._id,
       created: new Date()
     }, {
+      _id: Random.id(),
       source: nodes[2]._id,
       target: nodes[4]._id,
       creator: user._id,
       created: new Date()
     }, {
+      _id: Random.id(),
       source: nodes[1]._id,
       target: nodes[4]._id,
       creator: user._id,
       created: new Date()
     }, {
+      _id: Random.id(),
       source: nodes[3]._id,
       target: nodes[2]._id,
       creator: user._id,
       created: new Date()
     }, {
+      _id: Random.id(),
       source: nodes[1]._id,
       target: nodes[3]._id,
       creator: user._id,
       created: new Date()
     }, {
+      _id: Random.id(),
       source: nodes[3]._id,
       target: nodes[4]._id,
       creator: user._id,
