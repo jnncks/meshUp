@@ -100,6 +100,7 @@
 
     /deep/ .more-nodes {
       box-sizing: padding-box;
+      position: inital;
       display: flex;
       flex-direction: column;
       z-index: 999;
