@@ -36,6 +36,10 @@
         font-size: 11px;
         overflow: hidden;
       }
+
+      &__type-icon {
+        fill: $disabled-icon-color;
+      }
     }
 
     .focus-button {

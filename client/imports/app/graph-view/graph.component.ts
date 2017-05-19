@@ -293,11 +293,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
             return node._id === d.target;
           })[0];
 
-          d3.select(g[i])
-            .attr('x1', source.x)
-            .attr('y1', source.y)
-            .attr('x2', target.x)
-            .attr('y2', target.y)
+            d3.select(g[i])
+              .attr('x1', source.x)
+              .attr('y1', source.y)
+              .attr('x2', target.x)
+              .attr('y2', target.y)
         });
     
     // remove edges that don't exist anymore
@@ -620,6 +620,19 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const maxCTitle = [10, 14, 16]; // title lines
     const maxCContent = [36, 35, 33, 32, 27, 18]; // content lines
     const HTMLTagsRegEx = /<[^>]+>/ig // RegEx for identifying HTML tags
+    const iconUrl = 'icons/svg-sprite-action-symbol.svg#ic_description_24px';
+    const group = d3.select(g[i])
+
+    /**
+     * add the node type icon (currently only the document type is supported)
+     */
+    group.append('svg:use')
+      .attr('xlink:href', iconUrl)
+      .attr('class', 'node__content__type-icon')
+      .attr('x', d.x - 76)
+      .attr('y', d.y - 72)
+      .attr('width', 48)
+      .attr('height', 48);
 
     /**
      * add the title
@@ -632,10 +645,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const titleArr = this._htmlEntities.decode(d.title)
       .split(' ');
     let lines = this.generateTextLines(titleArr, maxCTitle);
-    const element = d3.select(g[i])
 
     for (let k = 0; k < lines.length; k++) {
-      element.append('svg:text')
+      group.append('svg:text')
         .attr('class', 'node__content__title')
         .attr('x', d.x - 25)
         .attr('y', d.y - 60 + k * 16)
@@ -652,7 +664,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     lines = this.generateTextLines(contentArr, maxCContent);
 
     for (let k = 0; k < lines.length; k++) {
-      element.append('svg:text')
+      group.append('svg:text')
         .attr('class', 'node__content__text')
         .attr('x', d.x - 95 + Math.pow(1.3 * k, 2))
         .attr('y', d.y + k * 16)
