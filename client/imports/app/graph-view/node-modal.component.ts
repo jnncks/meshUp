@@ -62,6 +62,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
   private _nodeRadius: number = 100;
   private _htmlEntities: Html5Entities;
   private _resizeHandler: Subscription;
+  private _nodeFadeTransition: d3.Transition<any, any, any, any>;
   
   /**
    * Creates an instance of the NodeModalComponent.
@@ -71,6 +72,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    */
   constructor(private _graphViewService: GraphViewService) {
     this._htmlEntities = new Html5Entities();
+    this._nodeFadeTransition = d3.transition(null).duration(500);
   }
 
   /**
@@ -105,13 +107,16 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    * @method toggleExplorationMode
    */
   toggleExplorationMode(): void {
-    this.explorationMode = !this.explorationMode;
-    
-    if (this.explorationMode) {
+    if (!this.explorationMode) {
+      this.explorationMode = !this.explorationMode;
+
       // wait 50ms (take class changes into account!)
       setTimeout(() => this.displayAdjacentNodes(), 50);
     } else {
       this.hideAdjacentNodes();
+
+      setTimeout(() =>
+        this.explorationMode = !this.explorationMode, 300);
     }
   }
 
@@ -205,7 +210,8 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       .attr('style', `height: ${height};`);
 
     const containerGroup = svg.append<SVGGElement>('g')
-      .attr('class', 'container-group');
+      .attr('class', 'container-group')
+      .style('opacity', 0);
     
     const edgeGroup = containerGroup.append<SVGGElement>('svg:g')
       .attr('class', 'edges');
@@ -242,7 +248,11 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
         this.appendMoreNodesElement(container, hiddenNodes);
       
         moreNodesElement
-          .attr('style', `height: ${heightPerNode}px;`);
+          .attr('style', `height: ${heightPerNode}px;`)
+          .style('opacity', 0);
+
+        moreNodesElement.transition(this._nodeFadeTransition)
+          .style('opacity', 1);
       }
     } else if (visibleNodes.length > 0) {
       this.appendNode(nodeGroup, visibleNodes[0], width / 2, height / 2);
@@ -253,6 +263,10 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
     if (width < 2 * this._nodeRadius) {
       this.scaleNodeContainer(container);
     }
+
+    // fade the nodes smoothly in
+    containerGroup.transition(this._nodeFadeTransition)
+      .style('opacity', 1);
   }
 
   /**
@@ -711,19 +725,34 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    * unsubscribes from the window resize event.
    * 
    * @method hideAdjacentNodes
+   * @return {d3.Transition<any, any, any, any>} A transition object.
    */
-  hideAdjacentNodes(): void {
-    // remove all child elements of the containerGroups from the DOM
-    d3.select(this._nodeContainerLeft.nativeElement)
+  hideAdjacentNodes(): d3.Transition<any, any, any, any> {
+    // select all child elements of the containerGroups
+    const containerLeft = d3.select(this._nodeContainerLeft.nativeElement)
       .selectAll('*')
-      .remove();
-      
-    d3.select(this._nodeContainerRight.nativeElement)
+    const containerRight = d3.select(this._nodeContainerRight.nativeElement)
       .selectAll('*')
-      .remove();
+
+    // fade out the nodes
+    const transitionLeft = containerLeft
+      .transition(this._nodeFadeTransition)
+        .style('opacity', 0)
+    const transitionRight = containerRight
+      .transition(this._nodeFadeTransition)
+        .style('opacity', 0)
+
+    // remove the elements from the DOM once the transition has ended
+    transitionLeft
+      .on('end', () => containerLeft.remove());
+    transitionRight
+      .on('end', () => containerRight.remove()); 
 
     // remove the window resize subscription
     this._resizeHandler.unsubscribe();
+
+    // return one of the transitions for event handling
+    return transitionLeft;
   }
 
   /**

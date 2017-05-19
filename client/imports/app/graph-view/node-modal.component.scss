@@ -2,6 +2,8 @@
 @import '../../../styles/cards';
 
 .modal {
+   @include transition($properties: (background-color));
+
   &--exploration {
     padding-left: 0;
     padding-right: 0;
