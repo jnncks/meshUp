@@ -17,12 +17,16 @@
     _currentRouteData &&
     _currentRouteData.name === 'Graphview' &&
     _currentGraphMeta &&
-    _currentGraphMeta.owner === _userId &&
-    !_isEditing" (click)="toggleEditing()">
-    <svg>
+    _currentGraphMeta.owner === _userId"
+    (click)="toggleEditing()">
+    <svg *ngIf="!_isEditing">
       <use xlink:href="icons/svg-sprite-content-symbol.svg#ic_create_24px" />
     </svg>
-    <span>bearbeiten</span>
+    <span *ngIf="!_isEditing">bearbeiten</span>
+    <svg *ngIf="_isEditing">
+      <use xlink:href="icons/svg-sprite-action-symbol.svg#ic_done_24px" />
+    </svg>
+    <span *ngIf="_isEditing">Bearbeitung beenden</span>
   </button>
   <user-menu [visible]="isLoggedIn()"></user-menu>
 </div>
