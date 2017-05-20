@@ -275,6 +275,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
     const graph = svg.select<SVGGElement>('g#graph');
+    const nodes = graph.select('g#nodes');
     const edges = graph.select('g#edges');
 
     // apply the data with the id as the key to keep the data and DOM in sync
@@ -286,46 +287,61 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // update the positions of edges in the DOM
     lines.each((d: Edge, i: number, g: Element[]) =>
-      this.updateEdgeCoordinates(d, i, g));
+      this.updateEdge(d, i, g));
     
     lines.enter() // append new edges to the DOM
       .append('svg:line') // append new edges when required
         .attr('class', 'edge')
         .attr('data-source-id', (d: Edge) => d.source)
         .attr('data-target-id', (d: Edge) => d.target)
-      .each((d: Edge, i: number, g: Element[]) =>
-        this.updateEdgeCoordinates(d, i, g));
+      .each((d: Edge, i: number, g: Element[]) => {
+        this.updateEdge(d, i, g)
+
+        const source: d3.Selection<SVGGElement, any, any, any> =
+          nodes.select<SVGGElement>(`g [id="${d.source}"]`);
+        const target: d3.Selection<SVGGElement, any, any, any> =
+          nodes.select<SVGGElement>(`g [id="${d.target}"]`);
+
+        if (source.classed('node--selected') ||
+          target.classed('node--selected')) {
+          d3.select(g[i]).classed('edge--highlighted', true);
+          this.appendEdgeRemovalButton(d, i, g);
+        }
+      });
     
     // update the positions of the edgeRemovalButtons
     this.updateEdgeRemovalButtons();
   }
 
   /**
-   * Updates the coordinates (x1, y1, x2, y2) of the passed edge.
+   * Updates the coordinates (x1, y1, x2, y2) of the passed edge and append
+   * the edgeRemovalButton if needed.
    * 
-   * @method updateEdgeCoordinates
+   * @method updateEdge
    * @param  {Edge} d The edge data.
    * @param  {i} number The elements index of the selection.
    * @param  [Element[]] The element selection.
    */
-  updateEdgeCoordinates(d: Edge, i: number, g: Element[]) {
+  updateEdge(d: Edge, i: number, g: Element[]) {
     const element = this._graphContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
     const graph = svg.select<SVGGElement>('g#graph');
     const nodes = graph.select('g#nodes');
 
-    const source: Node = this._localNodeData
-      .get(nodes.select<SVGGElement>(`g [id="${d.source}"]`).node());
+    const source: d3.Selection<SVGGElement, any, any, any> =
+      nodes.select<SVGGElement>(`g [id="${d.source}"]`);
+    const target: d3.Selection<SVGGElement, any, any, any> =
+      nodes.select<SVGGElement>(`g [id="${d.target}"]`);
 
-    const target: Node = this._localNodeData
-      .get(nodes.select<SVGGElement>(`g [id="${d.target}"]`).node());
-    
-    if (source && target)
+    const sourceData: Node = this._localNodeData.get(source.node());
+    const targetData: Node = this._localNodeData.get(target.node());
+
+    if (sourceData && targetData)
       d3.select(g[i])
-        .attr('x1', source.x)
-        .attr('y1', source.y)
-        .attr('x2', target.x)
-        .attr('y2', target.y);
+        .attr('x1', sourceData.x)
+        .attr('y1', sourceData.y)
+        .attr('x2', targetData.x)
+        .attr('y2', targetData.y);
   }
 
   /**
@@ -469,8 +485,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('x', mouse[0] - 50)
       .attr('y', mouse[1] - 50);
   }
-
-  /**
+  
+/**
    * Adds a node to the drawn graph.
    * 
    * @method addNode
@@ -507,6 +523,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     // compare the local node data to the updated data
     if (_.isEqual(previousData, d))
       return; // the data is the same, no update required!
+    
+    // update the local node data
+    this._localNodeData.set(g[i], d);
 
     node.select('circle.outer')
       .attr('cx', (d: Node) => d.x)
@@ -522,8 +541,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('class', 'node__content')
       .each(this.renderNodeContent);
 
-    // update the local node data
-    this._localNodeData.set(g[i], d);
+    node.selectAll('g.focus-button').raise();
   }
 
   /**
@@ -591,7 +609,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     
     // update the position of the drawn icons
     node.selectAll('use')
-      .each((d: Node, i: number, g: SVGRectElement[]) => {
+      .each((d: Node, i: number, g: SVGUseElement[]) => {
         const use = d3.select(g[i]);
         const x = Number(use.attr('x'));
         const y = Number(use.attr('y'));
@@ -601,12 +619,24 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           .attr('y', y + dy);
       });
 
+    node.selectAll('path')
+      .each((d: Node, i: number, g: SVGPathElement[]) => {
+        const path = d3.select(g[i]);
+
+        // get the current transform
+        const t = path.node().transform.baseVal.consolidate().matrix;
+        const x = t.e;
+        const y = t.f;
+    
+        path.attr('transform', `translate(${x + dx},${y + dy})`);
+      });
+
     // update the edges
     edges.selectAll('line.edge')
       .filter((edge: Edge) =>
         edge.target === d._id || edge.source === d._id)
       .each((d: Edge, i: number, g: Element[]) => {
-        this.updateEdgeCoordinates(d, i, g);
+        this.updateEdge(d, i, g);
       });
 
     this.updateEdgeRemovalButtons();
@@ -645,6 +675,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const HTMLTagsRegEx = /<[^>]+>/ig // RegEx for identifying HTML tags
     const iconUrl = 'icons/svg-sprite-action-symbol.svg#ic_description_24px';
     const group = d3.select(g[i])
+    const nodeData = this._localNodeData.get(group.node());
 
     /**
      * add the node type icon (currently only the document type is supported)
@@ -652,8 +683,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     group.append('svg:use')
       .attr('xlink:href', iconUrl)
       .attr('class', 'node__content__type-icon')
-      .attr('x', d.x - 76)
-      .attr('y', d.y - 72)
+      .attr('x', nodeData.x - 76)
+      .attr('y', nodeData.y - 72)
       .attr('width', 48)
       .attr('height', 48);
 
@@ -665,15 +696,15 @@ export class GraphComponent implements AfterViewInit, OnChanges {
      * 3. Generate the text according to the different line lenghts.
      * 4. Add the text lines as single text elements.
      */ 
-    const titleArr = this._htmlEntities.decode(d.title)
+    const titleArr = this._htmlEntities.decode(nodeData.title)
       .split(' ');
     let lines = this.generateTextLines(titleArr, maxCTitle);
 
     for (let k = 0; k < lines.length; k++) {
       group.append('svg:text')
         .attr('class', 'node__content__title')
-        .attr('x', d.x - 25)
-        .attr('y', d.y - 60 + k * 16)
+        .attr('x', nodeData.x - 25)
+        .attr('y', nodeData.y - 60 + k * 16)
         .text(lines[k]);
     }
 
@@ -681,7 +712,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
      * add the content: similar to adding the title, but also stripping
      * all HTML tags since the content will be added as plain text elements.
      */ 
-    const contentArr = this._htmlEntities.decode(d.content)
+    const contentArr = this._htmlEntities.decode(nodeData.content)
       .replace(HTMLTagsRegEx,' ')
       .split(' ');
     lines = this.generateTextLines(contentArr, maxCContent);
@@ -689,8 +720,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     for (let k = 0; k < lines.length; k++) {
       group.append('svg:text')
         .attr('class', 'node__content__text')
-        .attr('x', d.x - 95 + Math.pow(1.3 * k, 2))
-        .attr('y', d.y + k * 16)
+        .attr('x', nodeData.x - 95 + Math.pow(1.3 * k, 2))
+        .attr('y', nodeData.y + k * 16)
         .text(lines[k]);
     }
   }
@@ -1083,23 +1114,23 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @param {string} id 
    */
   removeEdge(id: string): void {      
-      const element = this._graphContainer.nativeElement;
-      const graph = d3.select(element)
-        .select<SVGElement>('svg')
-        .select<SVGGElement>('g#graph');
-      const edges = graph.select('g#edges');
+    const element = this._graphContainer.nativeElement;
+    const graph = d3.select(element)
+      .select<SVGElement>('svg')
+      .select<SVGGElement>('g#graph');
+    const edges = graph.select('g#edges');
 
-      // get a reference to the button and remove it
-      const button = edges.selectAll('g.edge-button--remove')
-        .filter<SVGGElement>((d: undefined, i: number, g: Element[]) =>
-          d3.select(g[i]).attr('data-edge-id') === id);
+    // get a reference to the button and remove it
+    const button = edges.selectAll('g.edge-button--remove')
+      .filter<SVGGElement>((d: undefined, i: number, g: Element[]) =>
+        d3.select(g[i]).attr('data-edge-id') === id);
 
-      button
-        .on('mousedown', null) // remove the mousedown handler
-        .remove() // remove the button group
+    button
+      .on('mousedown', null) // remove the mousedown handler
+      .remove() // remove the button group
 
-      // remove the edge from the collection's document
-      this._graphViewService.removeInfoGraphEdge(id);
+    // remove the edge from the collection's document
+    this._graphViewService.removeInfoGraphEdge(id);
   }
 
   /**
@@ -1137,6 +1168,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     this.updateEdgeRemovalButtons();
 
     buttonGroup.on('mousedown', (d: undefined, i: number, g: Element[]) => {
+      if (d3.event && d3.event.button === 2) { // this is a right click
+        d3.event.stopImmediatePropagation();
+        return;
+      }
+
       const button = d3.select(g[i]);
       const edgeId = button.attr('data-edge-id');
       this.removeEdge(edgeId)

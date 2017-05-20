@@ -112,6 +112,8 @@ export class NodeModalComponent implements OnInit, AfterViewInit, OnChanges{
       if ((changes.graph.previousValue === undefined ||
         changes.graph.previousValue === null) &&
         changes.graph.currentValue) {
+          this.node = this.graph.nodes.filter((node: Node) =>
+            node._id === this.currendNodeId)[0];
           this.sortNodes();
           setTimeout(() => this.displayAdjacentNodes(), 50);
         }
