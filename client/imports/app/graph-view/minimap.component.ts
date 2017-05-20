@@ -292,13 +292,16 @@ export class MiniMapComponent implements AfterViewInit, OnChanges {
     const graph = svg.select<SVGGElement>('g#graph');
 
     // return if the graph is empty
-    if (!graph.node())
+    if (graph.empty())
       return;
 
     // get boundaries of the container and the graph group
     const containerWidth = this._width;
     const containerHeight = this._height;
     const bbox = graph.node().getBBox();
+
+    if (! containerWidth || !containerHeight || !bbox)
+      return;
 
     // calculate the scale
     let scale = (1 - this._padding) * Math.min(
