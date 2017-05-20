@@ -145,20 +145,22 @@ export class NodeModalComponent implements OnInit, AfterViewInit, OnChanges{
    * 
    * @method sortNodes
    */
-  sortNodes(): void {
+  sortNodes(currentNode?: Node): void {
     if (!this.graph || !this.graph.nodes || this.graph.nodes.length <= 1)
       return;
-    
+
+    const currentNodeId = currentNode ? currentNode._id : this.currendNodeId;
+
     // get all relevant edges
     const edges = this.graph.edges
       .filter((edge: Edge) =>
-        edge.source === this.currendNodeId ||
-        edge.target === this.currendNodeId
+        edge.source === currentNodeId ||
+        edge.target === currentNodeId
       );
 
     // filter the currently displayed node and all non-adjacent nodes
     const nodes = this.graph.nodes
-      .filter((node: Node) => node._id !== this.currendNodeId)
+      .filter((node: Node) => node._id !== currentNodeId)
       .filter((node: Node) => {
         const index = edges.findIndex((edge: Edge) => {
           return (edge.source === node._id || edge.target === node._id);
@@ -811,11 +813,19 @@ export class NodeModalComponent implements OnInit, AfterViewInit, OnChanges{
    * @param {Node} node The node which will be focused.
    */
   navigateTo(node: Node) {
+    this.toggleExplorationMode();
+
     // request a zoom transition to the new node
     this._graphViewService.focusOnNode(node, 150);
 
-    // close this modal as a new modal will be opend after the transition
-    this.close();
+    setTimeout(() => {
+      this.node = node;
+      this.sortNodes(node);
+    }, 1000);
+
+    setTimeout(() => {
+      this.toggleExplorationMode();
+    }, 1250);
   }
 
   /**

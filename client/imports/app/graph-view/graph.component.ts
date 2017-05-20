@@ -184,11 +184,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       // change the focus and open the modal once the zoom transition has ended
       transition.on('end', () => {
         this.toggleNodeFocus(node);
-        this._modalService.create(NodeModalComponent, {
-          graph: this.graphData,
-          currendNodeId: node._id,
-          openInExplorationMode: true
-        });
       });
     });
   }
