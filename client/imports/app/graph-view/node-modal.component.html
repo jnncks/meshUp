@@ -1,4 +1,4 @@
-<div class="modal" [ngClass]="{'modal--exploration' : explorationMode}" id="nodeModal" *ngIf="!hidden" [@fadeInOut] (click)="close($event)">
+<div class="modal" [ngClass]="{'modal--exploration' : explorationMode}" id="nodeModal" *ngIf="!hidden && node" [@fadeInOut]>
 
 	<div class="modal__nodes" [ngClass]="{'modal__nodes--hidden' : !explorationMode}" #nodeContainerLeft></div>
 
