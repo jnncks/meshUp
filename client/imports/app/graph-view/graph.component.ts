@@ -1300,6 +1300,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     const newY = (this._height / 2 - y * scale);
     const newScale = scale;
 
+    const distance = Math.sqrt(
+      Math.pow(newX - currentTransform.x, 2) + 
+      Math.pow(newY - currentTransform.y, 2)
+    );
+
     // create the new transform object
     const newTransform = d3.zoomIdentity
       .translate(newX, newY)
@@ -1307,7 +1312,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // run the zoom animation
     return svg.transition()
-      .duration(1000)
+      .duration(Math.max( // scale the duration with the distance
+        Math.sqrt(distance) * 25,
+        1000)) // at least 750ms
       .call((transition: d3.Transition<SVGGElement, any, any, any>) => {
         transition.call(this._scale.transform, newTransform);
       });
