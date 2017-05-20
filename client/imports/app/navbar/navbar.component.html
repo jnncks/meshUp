@@ -1,5 +1,5 @@
 <div class="bar">
-  <ul class="bar__pagelist" *ngIf="isLoggedIn()">
+  <ul class="bar__pagelist" *ngIf="_isLoggedIn">
     <li class="bar__pagelist__page"
       [ngClass]="{'bar__pagelist__page--no-shrink' : first}"
       routerLinkActive="bar__pagelist__page--active"
@@ -28,5 +28,5 @@
     </svg>
     <span *ngIf="_isEditing">Bearbeitung beenden</span>
   </button>
-  <user-menu [visible]="isLoggedIn()"></user-menu>
+  <user-menu [visible]="_isLoggedIn" [user]="_user" [userId]="_userId"></user-menu>
 </div>

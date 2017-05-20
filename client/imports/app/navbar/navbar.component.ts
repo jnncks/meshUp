@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, NgZone } from '@angular/core';
 import { Route, ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Meteor } from 'meteor/meteor';
@@ -22,7 +22,13 @@ import styleUrl from './navbar.component.scss';
   template,
   styles: [ styleUrl ]
 })
-export class NavBarComponent implements OnInit{
+export class NavBarComponent implements OnInit {
+  private _autorunComputation: Tracker.Computation;
+  private _user: Meteor.User;
+  private _userId: string;
+  private _isLoggingIn: boolean;
+  private _isLoggedIn: boolean;
+
   public breadcrumbs: {
     url: string,
     name?: string,
@@ -32,7 +38,6 @@ export class NavBarComponent implements OnInit{
   private _currentRouteData: Object;
   private _currentGraphMeta: InfoGraphMeta;
   private _isEditing: boolean = false;
-  private _userId: string;
 
   /**
    * Creates an instance of the NavBarComponent.
@@ -42,8 +47,15 @@ export class NavBarComponent implements OnInit{
    * @param {Router} _router 
    * @param {ActivatedRoute} _activatedRoute 
    * @param {GraphViewService} _graphViewService 
+   * @param {NgZone} _zone
    */
-  constructor(private _authService: AuthService, private _router: Router, private _activatedRoute: ActivatedRoute, private _graphViewService: GraphViewService) { }
+  constructor(
+    private _router: Router,
+    private _activatedRoute: ActivatedRoute,
+    private _graphViewService: GraphViewService,
+    private _zone: NgZone) {
+      this._initAutorun();
+  }
 
   ngOnInit() {
     this._userId = Meteor.userId();
@@ -71,16 +83,6 @@ export class NavBarComponent implements OnInit{
     // subscribe to mode changes in the graph view
     this._graphViewService.modeChanged.subscribe(isEditing =>
       this._isEditing = isEditing);
-  }
-
-  /**
-   * Returns the current login status.
-   * 
-   * @method isLoggedIn
-   * @returns {boolean} The login status.
-   */
-  isLoggedIn(): boolean {
-    return this._authService.isLoggedIn();
   }
 
   /**
@@ -122,5 +124,22 @@ export class NavBarComponent implements OnInit{
 
   updateInfoGraphMeta(): void {
     this._graphViewService.getCurrentGraphMeta().subscribe(meta => this._currentGraphMeta = meta);
+  }
+
+  /**
+   * Populates the private _user object with the user document
+   * of the currently logged in user.
+   * 
+   * @method _initAutorun
+   */
+  _initAutorun(): void {
+    this._autorunComputation = Tracker.autorun(() => {
+      this._zone.run(() => {
+        this._user = Meteor.user();
+        this._userId = Meteor.userId();
+        this._isLoggingIn = Meteor.loggingIn();
+        this._isLoggedIn = !!Meteor.user();
+      })
+    });
   }
 }

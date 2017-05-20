@@ -1,4 +1,4 @@
-import { Component, NgZone, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 import { MongoObservable } from 'meteor-rxjs'
@@ -21,20 +21,16 @@ import styleUrl from './profile-button.component.scss';
 })
 export class ProfileButtonComponent implements OnChanges {
   @Input() toggled: boolean;
-  private _autorunComputation: Tracker.Computation;
-  private _user: Meteor.User;
-  private _userId: string;
-  private _isLoggingIn: boolean;
-  public isLoggedIn: boolean;
+  @Input() user: Meteor.User;
+  @Input() userId: string;
+  @Input() isLoggedIn: boolean;
 
   /**
    * Creates an instance of the ProfileButtonComponent.
    * 
    * @constructor
-   * @param {NgZone} _zone
    */
-  constructor(private _zone: NgZone) {
-    this._initAutorun();
+  constructor() {
   }
 
   /**
@@ -55,7 +51,7 @@ export class ProfileButtonComponent implements OnChanges {
    * @return {string} The name of the currently logged in user.
    */
   getUserName(): string {
-    let user: Meteor.User = this._user;
+    let user: Meteor.User = this.user;
 
     if (!user)
       return '';
@@ -79,7 +75,7 @@ export class ProfileButtonComponent implements OnChanges {
    * @returns {string} The URL of the user's profile image.
    */
   getUserImage(): string {
-    let user: Meteor.User = this._user;
+    let user: Meteor.User = this.user;
 
     if (!user)
       return '';
@@ -88,23 +84,5 @@ export class ProfileButtonComponent implements OnChanges {
       return user.profile.image;
 
     return '';
-  }
-
-
-  /**
-   * Populates the private _user object with the user document
-   * of the currently logged in user.
-   * 
-   * @method _initAutorun
-   */
-  _initAutorun(): void {
-    this._autorunComputation = Tracker.autorun(() => {
-      this._zone.run(() => {
-        this._user = Meteor.user();
-        this._userId = Meteor.userId();
-        this._isLoggingIn = Meteor.loggingIn();
-        this.isLoggedIn = !!Meteor.user();
-      })
-    });
   }
 }

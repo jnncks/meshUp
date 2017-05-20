@@ -1,4 +1,4 @@
  <div class="user-menu" [ngClass]="{'user-menu--toggled' : toggleState}" *ngIf="visible" (blur)="onBlur($event)" tabindex="1">
-   <profile-button (click)="togglePanel()"></profile-button>
+   <profile-button [isLoggedIn]="visible" [user]="user" [userId]="userId" (click)="togglePanel()"></profile-button>
    <menu-panel [visible]="toggleState" (clicked)="handleItemClick($event)"></menu-panel>
  </div>

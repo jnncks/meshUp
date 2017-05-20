@@ -16,6 +16,8 @@ import styleUrl from './user-menu.component.scss';
 })
 export class UserMenuComponent {
   @Input() visible: boolean;
+  @Input() user: Meteor.User;
+  @Input() userId: string;
   toggleState: boolean;
 
   /**
