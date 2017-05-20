@@ -36,13 +36,33 @@ export class Main {
     if (Meteor.users.find({}).count() === 0) {
       console.log('no users found, creating a test user')
       Accounts.createUser({
-        username: 'test',
-        email: 'test@test.test',
-        password: 'test',
+        username: 'evaluation',
+        email: 'evaluation@meshup.de',
+        password: 'evaluation',
         profile: {
-          name: 'Wolfgang von Testland'
+          name: 'meshUp Evaluation'
         }
       });
+
+      Accounts.createUser({
+        username: 'mathe',
+        email: 'mathe@meshup.de',
+        password: 'mathe',
+        profile: {
+          name: 'Institut für Mathematik'
+        }
+      });
+
+      Accounts.createUser({
+        username: 'imis',
+        email: 'imis@meshup.de',
+        password: 'imis',
+        profile: {
+          name: 'IMIS'
+        }
+      });
+
+      
     }
 
     let lectureId: string;
@@ -66,13 +86,15 @@ export class Main {
     // generate some fake InfoGraphMeta elements if the collection is empty
     if (InfoGraphMetaCollection.collection.find({}).count() === 0) {
 
-      let user = Meteor.users.findOne({});
+      let user = Meteor.users.findOne({username: 'evaluation'});
+      let imis = Meteor.users.findOne({username: 'imis'});
+      let math = Meteor.users.findOne({username: 'mathe'});
 
       // lecture InfoGraphs meta info
       const lecturesMeta: InfoGraphMeta[] = [{
         name: 'Einführung in die Medieninformatik',
         description: 'Was gehört alles zum Medieninformatik-Studium dazu?',
-        owner: '',
+        owner: imis._id,
         collaborators: [user._id],
         created: new Date(),
         lastUpdated: new Date(),
@@ -80,7 +102,7 @@ export class Main {
       }, {
         name: 'Software-Ergonomie',
         description: 'Grundlagen menschzentrierter Softwareentwicklung.',
-        owner: '',
+        owner: imis._id,
         collaborators: [user._id],
         created: new Date(),
         lastUpdated: new Date(),
@@ -88,7 +110,7 @@ export class Main {
       }, {
         name: 'Analysis',
         description: 'Integration. Fourier.',
-        owner: '',
+        owner: math._id,
         collaborators: [user._id],
         created: new Date(),
         lastUpdated: new Date(),
@@ -96,7 +118,7 @@ export class Main {
       }, {
         name: 'Ingenieurpsychologie',
         description: 'Gaps und mehr.',
-        owner: '',
+        owner: imis._id,
         collaborators: [user._id],
         created: new Date(),
         lastUpdated: new Date(),
@@ -114,20 +136,20 @@ export class Main {
       // lecture InfoGraphs
       const lectures: InfoGraph[] = [{
         metaId: lectureMetaIds[0],
-        nodes: nodes = this.randomNodes(user),
-        edges: edges = this.randomEdges(nodes, user)
+        nodes: nodes = this.randomNodes(imis),
+        edges: edges = this.randomEdges(nodes, imis)
       }, {
         metaId: lectureMetaIds[1],
-        nodes: nodes = this.randomNodes(user),
-        edges: edges = this.randomEdges(nodes, user)
+        nodes: nodes = this.randomNodes(imis),
+        edges: edges = this.randomEdges(nodes, imis)
       }, {
         metaId: lectureMetaIds[2],
-        nodes: nodes = this.randomNodes(user),
-        edges: edges = this.randomEdges(nodes, user)
+        nodes: nodes = this.randomNodes(math),
+        edges: edges = this.randomEdges(nodes, math)
       }, {
         metaId: lectureMetaIds[3],
-        nodes: nodes = this.randomNodes(user),
-        edges: edges = this.randomEdges(nodes, user)
+        nodes: nodes = this.randomNodes(imis),
+        edges: edges = this.randomEdges(nodes, imis)
       }];
 
       lectures.forEach((obj: InfoGraph) => {
