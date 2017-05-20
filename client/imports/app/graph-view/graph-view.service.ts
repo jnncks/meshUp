@@ -301,8 +301,8 @@ export class GraphViewService {
       });
   }
 
-  focusOnNode(node: Node): void {
-    this.requestNodeFocus.emit(node);
+  focusOnNode(node: Node, timeout: number = 0): void {
+    setTimeout(() => this.requestNodeFocus.emit(node), timeout);
   }
 
   /**

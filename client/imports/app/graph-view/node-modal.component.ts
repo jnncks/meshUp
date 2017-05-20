@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnChanges, SimpleChanges, Input, ViewChild, ElementRef } from '@angular/core';
 import { trigger, state, style, animate, transition, keyframes } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 
@@ -42,7 +42,7 @@ import styleUrl from './node-modal.component.scss';
   ]
 })
 @Modal()
-export class NodeModalComponent implements OnInit, AfterViewInit{
+export class NodeModalComponent implements OnInit, AfterViewInit, OnChanges{
   // properties inherited from the ModalContainer
   destroy: Function;
   closeModal: Function;
@@ -99,6 +99,23 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
 
     if (this.openInExplorationMode)
       setTimeout(() =>  this.toggleExplorationMode(), 50);
+  }
+
+  /**
+   * Handles input changes.
+   * 
+   * @method ngOnChanges
+   * @param  {SimpleChanges} changes An event of changed properties.
+   */
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.graph && this.explorationMode) {
+      if ((changes.graph.previousValue === undefined ||
+        changes.graph.previousValue === null) &&
+        changes.graph.currentValue) {
+          this.sortNodes();
+          setTimeout(() => this.displayAdjacentNodes(), 50);
+        }
+    }
   }
 
   /**
@@ -166,6 +183,9 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
       (!this.nodesLeft.length && !this.nodesRight.length))
       return;
     
+    if (!this._nodeContainerLeft)
+      return;
+
     const containerLeft = this._nodeContainerLeft.nativeElement;
 
     const height = containerLeft.clientHeight;
@@ -790,7 +810,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit{
    */
   navigateTo(node: Node) {
     // request a zoom transition to the new node
-    this._graphViewService.focusOnNode(node);
+    this._graphViewService.focusOnNode(node, 150);
 
     // close this modal as a new modal will be opend after the transition
     this.close();
