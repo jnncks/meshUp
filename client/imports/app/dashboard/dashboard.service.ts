@@ -121,14 +121,14 @@ export class DashboardService {
    */
   public getUserName(userId: string): Observable<string> {
     return Observable.from(
-      UsersCollection.find(
+      UsersCollection.collection.find(
         {_id: userId},
         {limit: 1, fields: { profile: 1, } }
-      ).map(users => {
-        if(!users.length) {
-          return '';
+      ).map(user => {
+        if(!user) {
+          return 'unbekanntem Benutzer';
         }
-        return users[0].profile.name;
+        return user.profile.name;
       })
     );
   }
