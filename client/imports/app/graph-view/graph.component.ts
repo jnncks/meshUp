@@ -109,7 +109,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // handle window resize events
     Observable.fromEvent(window, 'resize')
-      .debounceTime(50) // debounce for 50ms
+      .debounceTime(150) // debounce for 50ms
       .subscribe(() => this.handleResize());
     });
   }
@@ -1304,7 +1304,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     }
     
     // finally, resize the SVG element due to the toolbar being added/removed
-    setTimeout(() => this.handleResize(), 150);
+    setTimeout(() => this.handleResize(), 250);
   }
 
   /**
