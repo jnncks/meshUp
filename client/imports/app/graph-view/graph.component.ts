@@ -855,14 +855,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           dragButtonY, dragButtonIcon, 'verschieben');
 
         // set up the mousedown handlers
-        editButton.on('mousedown', (node: Node) => {
+        editButton.on('mousedown', (node: Node, i: number, g: SVGGElement[]) => {
           if (d3.event.button === 2) {
             d3.event.stopImmediatePropagation();
             return;
           }
 
           this._modalService.create(NodeEditModalComponent, {
-            node: node
+            node: this._localNodeData.get(g[i])
           });
         });
 
