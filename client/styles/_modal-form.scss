@@ -3,9 +3,12 @@
     &__form {
       display: flex;
       flex-direction: column;
-      margin-bottom: 2rem;
       min-height: 4rem;
       overflow-y: auto;
+      
+      :last-child {
+        margin-bottom: 0;
+      }
     }
   }
 }

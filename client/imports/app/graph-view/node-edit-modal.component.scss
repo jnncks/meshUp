@@ -5,11 +5,17 @@
   &__dialog {
     &__form {
       overflow: visible;
+
+      p-editor {
+        @include baseline(zeta, $headingtype, 2, 2, all);
+        flex-basis: auto;
+        flex-shrink: 1;
+      }
     }
 
     &__buttons {
-      &--first-line {
-        margin-bottom: 2rem;
+      &--first-line + * {
+        padding-top: 1rem;
       }
     }
   }

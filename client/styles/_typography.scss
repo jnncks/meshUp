@@ -10,6 +10,7 @@ input,
 select,
 textarea {
 	width: 100%;
+	min-height: 3rem;
 	outline: 0;
 	border: 2px solid $divider-color;
   border-radius: 0.15rem;

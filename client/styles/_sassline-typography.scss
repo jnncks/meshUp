@@ -128,8 +128,9 @@ a {
       &:before {
         content: counter(top-level) '.';
         font-feature-settings: 'lnum', 'tnum';
-        margin-left: -3rem;
-        position: absolute;
+        margin-left: -2rem;
+        margin-right: 1rem;
+        position: relative;
         text-align: right;
         width: 2em;
       }
