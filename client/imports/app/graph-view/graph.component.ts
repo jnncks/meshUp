@@ -651,7 +651,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    * @param  {Element[]} g
    */
   saveNodePosition = (d: Node, i: number, g: Element[]) => {
-    this._graphViewService.updateInfoGraphNode(d);
+    this._graphViewService.updateInfoGraphNode(this._localNodeData.get(g[i]));
   }
 
   /**
