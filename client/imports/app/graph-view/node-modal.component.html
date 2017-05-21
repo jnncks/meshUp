@@ -9,9 +9,11 @@
 		<div class="modal__dialog__content" *ngIf="node.content" [innerHTML]="node.content">
 		</div>
   	<div class="modal__dialog__buttons">
-			<button class="modal__dialog__buttons__button" (click)="toggleExplorationMode()">
-				<span *ngIf="explorationMode">verknüpfte Inhalte ausblenden</span>
-				<span *ngIf="!explorationMode">verknüpfte Inhalte einblenden</span>
+			<button class="modal__dialog__buttons__button"
+			  [disabled]="(!nodesLeft && !nodesRight) || (!nodesLeft.length && !nodesRight.length)"
+				(click)="toggleExplorationMode()">
+					<span *ngIf="explorationMode">verknüpfte Inhalte ausblenden</span>
+					<span *ngIf="!explorationMode">verknüpfte Inhalte einblenden</span>
 			</button>
    		<button class="modal__dialog__buttons__button" (click)="close()">schließen</button>
   	</div>

@@ -12,11 +12,5 @@
         flex-shrink: 1;
       }
     }
-
-    &__buttons {
-      &--first-line + * {
-        padding-top: 1rem;
-      }
-    }
   }
 }
