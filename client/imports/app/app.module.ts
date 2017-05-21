@@ -47,6 +47,7 @@ import {
   GraphComponent,
   NodeModalComponent,
   NodeEditModalComponent,
+  NodeRemovalConfirmModalComponent,
   GraphToolbarComponent,
   MiniMapComponent
 } from './graph-view';
@@ -104,6 +105,7 @@ import {
     MiniMapComponent,
     NodeModalComponent,
     NodeEditModalComponent,
+    NodeRemovalConfirmModalComponent,
     RouteWithNamePipe,
     ArrayToListPipe
   ],

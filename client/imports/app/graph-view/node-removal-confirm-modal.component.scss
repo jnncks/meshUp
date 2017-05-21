@@ -1,0 +1,15 @@
+@import '../../../styles/modal-common';
+
+.modal {
+  &__dialog {
+    &__message {
+      overflow-y: auto;
+    }
+
+    &__buttons {
+      &--first-line + * {
+        padding-top: 1rem;
+      }
+    }
+  }
+}

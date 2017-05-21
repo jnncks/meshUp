@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { trigger, state, style, animate, transition, keyframes} from '@angular/core';
+import { trigger, state, style, animate, transition, keyframes } from '@angular/core';
 
-import { GraphViewService } from './index';
+import { GraphViewService, NodeRemovalConfirmModalComponent } from './index';
 
-import { Modal } from '../shared/modal.module';
+import { Modal, ModalService } from '../shared/modal.module';
 import { InfoGraph, Node } from '../../../../both/models';
 
 import template from './node-edit-modal.component.html';
@@ -55,15 +55,17 @@ export class NodeEditModalComponent implements OnInit{
    * @constructor
    * @param {FormBuilder} fb The FormBuilder.
    */
-  constructor(@Inject(FormBuilder) fb: FormBuilder, private _graphViewService: GraphViewService) {
-    this.modalTitle = 'Inhalt bearbeiten';
+  constructor(@Inject(FormBuilder) fb: FormBuilder,
+    private _graphViewService: GraphViewService,
+    private _modalService: ModalService) {
+      this.modalTitle = 'Inhalt bearbeiten';
 
-    // set up the form group
-    this.nodeForm = fb.group({
-      title: ['', Validators.required],
-      content: ['', Validators.required],
-      tags: ''
-    });
+      // set up the form group
+      this.nodeForm = fb.group({
+        title: ['', Validators.required],
+        content: ['', Validators.required],
+        tags: ''
+      });
   }
 
   /**
@@ -113,7 +115,10 @@ export class NodeEditModalComponent implements OnInit{
    * @method remove
    */
   remove(): void {
-    this._graphViewService.removeInfoGraphNode(this.node);
+    this._modalService.create(NodeRemovalConfirmModalComponent, {
+      node: this.node
+    });
+
     this.closeModal();
   }
 

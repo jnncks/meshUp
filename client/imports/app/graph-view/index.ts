@@ -5,3 +5,4 @@ export * from './node-modal.component';
 export * from './node-edit-modal.component';
 export * from './graph-toolbar.component';
 export * from './minimap.component';
+export * from './node-removal-confirm-modal.component';
