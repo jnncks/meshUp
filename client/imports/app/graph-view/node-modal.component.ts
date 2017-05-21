@@ -56,6 +56,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit, OnChanges{
   @Input() currendNodeId: string;
   @Input() openInExplorationMode: boolean = false;
   node: Node;
+  hasAdjacentNodes: boolean;
   nodesLeft: Node[];
   nodesRight: Node[];
   explorationMode: boolean = false;
@@ -85,18 +86,16 @@ export class NodeModalComponent implements OnInit, AfterViewInit, OnChanges{
       this.node = this.graph.nodes.filter((node: Node) =>
         node._id === this.currendNodeId)[0];
 
+    this.sortNodes()
     // TODO: get the creator's name
   }
 
   /**
    * Called after the view has been initialized.
-   * Sorts the graphs nodes.
    * 
    * @method ngOnInit
    */
   ngAfterViewInit(): void {
-    this.sortNodes()
-
     if (this.openInExplorationMode)
       setTimeout(() =>  this.toggleExplorationMode(), 50);
   }
@@ -172,6 +171,9 @@ export class NodeModalComponent implements OnInit, AfterViewInit, OnChanges{
       .sort((a: Node, b: Node) => a.y - b.y);
     this.nodesRight = nodes.filter(node => node.x > this.node.x)
       .sort((a: Node, b: Node) => a.y - b.y);
+
+    if (this.nodesLeft.length || this.nodesRight.length)
+      this.hasAdjacentNodes = true;
   }
 
   /**

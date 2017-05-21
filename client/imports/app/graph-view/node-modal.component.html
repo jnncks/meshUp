@@ -10,7 +10,7 @@
 		</div>
   	<div class="modal__dialog__buttons">
 			<button class="modal__dialog__buttons__button"
-			  [disabled]="(!nodesLeft && !nodesRight) || (!nodesLeft.length && !nodesRight.length)"
+			  [disabled]="!hasAdjacentNodes"
 				(click)="toggleExplorationMode()">
 					<span *ngIf="explorationMode">verknüpfte Inhalte ausblenden</span>
 					<span *ngIf="!explorationMode">verknüpfte Inhalte einblenden</span>
