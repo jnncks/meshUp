@@ -287,6 +287,9 @@ export class MiniMapComponent implements AfterViewInit, OnChanges {
    * @method fitContainer
    */
   fitContainer(maxScale?: number): void {
+    if (!this._miniMapContainer || !this._miniMapContainer.nativeElement)
+      return;
+      
     const element = this._miniMapContainer.nativeElement;
     const svg = d3.select(element).select<SVGElement>('svg');
     const graph = svg.select<SVGGElement>('g#graph');
