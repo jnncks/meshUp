@@ -175,6 +175,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     // subscribe to requestNodeFocus events
     this._graphViewService.requestNodeFocus.subscribe((node: Node) => {
+      if (!node)
+        return;
+
       // remove the current focus
       this.removeNodeFocus();
 
@@ -1433,6 +1436,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
    */
   handleZoom = () => {
     if (!d3.event || !d3.event.transform)
+      return;
+    
+    if (!this._graphContainer || !this._graphContainer.nativeElement)
       return;
 
     const element: HTMLDivElement = this._graphContainer.nativeElement;

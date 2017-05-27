@@ -814,7 +814,7 @@ export class NodeModalComponent implements OnInit, AfterViewInit, OnChanges{
    */
   navigateTo(node: Node) {
     // request a zoom transition to the new node
-    this._graphViewService.focusOnNode(node, 150);
+    this._graphViewService.focusOnNode(node, 50);
 
     // close this modal as a new modal will be opend after the transition
     this.close();
