@@ -57,7 +57,7 @@ export class InfoGraphSettingsModalComponent implements OnInit{
    * @param {InfoGraphService} _infoGraphService The InfoGraphService.
    */
   constructor(@Inject(FormBuilder) fb: FormBuilder, private _infoGraphService: InfoGraphService) {
-    this.modalTitle = 'Informationsetz bearbeiten';
+    this.modalTitle = 'Informationsnetz bearbeiten';
 
     // set up the form group
     this.infoGraphForm = fb.group({
