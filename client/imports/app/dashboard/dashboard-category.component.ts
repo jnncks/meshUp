@@ -1,9 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Meteor } from 'meteor/meteor';
-
-import { DashboardService } from './dashboard.service';
 
 import { InfoGraphCategory } from '../../../../both/models';
 
@@ -29,10 +26,8 @@ export class DashboardCategoryComponent {
    * Creates an instance of the DashboardCategoryComponent.
    * 
    * @constructor
-   * @param {Router} _router The Router.
-   * @param {DashboardService} _dashboardService The DashboardService.
    */
-  constructor(private _router: Router, private _dashboardService: DashboardService) {
+  constructor() {
     this.user = Meteor.user();
   }
 }

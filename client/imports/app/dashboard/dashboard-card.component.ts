@@ -33,6 +33,7 @@ export class DashboardCardComponent implements OnChanges {
   /**
    * @constructor 
    * @param  {Router} _router The Router.
+   * @param  {ActivatedRoute} _activatedRoute The currently active Route.
    * @param  {DashoardService} _dashboardService The DashboardService.
    * @param  {ModalService} _modalService The ModalService.
   */
@@ -72,7 +73,7 @@ export class DashboardCardComponent implements OnChanges {
   }
 
   /**
-   * Opens a confirmation modal to prevent accidental logout actions.
+   * Opens the infoGraph settings Modal.
    * 
    * @method openSettingsModal
    * @param  {InfoGraphMeta} infoGraph The infoGraphMeta that will be edited.
