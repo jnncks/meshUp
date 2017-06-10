@@ -11,7 +11,9 @@ Make sure you have [Meteor 1.4](https://www.meteor.com/install) and a current no
 5. Run Meteor initially to install the required Meteor packets: `npm run start`. 
 
 
-## NPM Scripts
+## Usage
+
+### NPM Scripts
 This project comes with predefined NPM scripts, defined in the `package.json`:
 
 - `npm run start` - Run the Meteor application.
@@ -21,6 +23,9 @@ This project comes with predefined NPM scripts, defined in the `package.json`:
 - `npm run meteor:update` - Updates Meteor's version and it's dependencies.
 - `npm run test` - Executes Meteor in test mode with Mocha.
 - `npm run test:ci` - Executes Meteor in test mode with Mocha for CI (run once).
+
+### Using the app
+The server will be running on port 3000. If the server is running on your machine, simply connect to `http://localhost:3000` in your browser. Oherwise, you may connect to the server's IP on the same port.
 
 
 ## Package Contents
