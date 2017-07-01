@@ -43,6 +43,7 @@ import template from './graph.component.html';
  * 
  * @class GraphComponent
  * @implements {AfterViewInit}
+ * @implements {OnDestroy}
  * @implements {OnChanges}
  */
 @Component({
@@ -71,6 +72,7 @@ export class GraphComponent implements AfterViewInit, OnDestroy, OnChanges {
   private _dragEdge: d3.DragBehavior<SVGCircleElement, any, any>;
   private _localNodeData = d3.local<Node>();
   private _htmlEntities: Html5Entities;
+  private _nodeAddingChanged: Subscription;
   private _requestNodeFocus: Subscription;
 
   /**
@@ -118,14 +120,15 @@ export class GraphComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   /**
-   * Handle the destruction of the component.
+   * Handles the destruction of the component.
    * Removes subscriptions.
    * 
-   * @method ngOnChanges
+   * @method ngOnDestroy
    */
   ngOnDestroy(): void {
     // remove subscriptions to the graphViewService
     this._requestNodeFocus.unsubscribe();
+    this._nodeAddingChanged.unsubscribe();
   }
 
   /**
@@ -183,9 +186,8 @@ export class GraphComponent implements AfterViewInit, OnDestroy, OnChanges {
       .on('end', (d: Node, i: number, g: Element[]) => this.saveNodePosition(d, i, g));
 
     // set up the mousemove handler for new nodes
-    this._graphViewService.nodeAddingChanged.subscribe(state => {
-      this.handleNodeAddingModeChange(state);
-    });
+    this._nodeAddingChanged = this._graphViewService.nodeAddingChanged
+      .subscribe(state => this.handleNodeAddingModeChange(state));
 
     // subscribe to requestNodeFocus events
     this._requestNodeFocus = this._graphViewService.requestNodeFocus.subscribe((node: Node) => {

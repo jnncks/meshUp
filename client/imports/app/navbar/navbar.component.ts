@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, NgZone } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { Route, ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Meteor } from 'meteor/meteor';
 
 import { AuthService } from '../shared/auth.service';
@@ -15,6 +15,7 @@ import styleUrl from './navbar.component.scss';
  * Displays the routes as breadcrumbs as well as the user menu.
  * 
  * @implements {OnInit}
+ * @implements {OnDestroy}
  * @class NavBarComponent
  */
 @Component({
@@ -22,7 +23,7 @@ import styleUrl from './navbar.component.scss';
   template,
   styles: [ styleUrl ]
 })
-export class NavBarComponent implements OnInit {
+export class NavBarComponent implements OnInit, OnDestroy {
   private _autorunComputation: Tracker.Computation;
   private _user: Meteor.User;
   private _userId: string;
@@ -38,6 +39,7 @@ export class NavBarComponent implements OnInit {
   private _currentRouteData: Object;
   private _currentGraphMeta: InfoGraphMeta;
   private _isEditing: boolean = false;
+  private _modeChanged: Subscription;
 
   /**
    * Creates an instance of the NavBarComponent.
@@ -60,7 +62,6 @@ export class NavBarComponent implements OnInit {
   ngOnInit() {
     this._userId = Meteor.userId();
     this._isEditing = this._graphViewService.getCurrentMode();
-    this._graphViewService.modeChanged.subscribe(isEditing => this._isEditing);
 
     // update some properties after navigation ends
     this._router.events
@@ -81,8 +82,19 @@ export class NavBarComponent implements OnInit {
       });
     
     // subscribe to mode changes in the graph view
-    this._graphViewService.modeChanged.subscribe(isEditing =>
+    this._modeChanged = this._graphViewService.modeChanged.subscribe(isEditing =>
       this._isEditing = isEditing);
+  }
+
+  /**
+   * Handles the destruction of the component.
+   * Removes subscriptions.
+   * 
+   * @method ngOnDestroy
+   */
+  ngOnDestroy(): void {
+    // remove subscriptions to the graphViewService
+    this._modeChanged.unsubscribe();
   }
 
   /**

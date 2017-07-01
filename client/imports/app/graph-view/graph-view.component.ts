@@ -1,6 +1,6 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Meteor } from 'meteor/meteor';
 
 import { GraphViewService } from './graph-view.service';
@@ -15,15 +15,17 @@ import styleUrl from './graph-view.component.scss';
  * 
  * @class GraphViewComponent
  * @implements {OnInit}
+ * @implements {OnDestroy}
  */
 @Component({
   selector: 'graph-view',
   template,
   styles: [ styleUrl ]
 })
-export class GraphViewComponent implements OnInit {
+export class GraphViewComponent implements OnInit, OnDestroy {
   private _graph: Observable<InfoGraph>;
   private _graphMetaId: string;
+  private _modeChanged: Subscription
   public isEditing: boolean = false;
 
   /**
@@ -57,7 +59,18 @@ export class GraphViewComponent implements OnInit {
         }
       });
     
-    this._graphViewService.modeChanged.subscribe(isEditing =>
+    this._modeChanged = this._graphViewService.modeChanged.subscribe(isEditing =>
       this.isEditing = isEditing);
+  }
+
+  /**
+   * Handles the destruction of the component.
+   * Removes subscriptions.
+   * 
+   * @method ngOnDestroy
+   */
+  ngOnDestroy(): void {
+    // remove subscriptions to the graphViewService
+    this._modeChanged.unsubscribe();
   }
 }

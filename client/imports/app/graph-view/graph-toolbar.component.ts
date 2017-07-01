@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import {
   trigger,
   state,
@@ -7,7 +7,7 @@ import {
   transition,
   keyframes
 } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { GraphViewService } from './graph-view.service';
 import { ModalService } from '../shared/modal.module';
@@ -27,7 +27,7 @@ import styleUrl from './graph-toolbar.component.scss';
  * A toolbar for editing graphs.
  * 
  * @class GraphToolbarComponent
- * @implements {OnInit}
+ * @implements {OnDestroy}
  */
 @Component({
   selector: 'graph-toolbar',
@@ -54,8 +54,9 @@ import styleUrl from './graph-toolbar.component.scss';
     'style': 'display: block; overflow: hidden;'
   }
 })
-export class GraphToolbarComponent {
+export class GraphToolbarComponent implements OnDestroy {
   private _isAddingNode = false;
+  private _nodeAddingChanged: Subscription
 
   /**
    * Creates an instance of the GraphToolbarComponent.
@@ -63,9 +64,19 @@ export class GraphToolbarComponent {
    * @param {GraphViewService} _graphViewService The GraphViewService.
    */
   constructor(private _graphViewService: GraphViewService, private _modalService: ModalService) {
-    _graphViewService.nodeAddingChanged.subscribe(state => {
-      this._isAddingNode = state;
-    });
+    this._nodeAddingChanged = _graphViewService.nodeAddingChanged
+      .subscribe(state => this._isAddingNode = state);
+  }
+
+  /**
+   * Handles the destruction of the component.
+   * Removes subscriptions.
+   * 
+   * @method ngOnDestroy
+   */
+  ngOnDestroy(): void {
+    // remove subscriptions to the graphViewService
+    this._nodeAddingChanged.unsubscribe();
   }
 
   /**
