@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  OnDestroy,
   Component,
   ElementRef,
   Input,
@@ -9,7 +10,8 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import {
-  Observable
+  Observable,
+  Subscription
 } from 'rxjs';
 import * as d3 from 'd3';
 import * as _ from 'underscore';
@@ -49,7 +51,7 @@ import template from './graph.component.html';
   styles: [styleUrl],
   encapsulation: ViewEncapsulation.None
 })
-export class GraphComponent implements AfterViewInit, OnChanges {
+export class GraphComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('graphContainer') private _graphContainer: ElementRef;
   @Input() graphData: InfoGraph;
   @Input() isEditing: boolean = false;
@@ -69,6 +71,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private _dragEdge: d3.DragBehavior<SVGCircleElement, any, any>;
   private _localNodeData = d3.local<Node>();
   private _htmlEntities: Html5Entities;
+  private _requestNodeFocus: Subscription;
 
   /**
    * Creates an instance of the GraphComponent.
@@ -112,6 +115,17 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .debounceTime(150) // debounce for 50ms
       .subscribe(() => this.handleResize());
     });
+  }
+
+  /**
+   * Handle the destruction of the component.
+   * Removes subscriptions.
+   * 
+   * @method ngOnChanges
+   */
+  ngOnDestroy(): void {
+    // remove subscriptions to the graphViewService
+    this._requestNodeFocus.unsubscribe();
   }
 
   /**
@@ -174,7 +188,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     });
 
     // subscribe to requestNodeFocus events
-    this._graphViewService.requestNodeFocus.subscribe((node: Node) => {
+    this._requestNodeFocus = this._graphViewService.requestNodeFocus.subscribe((node: Node) => {
       if (!node)
         return;
 
