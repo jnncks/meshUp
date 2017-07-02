@@ -110,19 +110,6 @@ export class NodeEditModalComponent implements OnInit{
   }
 
   /**
-   * Removes the node and all related edges.
-   * 
-   * @method remove
-   */
-  remove(): void {
-    this._modalService.create(NodeRemovalConfirmModalComponent, {
-      node: this.node
-    });
-
-    this.closeModal();
-  }
-
-  /**
    * Closes the modal.
    * 
    * @method close

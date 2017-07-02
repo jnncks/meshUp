@@ -89,10 +89,6 @@ export class NodeRemovalConfirmModalComponent implements OnInit {
     if (event && event.target && event.target['id'] !== 'nodeEditModal') {
       return;
     }
-
-    this._modalService.create(NodeEditModalComponent, {
-      node: this.node
-    });
     
     this.closeModal();
   }

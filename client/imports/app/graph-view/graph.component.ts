@@ -23,6 +23,7 @@ import {
 import {
   NodeModalComponent,
   NodeEditModalComponent,
+  NodeRemovalConfirmModalComponent,
   GraphViewService
 } from './index';
 
@@ -866,14 +867,19 @@ export class GraphComponent implements AfterViewInit, OnDestroy, OnChanges {
         const dragButtonX = d.x + 60;
         const dragButtonY = d.y + 35;
         const dragButtonIcon = 'icons/svg-sprite-action-symbol.svg#ic_open_with_24px';
+        const removalButtonX = d.x + 36;
+        const removalButtonY = d.y + 70;
+        const removalButtonIcon = 'icons/svg-sprite-action-symbol.svg#ic_delete_24px';
 
         // append the buttons
         const editButton = this.appendFocusButton(node, d, 'EditButton', editButtonX,
           editButtonY, editButtonIcon, 'bearbeiten');
         const dragButton = this.appendFocusButton(node, d, 'dragButton', dragButtonX,
           dragButtonY, dragButtonIcon, 'verschieben');
+        const removalButton = this.appendFocusButton(node, d, 'removalButton',
+          removalButtonX, removalButtonY, removalButtonIcon, 'entfernen');
 
-        // set up the mousedown handlers
+        // set up the editButton handler
         editButton.on('mousedown', (node: Node, i: number, g: SVGGElement[]) => {
           if (d3.event.button === 2) {
             d3.event.stopImmediatePropagation();
@@ -885,8 +891,20 @@ export class GraphComponent implements AfterViewInit, OnDestroy, OnChanges {
           });
         });
 
-        // set up the mousedown handlers
+        // set up the dragButton handler
         dragButton.call(this._dragNode);
+
+        // set up the removalButton handler
+        removalButton.on('mousedown', (node: Node, i: number, g: SVGGElement[]) => {
+          if (d3.event.button === 2) {
+            d3.event.stopImmediatePropagation();
+            return;
+          }
+
+          this._modalService.create(NodeRemovalConfirmModalComponent, {
+            node: this._localNodeData.get(g[i])
+          });
+        });
       }
     }
   }
