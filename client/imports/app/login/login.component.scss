@@ -8,7 +8,7 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
-    height: calc(5vh + 15vw);
+    height: calc(3vh + 15vw);
   }
 
   &__welcome-title {
@@ -17,6 +17,15 @@
 
   &__welcome-message {
     text-align: center;
+  }
+
+  &__error-message {
+    border: 2px solid #f44336;
+    border-radius: 0.15rem;
+    color: #b71c1c;
+    background-color: #ffebee;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   &__form {

@@ -5,13 +5,17 @@
 
   <h1 class="login__welcome-title">{{ welcomeTitle }}</h1>
   <p class="login__welcome-message">{{ welcomeMessage }}</p>
-
   <form class="login__form" (ngSubmit)="login()" #loginForm="ngForm">
     <label for="user">Benutzername oder E-Mail-Adresse</label>
-    <input [(ngModel)]="user" name="user" id="user" type="text" placeholder="dein Benutzername oder deine E-Mail-Adresse" required>
+    <input [(ngModel)]="user" (ngModelChange)="formStateChanged($event)" name="user" id="user" type="text" placeholder="dein Benutzername oder deine E-Mail-Adresse" required>
 
     <label for="password">Passwort</label>
-    <input [(ngModel)]="password" name="password" id="password" type="password" placeholder="dein Passwort" required>
+    <input [(ngModel)]="password" (ngModelChange)="formStateChanged($event)" name="password" id="password" type="password" placeholder="dein Passwort" required>
+
+    <div class="login__error-message" *ngIf="errorMessage">
+      <p>{{ errorMessage }}</p>
+    </div>
+
     <div class="login__form__buttons">
       <button class="login__form__buttons__button" (click)="login()" type="submit" [disabled]="!loginForm.form.valid">Anmelden</button>
     </div>

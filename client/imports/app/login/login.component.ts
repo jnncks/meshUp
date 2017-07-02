@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit {
   public welcomeMessage: string;
   public user: string;
   public password: string;
+  public errorMessage: string;
 
   /**
    * Creates an instance of the LoginComponent.
@@ -58,6 +59,12 @@ export class LoginComponent implements OnInit {
     // intialize the form fiels
     this.user = '';
     this.password = '';
+    this.errorMessage = '';
+  }
+
+  formStateChanged(event: Event) {
+    if (this.errorMessage)
+      this.errorMessage = '';
   }
 
   /**
@@ -79,12 +86,15 @@ export class LoginComponent implements OnInit {
   }
 
   /**
-   * Handles errors (currently by logging them to the console).
+   * Handles errors.
    * 
    * @method handleError
    * @param  {Error} e The error to handle.
    */
-  handleError(e: Error): void {
-    console.error(e);
+  handleError(e: Meteor.Error): void {
+    if (e.error === 403) {
+      this.errorMessage = `Benutzername und Passwort passen nicht zusammen.
+                    Bitte überprüfe, ob du beides korrekt eingegeben hast!`;
+    }
   }
 }
