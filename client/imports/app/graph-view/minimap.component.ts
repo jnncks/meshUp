@@ -253,7 +253,7 @@ export class MiniMapComponent implements AfterViewInit, OnChanges {
     const graph = svg.select<SVGGElement>('g#graph');
     const visibleArea = svg.select('rect#visibleArea');
 
-    if (graph.empty())
+    if (graph.empty() || !this._transform || !this.graphViewTransform)
       return;
 
     // calculate the width and height of the area
@@ -311,9 +311,12 @@ export class MiniMapComponent implements AfterViewInit, OnChanges {
       containerWidth / bbox.width,
       containerHeight / bbox.height
     );
-
+    
     if (maxScale)
       scale = Math.min(scale, maxScale);
+
+    if (!isFinite(scale))
+      return;
     
     // calculate the x and y offsets to center the graph
     const widthOffset =

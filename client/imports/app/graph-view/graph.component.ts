@@ -1424,6 +1424,9 @@ export class GraphComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (maxScale)
       scale = Math.min(scale, maxScale);
     
+    if (!isFinite(scale))
+      return;
+      
     // calculate the x and y offsets to center the graph
     const widthOffset =
       (containerWidth - bbox.width * scale) / 2 - bbox.x * scale;
